@@ -1,0 +1,3270 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Wizz Air フライト検索 - モバイル版</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #C2185B;
+            --primary-dark: #8E0038;
+            --accent: #FF6090;
+            --bg-main: #F5F5F5;
+            --bg-card: #FFFFFF;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --border: #E0E0E0;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #C2185B 0%, #FF6090 100%);
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.5;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header - モバイル最適化 */
+        header {
+            background: var(--gradient);
+            padding: 1.5rem 1rem;
+            box-shadow: 0 2px 10px rgba(194, 24, 91, 0.2);
+            position: static;
+        }
+
+        .header-title {
+            background: none;
+            border: none;
+            padding: 0;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        h1 {
+            font-family: 'Montserrat', 'Noto Sans JP', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+
+        /* Search Container - モバイル最適化 */
+        .search-container {
+            padding: 1rem;
+            background: white;
+            box-shadow: 0 2px 8px var(--shadow);
+            position: static;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            z-index: 2;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid var(--border);
+            border-radius: 50px;
+            font-size: 1rem;
+            font-family: 'Noto Sans JP', sans-serif;
+            transition: all 0.3s ease;
+            background: var(--bg-main);
+        }
+
+        #searchInput:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(194, 24, 91, 0.1);
+            background: white;
+        }
+
+        /* Autocomplete - モバイル最適化 */
+        .autocomplete-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            max-height: 60vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 24px var(--shadow);
+            z-index: 1000;
+            display: none;
+        }
+
+        .autocomplete-dropdown.show {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 1.2rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid var(--border);
+            min-height: 60px;
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item:active {
+            background: linear-gradient(135deg, rgba(194, 24, 91, 0.1) 0%, rgba(255, 96, 144, 0.1) 100%);
+        }
+
+        .autocomplete-item-main {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.3rem;
+            font-size: 1.05rem;
+        }
+
+        .autocomplete-item-code {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .autocomplete-item-sub {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Filter Buttons - モバイル最適化 */
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 0.5rem;
+            scrollbar-width: none;
+        }
+
+        .filter-buttons::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            white-space: nowrap;
+            flex-shrink: 0;
+            min-height: 44px;
+        }
+
+        .filter-btn:active {
+            transform: scale(0.95);
+        }
+
+        .filter-btn.active {
+            background: var(--gradient);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Results Container */
+        .results-container {
+            padding: 1rem;
+        }
+
+        .quick-panel {
+            padding: 0 1rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .ghost-btn {
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--text-primary);
+            border-radius: 999px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            min-height: 36px;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            padding: 0.9rem 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.6rem;
+        }
+
+        .chip-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 0.6rem;
+        }
+
+        .rank-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.6rem;
+            padding: 0.55rem 0.7rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: white;
+            cursor: pointer;
+        }
+
+        .rank-left {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .rank-badge {
+            width: 24px;
+            height: 24px;
+            border-radius: 8px;
+            background: var(--gradient);
+            color: white;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .rank-meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .results-count {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .results-count strong {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .sort-select {
+            padding: 0.7rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 50px;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            background: white;
+            font-weight: 600;
+            min-height: 44px;
+        }
+
+        /* Flight Cards - モバイル最適化 */
+        .flights-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .flight-group {
+            background: var(--bg-card);
+            border-radius: 14px;
+            border: 2px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .flight-group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.9rem 1rem;
+            background: linear-gradient(135deg, rgba(194, 24, 91, 0.08) 0%, rgba(255, 96, 144, 0.08) 100%);
+        }
+
+        .airport-title {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .airport-code {
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .airport-name {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .airport-country {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .airport-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .star-btn {
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--text-secondary);
+            border-radius: 999px;
+            padding: 0.35rem 0.6rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            min-height: 36px;
+        }
+
+        .star-btn.active {
+            color: #FFC107;
+            border-color: #FFC107;
+        }
+
+        .code-copy-btn {
+            border: 1px solid var(--primary);
+            background: white;
+            color: var(--primary);
+            border-radius: 999px;
+            padding: 0.35rem 0.7rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            min-height: 36px;
+        }
+
+        .flight-group-body {
+            padding: 0.85rem 1rem 1rem;
+        }
+
+        .destinations {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 0.6rem;
+        }
+
+        .airport-chip {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            padding: 0.6rem 0.7rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: white;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .airport-chip:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .airport-chip-code {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .airport-chip-name {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .airport-chip-country {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(33, 33, 33, 0.95);
+            color: white;
+            padding: 0.7rem 1rem;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-6px);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background: white;
+            border-radius: 16px;
+            border: 2px dashed var(--border);
+        }
+
+        .no-results-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .no-results h3 {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .no-results p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-primary);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 2rem;
+        }
+
+        footer p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .flight-group {
+            animation: fadeInUp 0.4s ease;
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(194, 24, 91, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* スクロールバー非表示（iOS対応） */
+        .autocomplete-dropdown {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* タッチフィードバック改善 */
+        .flight-group, .filter-btn, .autocomplete-item, .airport-chip, .code-copy-btn {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .is-hidden {
+            display: none;
+        }
+
+        .detail-view {
+            padding: 1rem;
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .back-btn {
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 999px;
+            padding: 0.5rem 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            min-height: 40px;
+        }
+
+        .detail-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .detail-sub {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .detail-card {
+            background: white;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 0.7rem;
+            margin-top: 0.8rem;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 1.2rem 1rem;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+            }
+
+            .search-container {
+                padding: 0.9rem 0.9rem 1rem;
+            }
+
+            #searchInput {
+                padding: 0.85rem 0.85rem 0.85rem 2.7rem;
+                font-size: 0.95rem;
+            }
+
+            .filter-btn {
+                padding: 0.7rem 1.1rem;
+                font-size: 0.9rem;
+            }
+
+            .results-container {
+                padding: 0.9rem;
+            }
+
+            .flight-group-header {
+                padding: 0.75rem 0.9rem;
+            }
+
+            .flight-group-body {
+                padding: 0.75rem 0.9rem 0.9rem;
+            }
+
+            .destinations {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+
+            .detail-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <button class="header-title" id="homeButton" type="button">
+            <h1>✈️ Wizz Air 検索</h1>
+        </button>
+        <p class="subtitle">ヨーロッパ・中東 全2,000路線</p>
+    </header>
+
+    <div id="listView">
+        <div class="search-container">
+            <div class="search-input-wrapper">
+                <span class="search-icon">🔍</span>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="都市名で検索（ひらがな・英語OK）"
+                    autocomplete="off"
+                >
+                <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">すべて</button>
+                <button class="filter-btn" data-filter="favorites">お気に入り</button>
+                <button class="filter-btn" data-filter="ranking">接続数の多い空港</button>
+                <button class="filter-btn" data-filter="西欧">西欧</button>
+                <button class="filter-btn" data-filter="東欧">東欧</button>
+                <button class="filter-btn" data-filter="南欧">南欧</button>
+                <button class="filter-btn" data-filter="北欧">北欧</button>
+                <button class="filter-btn" data-filter="中東">中東</button>
+            </div>
+        </div>
+
+        <div class="quick-panel">
+            <div class="section-card is-hidden" id="favoritesSection">
+                <div class="section-title">お気に入り</div>
+                <div class="chip-grid" id="favoritesGrid"></div>
+            </div>
+            <div class="section-card" id="rankingSection">
+                <div class="section-title">接続数の多い空港</div>
+                <div class="chip-grid" id="rankingGrid"></div>
+            </div>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <div class="results-header">
+                <div class="results-count">
+                    出発空港 <strong id="groupCount">0</strong> / 路線 <strong id="resultCount">0</strong>
+                </div>
+                <select class="sort-select" id="sortSelect">
+                    <option value="default">デフォルト順</option>
+                    <option value="ja-asc">出発地順（あ→ん）</option>
+                    <option value="ja-desc">出発地順（ん→あ）</option>
+                </select>
+            </div>
+            <div class="flights-grid" id="flightsGrid"></div>
+        </div>
+    </div>
+
+    <div id="detailView" class="detail-view is-hidden">
+        <div class="detail-header">
+            <button class="back-btn" id="backButton">← 戻る</button>
+            <div>
+                <div class="detail-title" id="detailTitle">空港詳細</div>
+                <div class="detail-sub" id="detailSub">接続している空港一覧</div>
+            </div>
+            <div class="airport-actions">
+                <button class="star-btn" id="detailFavBtn" type="button">★</button>
+                <button class="code-copy-btn" id="detailCopyBtn" type="button">コードコピー</button>
+            </div>
+        </div>
+        <div class="detail-card">
+            <div class="detail-sub" id="detailCount">接続数: 0</div>
+            <div class="detail-grid" id="detailGrid"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Wizz Air フライト検索<br>非公式モバイル版</p>
+        <p style="margin-top: 0.5rem;">実際の予約は <a href="https://www.wizzair.com">wizzair.com</a> へ</p>
+    </footer>
+
+    <div class="toast" id="toast">コピーしました</div>
+
+    <script>
+        // 空港コードマッピング
+        const airportCodes = {
+            'Aberdeen': 'ABZ', 'Abu Dhabi': 'AUH', 'Agadir': 'AGA', 'Alesund': 'AES',
+            'Alghero': 'AHO', 'Alicante': 'ALC', 'Amman': 'AMM', 'Ancona': 'AOI',
+            'Antalya': 'AYT', 'Athens': 'ATH', 'Bacau': 'BCM', 'Baku': 'GYD',
+            'Banja Luka': 'BNX', 'Barcelona': 'BCN', 'Bari': 'BRI', 'Basel': 'BSL',
+            'Belgrade': 'BEG', 'Bergamo': 'BGY', 'Bergen': 'BGO', 'Berlin': 'BER',
+            'Bilbao': 'BIO', 'Billund': 'BLL', 'Birmingham': 'BHX', 'Bologna': 'BLQ',
+            'Bordeaux': 'BOD', 'Brasov': 'OTP', 'Bratislava': 'BTS', 'Brindisi': 'BDS',
+            'Brussels Charleroi': 'CRL', 'Bucharest': 'OTP', 'Budapest': 'BUD',
+            'Burgas': 'BOJ', 'Cairo': 'CAI', 'Castellon': 'CDT', 'Catania': 'CTA',
+            'Chania (Crete)': 'CHQ', 'Chisinau': 'RMO', 'Cluj-Napoca': 'CLJ',
+            'Cologne': 'CGN', 'Comiso': 'CIY', 'Constanta': 'CND', 'Copenhagen': 'CPH',
+            'Corfu': 'CFU', 'Craiova': 'CRA', 'Dalaman': 'DLM', 'Debrecen': 'DEB',
+            'Dortmund': 'DTM', 'Dubai': 'DXB', 'Dubrovnik': 'DBV', 'Eindhoven': 'EIN',
+            'Faro (Algarve)': 'FAO', 'Frankfurt': 'FRA', 'Friedrichshafen': 'FDH',
+            'Fuerteventura': 'FUE', 'Funchal (Madeira)': 'FNC', 'Gdansk': 'GDN',
+            'Genoa': 'GOA', 'Glasgow': 'GLA', 'Gothenburg': 'GOT', 'Gran Canaria': 'LPA',
+            'Grenoble': 'GNB', 'Gyumri': 'LWN', 'Hamburg': 'HAM', 'Haugesund': 'HAU',
+            'Heraklion (Crete)': 'HER', 'Hurghada': 'HRG', 'Iasi': 'IAS', 'Ibiza': 'IBZ',
+            'Istanbul': 'IST', 'Jeddah': 'JED', 'Karlsruhe/Baden-Baden': 'FKB', 'Katowice': 'KTW',
+            'Kaunas': 'KUN', 'Košice': 'KSC', 'Krakow': 'KRK', 'Kutaisi': 'KUT',
+            'Lamezia Terme': 'SUF', 'Lampedusa': 'LMP', 'Larnaca': 'LCA', 'Leeds': 'LBA',
+            'Lisbon': 'LIS', 'Liverpool': 'LPL', 'Ljubljana': 'LJU', 'London': 'LTN',
+            'Lublin': 'LUZ', 'Lyon': 'LYS', 'Maastricht': 'MST', 'Madrid': 'MAD',
+            'Malaga': 'AGP', 'Mallorca': 'PMI', 'Malmö': 'MMX', 'Malta': 'MLA',
+            'Marrakech': 'RAK', 'Marsa Alam': 'RMF', 'Medina': 'MED', 'Memmingen': 'FMM',
+            'Milan': 'MXP', 'Mykonos': 'JMK', 'Naples': 'NAP', 'Nice': 'NCE',
+            'Niš': 'INI', 'Nuremberg': 'NUE', 'Ohrid': 'OHD', 'Olbia': 'OLB',
+            'Olsztyn-Mazury': 'SZY', 'Oslo': 'OSL', 'Palanga': 'PLQ', 'Palermo': 'PMO',
+            'Paphos': 'PFO', 'Paris': 'BVA', 'Perugia': 'PEG', 'Pescara': 'PSR',
+            'Pisa': 'PSA', 'Plovdiv': 'PDV', 'Podgorica': 'TGD', 'Poprad-Tatry': 'TAT',
+            'Porto': 'OPO', 'Poznan': 'POZ', 'Prague': 'PRG', 'Pristina': 'PRN',
+            'Radom': 'RDO', 'Reykjavik': 'KEF', 'Rhodes': 'RHO', 'Rimini': 'RMI',
+            'Rome': 'FCO', 'Rzeszów': 'RZE', 'Sandefjord': 'TRF', 'Santander': 'SDR',
+            'Santorini': 'JTR', 'Sarajevo': 'SJJ', 'Satu Mare': 'SUJ', 'Sevilla': 'SVQ',
+            'Sharm El Sheikh': 'SSH', 'Sibiu': 'SBZ', 'Skiathos': 'JSI', 'Skopje': 'SKP',
+            'Sofia': 'SOF', 'Split': 'SPU', 'Stavanger': 'SVG', 'Stockholm': 'NYO',
+            'Stuttgart': 'STR', 'Suceava': 'SCV', 'Szczecin': 'SZZ', 'Tallinn': 'TLL',
+            'Tel Aviv': 'TLV', 'Tenerife': 'TFS', 'Thessaloniki': 'SKG', 'Timisoara': 'TSR',
+            'Tirana': 'TIA', 'Trieste': 'TRS', 'Tromsø': 'TOS', 'Trondheim': 'TRD',
+            'Turin': 'TRN', 'Turku': 'TKU', 'Tuzla': 'TZL', 'Târgu-Mures': 'TGM',
+            'Valencia': 'VLC', 'Varna': 'VAR', 'Venice': 'VCE', 'Verona': 'VRN',
+            'Vienna': 'VIE', 'Vilnius': 'VNO', 'Warsaw': 'WAW', 'Wroclaw': 'WRO',
+            'Yerevan': 'EVN', 'Zakynthos': 'ZTH', 'Zaragoza': 'ZAZ'
+        };
+
+        // 都市名マッピング（英語→日本語）
+        const cityNames = {
+            'Aberdeen': 'アバディーン', 'Abu Dhabi': 'アブダビ', 'Agadir': 'アガディール', 'Alesund': 'オーレスン',
+            'Alghero': 'アルゲーロ', 'Alicante': 'アリカンテ', 'Amman': 'アンマン', 'Ancona': 'アンコーナ',
+            'Antalya': 'アンタルヤ', 'Athens': 'アテネ', 'Bacau': 'バカウ', 'Baku': 'バクー',
+            'Banja Luka': 'バニャ・ルカ', 'Barcelona': 'バルセロナ', 'Bari': 'バーリ', 'Basel': 'バーゼル',
+            'Belgrade': 'ベオグラード', 'Bergamo': 'ベルガモ', 'Bergen': 'ベルゲン', 'Berlin': 'ベルリン',
+            'Bilbao': 'ビルバオ', 'Billund': 'ビルン', 'Birmingham': 'バーミンガム', 'Bologna': 'ボローニャ',
+            'Bordeaux': 'ボルドー', 'Brasov': 'ブラショフ', 'Bratislava': 'ブラチスラバ', 'Brindisi': 'ブリンディジ',
+            'Brussels Charleroi': 'ブリュッセル', 'Bucharest': 'ブカレスト', 'Budapest': 'ブダペスト',
+            'Burgas': 'ブルガス', 'Cairo': 'カイロ', 'Castellon': 'カステリョン', 'Catania': 'カターニア',
+            'Chania (Crete)': 'ハニア', 'Chisinau': 'キシナウ', 'Cluj-Napoca': 'クルージュ',
+            'Cologne': 'ケルン', 'Comiso': 'コミーゾ', 'Constanta': 'コンスタンツァ', 'Copenhagen': 'コペンハーゲン',
+            'Corfu': 'コルフ', 'Craiova': 'クラヨーヴァ', 'Dalaman': 'ダラマン', 'Debrecen': 'デブレツェン',
+            'Dortmund': 'ドルトムント', 'Dubai': 'ドバイ', 'Dubrovnik': 'ドゥブロヴニク', 'Eindhoven': 'アイントホーフェン',
+            'Faro (Algarve)': 'ファロ', 'Frankfurt': 'フランクフルト', 'Friedrichshafen': 'フリードリヒスハーフェン',
+            'Fuerteventura': 'フエルテベントゥラ', 'Funchal (Madeira)': 'フンシャル', 'Gdansk': 'グダニスク',
+            'Genoa': 'ジェノバ', 'Glasgow': 'グラスゴー', 'Gothenburg': 'ヨーテボリ', 'Gran Canaria': 'グラン・カナリア',
+            'Grenoble': 'グルノーブル', 'Gyumri': 'ギュムリ', 'Hamburg': 'ハンブルク', 'Haugesund': 'ハウゲスン',
+            'Heraklion (Crete)': 'イラクリオン', 'Hurghada': 'フルガダ', 'Iasi': 'ヤシ', 'Ibiza': 'イビサ',
+            'Istanbul': 'イスタンブール', 'Jeddah': 'ジッダ', 'Karlsruhe/Baden-Baden': 'カールスルーエ', 'Katowice': 'カトヴィツェ',
+            'Kaunas': 'カウナス', 'Košice': 'コシツェ', 'Krakow': 'クラクフ', 'Kutaisi': 'クタイシ',
+            'Lamezia Terme': 'ラメーツィア', 'Lampedusa': 'ランペドゥーザ', 'Larnaca': 'ラルナカ', 'Leeds': 'リーズ',
+            'Lisbon': 'リスボン', 'Liverpool': 'リバプール', 'Ljubljana': 'リュブリャナ', 'London': 'ロンドン',
+            'Lublin': 'ルブリン', 'Lyon': 'リヨン', 'Maastricht': 'マーストリヒト', 'Madrid': 'マドリード',
+            'Malaga': 'マラガ', 'Mallorca': 'マヨルカ', 'Malmö': 'マルメ', 'Malta': 'マルタ',
+            'Marrakech': 'マラケシュ', 'Marsa Alam': 'マルサ・アラム', 'Medina': 'メディナ', 'Memmingen': 'メミンゲン',
+            'Milan': 'ミラノ', 'Mykonos': 'ミコノス', 'Naples': 'ナポリ', 'Nice': 'ニース',
+            'Niš': 'ニシュ', 'Nuremberg': 'ニュルンベルク', 'Ohrid': 'オフリド', 'Olbia': 'オルビア',
+            'Olsztyn-Mazury': 'オルシュティン', 'Oslo': 'オスロ', 'Palanga': 'パランガ', 'Palermo': 'パレルモ',
+            'Paphos': 'パフォス', 'Paris': 'パリ', 'Perugia': 'ペルージャ', 'Pescara': 'ペスカーラ',
+            'Pisa': 'ピサ', 'Plovdiv': 'プロヴディフ', 'Podgorica': 'ポドゴリツァ', 'Poprad-Tatry': 'ポプラト',
+            'Porto': 'ポルト', 'Poznan': 'ポズナン', 'Prague': 'プラハ', 'Pristina': 'プリシュティナ',
+            'Radom': 'ラドム', 'Reykjavik': 'レイキャビク', 'Rhodes': 'ロードス', 'Rimini': 'リミニ',
+            'Rome': 'ローマ', 'Rzeszów': 'ジェシュフ', 'Sandefjord': 'サンデフィヨルド', 'Santander': 'サンタンデール',
+            'Santorini': 'サントリーニ', 'Sarajevo': 'サラエボ', 'Satu Mare': 'サトゥ・マーレ', 'Sevilla': 'セビリア',
+            'Sharm El Sheikh': 'シャルム・エル・シェイク', 'Sibiu': 'シビウ', 'Skiathos': 'スキアトス', 'Skopje': 'スコピエ',
+            'Sofia': 'ソフィア', 'Split': 'スプリト', 'Stavanger': 'スタヴァンゲル', 'Stockholm': 'ストックホルム',
+            'Stuttgart': 'シュトゥットガルト', 'Suceava': 'スチャヴァ', 'Szczecin': 'シュチェチン', 'Tallinn': 'タリン',
+            'Tel Aviv': 'テルアビブ', 'Tenerife': 'テネリフェ', 'Thessaloniki': 'テッサロニキ', 'Timisoara': 'ティミショアラ',
+            'Tirana': 'ティラナ', 'Trieste': 'トリエステ', 'Tromsø': 'トロムソ', 'Trondheim': 'トロンハイム',
+            'Turin': 'トリノ', 'Turku': 'トゥルク', 'Tuzla': 'トゥズラ', 'Târgu-Mures': 'トゥルグ・ムレシュ',
+            'Valencia': 'バレンシア', 'Varna': 'ヴァルナ', 'Venice': 'ヴェネツィア', 'Verona': 'ヴェローナ',
+            'Vienna': 'ウィーン', 'Vilnius': 'ヴィリニュス', 'Warsaw': 'ワルシャワ', 'Wroclaw': 'ヴロツワフ',
+            'Yerevan': 'エレバン', 'Zakynthos': 'ザキントス', 'Zaragoza': 'サラゴサ'
+        };
+
+        // 国名マッピング
+        const countryMap = {
+            'Aberdeen': 'スコットランド', 'Abu Dhabi': 'UAE', 'Agadir': 'モロッコ', 'Alesund': 'ノルウェー',
+            'Alghero': 'イタリア', 'Alicante': 'スペイン', 'Amman': 'ヨルダン', 'Ancona': 'イタリア',
+            'Antalya': 'トルコ', 'Athens': 'ギリシャ', 'Bacau': 'ルーマニア', 'Baku': 'アゼルバイジャン',
+            'Banja Luka': 'ボスニア', 'Barcelona': 'スペイン', 'Bari': 'イタリア', 'Basel': 'スイス',
+            'Belgrade': 'セルビア', 'Bergamo': 'イタリア', 'Bergen': 'ノルウェー', 'Berlin': 'ドイツ',
+            'Bilbao': 'スペイン', 'Billund': 'デンマーク', 'Birmingham': 'イギリス', 'Bologna': 'イタリア',
+            'Bordeaux': 'フランス', 'Brasov': 'ルーマニア', 'Bratislava': 'スロバキア', 'Brindisi': 'イタリア',
+            'Brussels Charleroi': 'ベルギー', 'Bucharest': 'ルーマニア', 'Budapest': 'ハンガリー', 'Burgas': 'ブルガリア',
+            'Cairo': 'エジプト', 'Castellon': 'スペイン', 'Catania': 'イタリア', 'Chania (Crete)': 'ギリシャ',
+            'Chisinau': 'モルドバ', 'Cluj-Napoca': 'ルーマニア', 'Cologne': 'ドイツ', 'Comiso': 'イタリア',
+            'Constanta': 'ルーマニア', 'Copenhagen': 'デンマーク', 'Corfu': 'ギリシャ', 'Craiova': 'ルーマニア',
+            'Dalaman': 'トルコ', 'Debrecen': 'ハンガリー', 'Dortmund': 'ドイツ', 'Dubai': 'UAE',
+            'Dubrovnik': 'クロアチア', 'Eindhoven': 'オランダ', 'Faro (Algarve)': 'ポルトガル', 'Frankfurt': 'ドイツ',
+            'Friedrichshafen': 'ドイツ', 'Fuerteventura': 'スペイン', 'Funchal (Madeira)': 'ポルトガル', 'Gdansk': 'ポーランド',
+            'Genoa': 'イタリア', 'Glasgow': 'スコットランド', 'Gothenburg': 'スウェーデン', 'Gran Canaria': 'スペイン',
+            'Grenoble': 'フランス', 'Gyumri': 'アルメニア', 'Hamburg': 'ドイツ', 'Haugesund': 'ノルウェー',
+            'Heraklion (Crete)': 'ギリシャ', 'Hurghada': 'エジプト', 'Iasi': 'ルーマニア', 'Ibiza': 'スペイン',
+            'Istanbul': 'トルコ', 'Jeddah': 'サウジアラビア', 'Karlsruhe/Baden-Baden': 'ドイツ', 'Katowice': 'ポーランド',
+            'Kaunas': 'リトアニア', 'Košice': 'スロバキア', 'Krakow': 'ポーランド', 'Kutaisi': 'ジョージア',
+            'Lamezia Terme': 'イタリア', 'Lampedusa': 'イタリア', 'Larnaca': 'キプロス', 'Leeds': 'イギリス',
+            'Lisbon': 'ポルトガル', 'Liverpool': 'イギリス', 'Ljubljana': 'スロベニア', 'London': 'イギリス',
+            'Lublin': 'ポーランド', 'Lyon': 'フランス', 'Maastricht': 'オランダ', 'Madrid': 'スペイン',
+            'Malaga': 'スペイン', 'Mallorca': 'スペイン', 'Malmö': 'スウェーデン', 'Malta': 'マルタ',
+            'Marrakech': 'モロッコ', 'Marsa Alam': 'エジプト', 'Medina': 'サウジアラビア', 'Memmingen': 'ドイツ',
+            'Milan': 'イタリア', 'Mykonos': 'ギリシャ', 'Naples': 'イタリア', 'Nice': 'フランス',
+            'Niš': 'セルビア', 'Nuremberg': 'ドイツ', 'Ohrid': '北マケドニア', 'Olbia': 'イタリア',
+            'Olsztyn-Mazury': 'ポーランド', 'Oslo': 'ノルウェー', 'Palanga': 'リトアニア', 'Palermo': 'イタリア',
+            'Paphos': 'キプロス', 'Paris': 'フランス', 'Perugia': 'イタリア', 'Pescara': 'イタリア',
+            'Pisa': 'イタリア', 'Plovdiv': 'ブルガリア', 'Podgorica': 'モンテネグロ', 'Poprad-Tatry': 'スロバキア',
+            'Porto': 'ポルトガル', 'Poznan': 'ポーランド', 'Prague': 'チェコ', 'Pristina': 'コソボ',
+            'Radom': 'ポーランド', 'Reykjavik': 'アイスランド', 'Rhodes': 'ギリシャ', 'Rimini': 'イタリア',
+            'Rome': 'イタリア', 'Rzeszów': 'ポーランド', 'Sandefjord': 'ノルウェー', 'Santander': 'スペイン',
+            'Santorini': 'ギリシャ', 'Sarajevo': 'ボスニア', 'Satu Mare': 'ルーマニア', 'Sevilla': 'スペイン',
+            'Sharm El Sheikh': 'エジプト', 'Sibiu': 'ルーマニア', 'Skiathos': 'ギリシャ', 'Skopje': '北マケドニア',
+            'Sofia': 'ブルガリア', 'Split': 'クロアチア', 'Stavanger': 'ノルウェー', 'Stockholm': 'スウェーデン',
+            'Stuttgart': 'ドイツ', 'Suceava': 'ルーマニア', 'Szczecin': 'ポーランド', 'Tallinn': 'エストニア',
+            'Tel Aviv': 'イスラエル', 'Tenerife': 'スペイン', 'Thessaloniki': 'ギリシャ', 'Timisoara': 'ルーマニア',
+            'Tirana': 'アルバニア', 'Trieste': 'イタリア', 'Tromsø': 'ノルウェー', 'Trondheim': 'ノルウェー',
+            'Turin': 'イタリア', 'Turku': 'フィンランド', 'Tuzla': 'ボスニア', 'Târgu-Mures': 'ルーマニア',
+            'Valencia': 'スペイン', 'Varna': 'ブルガリア', 'Venice': 'イタリア', 'Verona': 'イタリア',
+            'Vienna': 'オーストリア', 'Vilnius': 'リトアニア', 'Warsaw': 'ポーランド', 'Wroclaw': 'ポーランド',
+            'Yerevan': 'アルメニア', 'Zakynthos': 'ギリシャ', 'Zaragoza': 'スペイン'
+        };
+
+        // 地域分類
+        const regionMap = {
+            'London': '西欧', 'Paris': '西欧', 'Brussels Charleroi': '西欧', 'Eindhoven': '西欧', 'Maastricht': '西欧',
+            'Dortmund': '西欧', 'Frankfurt': '西欧', 'Hamburg': '西欧', 'Cologne': '西欧', 'Memmingen': '西欧',
+            'Nuremberg': '西欧', 'Stuttgart': '西欧', 'Karlsruhe/Baden-Baden': '西欧', 'Friedrichshafen': '西欧',
+            'Basel': '西欧', 'Birmingham': '西欧', 'Leeds': '西欧', 'Liverpool': '西欧', 'Glasgow': '西欧',
+            'Aberdeen': '西欧', 'Bordeaux': '西欧', 'Lyon': '西欧', 'Grenoble': '西欧', 'Nice': '西欧', 'Berlin': '西欧',
+            
+            'Budapest': '東欧', 'Bucharest': '東欧', 'Warsaw': '東欧', 'Prague': '東欧', 'Bratislava': '東欧',
+            'Vienna': '東欧', 'Krakow': '東欧', 'Gdansk': '東欧', 'Katowice': '東欧', 'Wroclaw': '東欧',
+            'Poznan': '東欧', 'Lublin': '東欧', 'Szczecin': '東欧', 'Olsztyn-Mazury': '東欧', 'Radom': '東欧',
+            'Cluj-Napoca': '東欧', 'Timisoara': '東欧', 'Iasi': '東欧', 'Sibiu': '東欧', 'Craiova': '東欧',
+            'Bacau': '東欧', 'Suceava': '東欧', 'Constanta': '東欧', 'Brasov': '東欧', 'Târgu-Mures': '東欧',
+            'Satu Mare': '東欧', 'Sofia': '東欧', 'Varna': '東欧', 'Burgas': '東欧', 'Plovdiv': '東欧',
+            'Chisinau': '東欧', 'Belgrade': '東欧', 'Niš': '東欧', 'Skopje': '東欧', 'Pristina': '東欧',
+            'Tirana': '東欧', 'Podgorica': '東欧', 'Sarajevo': '東欧', 'Banja Luka': '東欧', 'Tuzla': '東欧',
+            'Ljubljana': '東欧', 'Košice': '東欧', 'Poprad-Tatry': '東欧', 'Rzeszów': '東欧', 'Ohrid': '東欧',
+            
+            'Rome': '南欧', 'Milan': '南欧', 'Venice': '南欧', 'Bologna': '南欧', 'Naples': '南欧',
+            'Bergamo': '南欧', 'Catania': '南欧', 'Bari': '南欧', 'Pisa': '南欧', 'Turin': '南欧',
+            'Genoa': '南欧', 'Verona': '南欧', 'Ancona': '南欧', 'Pescara': '南欧', 'Brindisi': '南欧',
+            'Alghero': '南欧', 'Olbia': '南欧', 'Perugia': '南欧', 'Rimini': '南欧', 'Trieste': '南欧',
+            'Comiso': '南欧', 'Lampedusa': '南欧', 'Barcelona': '南欧', 'Madrid': '南欧', 'Valencia': '南欧',
+            'Alicante': '南欧', 'Malaga': '南欧', 'Sevilla': '南欧', 'Bilbao': '南欧', 'Santander': '南欧',
+            'Zaragoza': '南欧', 'Castellon': '南欧', 'Mallorca': '南欧', 'Ibiza': '南欧', 'Tenerife': '南欧',
+            'Gran Canaria': '南欧', 'Fuerteventura': '南欧', 'Athens': '南欧', 'Thessaloniki': '南欧',
+            'Heraklion (Crete)': '南欧', 'Chania (Crete)': '南欧', 'Corfu': '南欧', 'Rhodes': '南欧',
+            'Mykonos': '南欧', 'Santorini': '南欧', 'Zakynthos': '南欧', 'Skiathos': '南欧', 'Lisbon': '南欧',
+            'Porto': '南欧', 'Faro (Algarve)': '南欧', 'Funchal (Madeira)': '南欧', 'Lamezia Terme': '南欧',
+            'Palermo': '南欧', 'Split': '南欧', 'Dubrovnik': '南欧', 'Malta': '南欧', 'Larnaca': '南欧', 'Paphos': '南欧',
+            
+            'Copenhagen': '北欧', 'Stockholm': '北欧', 'Oslo': '北欧', 'Bergen': '北欧', 'Stavanger': '北欧',
+            'Tromsø': '北欧', 'Trondheim': '北欧', 'Haugesund': '北欧', 'Alesund': '北欧', 'Sandefjord': '北欧',
+            'Gothenburg': '北欧', 'Malmö': '北欧', 'Reykjavik': '北欧', 'Vilnius': '北欧', 'Kaunas': '北欧',
+            'Palanga': '北欧', 'Tallinn': '北欧', 'Turku': '北欧', 'Billund': '北欧',
+            
+            'Tel Aviv': '中東', 'Dubai': '中東', 'Abu Dhabi': '中東', 'Amman': '中東', 'Cairo': '中東',
+            'Hurghada': '中東', 'Sharm El Sheikh': '中東', 'Marsa Alam': '中東', 'Jeddah': '中東',
+            'Medina': '中東', 'Istanbul': '中東', 'Antalya': '中東', 'Dalaman': '中東', 'Baku': '中東',
+            'Yerevan': '中東', 'Gyumri': '中東', 'Kutaisi': '中東', 'Marrakech': '中東', 'Agadir': '中東'
+        };
+
+        // フライトデータ（全路線）- 省略して元のrawFlightDataを使用
+        const rawFlightData = `Aberdeen - Gdansk
+Abu Dhabi - Budapest
+Abu Dhabi - Katowice
+Abu Dhabi - Krakow
+Abu Dhabi - Larnaca
+Abu Dhabi - Sofia
+Agadir - Katowice
+Agadir - Warsaw
+Alesund - Gdansk
+Alghero - Bucharest
+Alghero - Budapest
+Alghero - Sofia
+Alghero - Warsaw
+Alicante - Belgrade
+Alicante - Bratislava
+Alicante - Bucharest
+Alicante - Budapest
+Alicante - Cluj-Napoca
+Alicante - Gdansk
+Alicante - Katowice
+Alicante - Milan
+Alicante - Rome
+Alicante - Warsaw
+Amman - Budapest
+Amman - London
+Amman - Milan
+Ancona - Tirana
+Antalya - Bucharest
+Antalya - Budapest
+Antalya - London
+Athens - Bratislava
+Athens - Bucharest
+Athens - Budapest
+Athens - Chisinau
+Athens - Craiova
+Athens - Gdansk
+Athens - Katowice
+Athens - Kutaisi
+Athens - Larnaca
+Athens - London
+Athens - Tel Aviv
+Athens - Tirana
+Athens - Venice
+Athens - Warsaw
+Bacau - London
+Bacau - Rome
+Baku - Budapest
+Baku - Rome
+Banja Luka - Basel
+Banja Luka - Dortmund
+Barcelona - Belgrade
+Barcelona - Bratislava
+Barcelona - Bucharest
+Barcelona - Budapest
+Barcelona - Chisinau
+Barcelona - Cluj-Napoca
+Barcelona - Craiova
+Barcelona - Gdansk
+Barcelona - Iasi
+Barcelona - Katowice
+Barcelona - Krakow
+Barcelona - Kutaisi
+Barcelona - Larnaca
+Barcelona - London
+Barcelona - Milan
+Barcelona - Podgorica
+Barcelona - Rome
+Barcelona - Skopje
+Barcelona - Sofia
+Barcelona - Timisoara
+Barcelona - Tirana
+Barcelona - Venice
+Barcelona - Vienna
+Barcelona - Vilnius
+Barcelona - Warsaw
+Barcelona - Wroclaw
+Bari - Bucharest
+Bari - Budapest
+Bari - Chisinau
+Bari - Cluj-Napoca
+Bari - Craiova
+Bari - Skopje
+Bari - Sofia
+Bari - Timisoara
+Bari - Tirana
+Bari - Warsaw
+Bari - Wroclaw
+Bari - Yerevan
+Basel - Banja Luka
+Basel - Belgrade
+Basel - Bratislava
+Basel - Bucharest
+Basel - Budapest
+Basel - Cluj-Napoca
+Basel - Iasi
+Basel - Krakow
+Basel - Niš
+Basel - Ohrid
+Basel - Podgorica
+Basel - Poznan
+Basel - Sibiu
+Basel - Skopje
+Basel - Sofia
+Basel - Timisoara
+Basel - Tirana
+Basel - Tuzla
+Basel - Warsaw
+Basel - Wroclaw
+Belgrade - Alicante
+Belgrade - Barcelona
+Belgrade - Basel
+Belgrade - Bergamo
+Belgrade - Berlin
+Belgrade - Dortmund
+Belgrade - Eindhoven
+Belgrade - Friedrichshafen
+Belgrade - Gothenburg
+Belgrade - Grenoble
+Belgrade - Hamburg
+Belgrade - Karlsruhe/Baden-Baden
+Belgrade - Larnaca
+Belgrade - London
+Belgrade - Madrid
+Belgrade - Malmö
+Belgrade - Malta
+Belgrade - Memmingen
+Belgrade - Nice
+Belgrade - Paris
+Belgrade - Rome
+Belgrade - Stockholm
+Bergamo - Belgrade
+Bergamo - Bucharest
+Bergamo - Chisinau
+Bergamo - Cluj-Napoca
+Bergamo - Craiova
+Bergamo - Iasi
+Bergamo - Sibiu
+Bergamo - Sofia
+Bergamo - Suceava
+Bergamo - Timisoara
+Bergamo - Tirana
+Bergamo - Varna
+Bergamo - Warsaw
+Bergen - Gdansk
+Bergen - Krakow
+Bergen - Szczecin
+Bergen - Vilnius
+Bergen - Warsaw
+Berlin - Belgrade
+Berlin - Bratislava
+Berlin - Bucharest
+Berlin - Budapest
+Berlin - Chisinau
+Berlin - Kutaisi
+Berlin - Skopje
+Berlin - Tirana
+Berlin - Tuzla
+Berlin - Varna
+Bilbao - Budapest
+Bilbao - Krakow
+Bilbao - London
+Bilbao - Rome
+Bilbao - Warsaw
+Billund - Bucharest
+Billund - Budapest
+Billund - Chisinau
+Billund - Cluj-Napoca
+Billund - Gdansk
+Billund - Iasi
+Billund - Katowice
+Billund - Tirana
+Billund - Vilnius
+Birmingham - Bucharest
+Birmingham - Budapest
+Birmingham - Craiova
+Birmingham - Rome
+Birmingham - Sibiu
+Birmingham - Suceava
+Bologna - Bucharest
+Bologna - Catania
+Bologna - Chisinau
+Bologna - Cluj-Napoca
+Bologna - Craiova
+Bologna - Iasi
+Bologna - Skopje
+Bologna - Suceava
+Bologna - Timisoara
+Bologna - Tirana
+Bologna - Warsaw
+Bordeaux - Bucharest
+Bordeaux - Rome
+Bordeaux - Venice
+Brasov - Budapest
+Brasov - Dortmund
+Brasov - Katowice
+Brasov - London
+Brasov - Memmingen
+Brasov - Milan
+Brasov - Naples
+Brasov - Nuremberg
+Brasov - Rome
+Bratislava - Alicante
+Bratislava - Athens
+Bratislava - Barcelona
+Bratislava - Basel
+Bratislava - Berlin
+Bratislava - Bucharest
+Bratislava - Chisinau
+Bratislava - Dortmund
+Bratislava - Košice
+Bratislava - Lamezia Terme
+Bratislava - Larnaca
+Bratislava - London
+Bratislava - Malaga
+Bratislava - Naples
+Bratislava - Niš
+Bratislava - Ohrid
+Bratislava - Oslo
+Bratislava - Palermo
+Bratislava - Plovdiv
+Bratislava - Pristina
+Bratislava - Rome
+Bratislava - Skopje
+Bratislava - Tel Aviv
+Bratislava - Tirana
+Bratislava - Tuzla
+Bratislava - Varna
+Bratislava - Warsaw
+Brindisi - Bucharest
+Brindisi - Katowice
+Brindisi - Warsaw
+Brussels Charleroi - Bucharest
+Brussels Charleroi - Budapest
+Brussels Charleroi - Chisinau
+Brussels Charleroi - Cluj-Napoca
+Brussels Charleroi - Craiova
+Brussels Charleroi - Iasi
+Brussels Charleroi - Kutaisi
+Brussels Charleroi - Skopje
+Brussels Charleroi - Sofia
+Brussels Charleroi - Suceava
+Brussels Charleroi - Timisoara
+Brussels Charleroi - Tirana
+Brussels Charleroi - Varna
+Brussels Charleroi - Warsaw
+Bucharest - Alghero
+Bucharest - Alicante
+Bucharest - Antalya
+Bucharest - Athens
+Bucharest - Barcelona
+Bucharest - Bari
+Bucharest - Basel
+Bucharest - Bergamo
+Bucharest - Berlin
+Bucharest - Billund
+Bucharest - Birmingham
+Bucharest - Bologna
+Bucharest - Bordeaux
+Bucharest - Bratislava
+Bucharest - Brindisi
+Bucharest - Brussels Charleroi
+Bucharest - Budapest
+Bucharest - Castellon
+Bucharest - Catania
+Bucharest - Chisinau
+Bucharest - Cologne
+Bucharest - Copenhagen
+Bucharest - Corfu
+Bucharest - Dortmund
+Bucharest - Dubai
+Bucharest - Eindhoven
+Bucharest - Faro (Algarve)
+Bucharest - Frankfurt
+Bucharest - Gdansk
+Bucharest - Gran Canaria
+Bucharest - Hamburg
+Bucharest - Heraklion (Crete)
+Bucharest - Krakow
+Bucharest - Larnaca
+Bucharest - Leeds
+Bucharest - Lisbon
+Bucharest - Liverpool
+Bucharest - London
+Bucharest - Lyon
+Bucharest - Maastricht
+Bucharest - Madrid
+Bucharest - Malaga
+Bucharest - Mallorca
+Bucharest - Malta
+Bucharest - Marrakech
+Bucharest - Memmingen
+Bucharest - Milan
+Bucharest - Mykonos
+Bucharest - Naples
+Bucharest - Nice
+Bucharest - Nuremberg
+Bucharest - Paris
+Bucharest - Pescara
+Bucharest - Pisa
+Bucharest - Porto
+Bucharest - Prague
+Bucharest - Rome
+Bucharest - Sandefjord
+Bucharest - Santander
+Bucharest - Santorini
+Bucharest - Sevilla
+Bucharest - Stockholm
+Bucharest - Stuttgart
+Bucharest - Tel Aviv
+Bucharest - Tenerife
+Bucharest - Turin
+Bucharest - Turku
+Bucharest - Valencia
+Bucharest - Venice
+Bucharest - Warsaw
+Bucharest - Wroclaw
+Bucharest - Yerevan
+Bucharest - Zakynthos
+Bucharest - Zaragoza
+Budapest - Abu Dhabi
+Budapest - Alghero
+Budapest - Alicante
+Budapest - Amman
+Budapest - Antalya
+Budapest - Athens
+Budapest - Baku
+Budapest - Barcelona
+Budapest - Bari
+Budapest - Basel
+Budapest - Berlin
+Budapest - Bilbao
+Budapest - Billund
+Budapest - Birmingham
+Budapest - Brasov
+Budapest - Brussels Charleroi
+Budapest - Bucharest
+Budapest - Burgas
+Budapest - Cairo
+Budapest - Catania
+Budapest - Chisinau
+Budapest - Copenhagen
+Budapest - Corfu
+Budapest - Dortmund
+Budapest - Dubai
+Budapest - Eindhoven
+Budapest - Funchal (Madeira)
+Budapest - Gdansk
+Budapest - Genoa
+Budapest - Gran Canaria
+Budapest - Heraklion (Crete)
+Budapest - Hurghada
+Budapest - Istanbul
+Budapest - Jeddah
+Budapest - Kutaisi
+Budapest - Larnaca
+Budapest - Lisbon
+Budapest - London
+Budapest - Madrid
+Budapest - Malaga
+Budapest - Mallorca
+Budapest - Malta
+Budapest - Marrakech
+Budapest - Memmingen
+Budapest - Milan
+Budapest - Naples
+Budapest - Nice
+Budapest - Paris
+Budapest - Podgorica
+Budapest - Reykjavik
+Budapest - Rhodes
+Budapest - Rome
+Budapest - Santorini
+Budapest - Sharm El Sheikh
+Budapest - Skopje
+Budapest - Stockholm
+Budapest - Stuttgart
+Budapest - Tallinn
+Budapest - Tel Aviv
+Budapest - Tenerife
+Budapest - Thessaloniki
+Budapest - Tirana
+Budapest - Turin
+Budapest - Târgu-Mures
+Budapest - Valencia
+Budapest - Venice
+Budapest - Vilnius
+Budapest - Warsaw
+Budapest - Wroclaw
+Budapest - Yerevan
+Budapest - Zakynthos
+Burgas - Budapest
+Burgas - Gdansk
+Burgas - Katowice
+Burgas - London
+Burgas - Lublin
+Burgas - Warsaw
+Cairo - Budapest
+Cairo - London
+Cairo - Milan
+Cairo - Rome
+Castellon - Bucharest
+Castellon - Cluj-Napoca
+Catania - Bologna
+Catania - Bucharest
+Catania - Budapest
+Catania - Cluj-Napoca
+Catania - Gdansk
+Catania - Katowice
+Catania - London
+Catania - Memmingen
+Catania - Milan
+Catania - Prague
+Catania - Sharm El Sheikh
+Catania - Turin
+Catania - Venice
+Catania - Verona
+Catania - Vilnius
+Catania - Warsaw
+Catania - Wroclaw
+Chania (Crete) - Warsaw
+Chisinau - Athens
+Chisinau - Barcelona
+Chisinau - Bari
+Chisinau - Bergamo
+Chisinau - Berlin
+Chisinau - Billund
+Chisinau - Bologna
+Chisinau - Bratislava
+Chisinau - Brussels Charleroi
+Chisinau - Bucharest
+Chisinau - Budapest
+Chisinau - Copenhagen
+Chisinau - Dortmund
+Chisinau - Frankfurt
+Chisinau - Hamburg
+Chisinau - Karlsruhe/Baden-Baden
+Chisinau - Katowice
+Chisinau - Larnaca
+Chisinau - London
+Chisinau - Maastricht
+Chisinau - Memmingen
+Chisinau - Milan
+Chisinau - Naples
+Chisinau - Nice
+Chisinau - Nuremberg
+Chisinau - Paris
+Chisinau - Prague
+Chisinau - Rome
+Chisinau - Sofia
+Chisinau - Turin
+Chisinau - Venice
+Chisinau - Verona
+Chisinau - Vienna
+Chisinau - Warsaw
+Chisinau - Wroclaw
+Cluj-Napoca - Alicante
+Cluj-Napoca - Barcelona
+Cluj-Napoca - Bari
+Cluj-Napoca - Basel
+Cluj-Napoca - Bergamo
+Cluj-Napoca - Billund
+Cluj-Napoca - Bologna
+Cluj-Napoca - Brussels Charleroi
+Cluj-Napoca - Castellon
+Cluj-Napoca - Catania
+Cluj-Napoca - Corfu
+Cluj-Napoca - Dortmund
+Cluj-Napoca - Eindhoven
+Cluj-Napoca - Heraklion (Crete)
+Cluj-Napoca - Larnaca
+Cluj-Napoca - Leeds
+Cluj-Napoca - Lisbon
+Cluj-Napoca - London
+Cluj-Napoca - Lyon
+Cluj-Napoca - Madrid
+Cluj-Napoca - Malaga
+Cluj-Napoca - Mallorca
+Cluj-Napoca - Malmö
+Cluj-Napoca - Marrakech
+Cluj-Napoca - Memmingen
+Cluj-Napoca - Milan
+Cluj-Napoca - Naples
+Cluj-Napoca - Nuremberg
+Cluj-Napoca - Paris
+Cluj-Napoca - Rome
+Cluj-Napoca - Sandefjord
+Cluj-Napoca - Stockholm
+Cluj-Napoca - Stuttgart
+Cluj-Napoca - Tel Aviv
+Cluj-Napoca - Valencia
+Cluj-Napoca - Venice
+Cluj-Napoca - Vienna
+Cluj-Napoca - Zakynthos
+Cluj-Napoca - Zaragoza
+Cologne - Bucharest
+Cologne - Podgorica
+Cologne - Skopje
+Cologne - Tirana
+Cologne - Tuzla
+Comiso - Tirana
+Constanta - London
+Copenhagen - Bucharest
+Copenhagen - Budapest
+Copenhagen - Chisinau
+Copenhagen - Gdansk
+Copenhagen - Iasi
+Copenhagen - Warsaw
+Corfu - Bucharest
+Corfu - Budapest
+Corfu - Cluj-Napoca
+Corfu - Katowice
+Corfu - Milan
+Corfu - Rome
+Corfu - Warsaw
+Craiova - Athens
+Craiova - Barcelona
+Craiova - Bari
+Craiova - Bergamo
+Craiova - Birmingham
+Craiova - Bologna
+Craiova - Brussels Charleroi
+Craiova - Dortmund
+Craiova - London
+Craiova - Madrid
+Craiova - Memmingen
+Craiova - Naples
+Craiova - Paris
+Craiova - Rome
+Dalaman - London
+Debrecen - Larnaca
+Debrecen - London
+Dortmund - Banja Luka
+Dortmund - Belgrade
+Dortmund - Brasov
+Dortmund - Bratislava
+Dortmund - Bucharest
+Dortmund - Budapest
+Dortmund - Chisinau
+Dortmund - Cluj-Napoca
+Dortmund - Craiova
+Dortmund - Gdansk
+Dortmund - Iasi
+Dortmund - Katowice
+Dortmund - Kutaisi
+Dortmund - Niš
+Dortmund - Ohrid
+Dortmund - Olsztyn-Mazury
+Dortmund - Podgorica
+Dortmund - Pristina
+Dortmund - Sibiu
+Dortmund - Skopje
+Dortmund - Sofia
+Dortmund - Suceava
+Dortmund - Timisoara
+Dortmund - Tirana
+Dortmund - Tuzla
+Dortmund - Varna
+Dortmund - Vilnius
+Dortmund - Warsaw
+Dortmund - Wroclaw
+Dortmund - Yerevan
+Dubai - Bucharest
+Dubai - Budapest
+Dubrovnik - Warsaw
+Eindhoven - Belgrade
+Eindhoven - Bucharest
+Eindhoven - Budapest
+Eindhoven - Cluj-Napoca
+Eindhoven - Gdansk
+Eindhoven - Iasi
+Eindhoven - Katowice
+Eindhoven - Krakow
+Eindhoven - Skopje
+Eindhoven - Sofia
+Eindhoven - Tirana
+Eindhoven - Varna
+Eindhoven - Vilnius
+Eindhoven - Warsaw
+Eindhoven - Wroclaw
+Faro (Algarve) - Bucharest
+Faro (Algarve) - Katowice
+Faro (Algarve) - London
+Frankfurt - Bucharest
+Frankfurt - Chisinau
+Frankfurt - Kutaisi
+Frankfurt - Sibiu
+Frankfurt - Skopje
+Frankfurt - Timisoara
+Frankfurt - Tirana
+Frankfurt - Tuzla
+Frankfurt - Varna
+Friedrichshafen - Belgrade
+Friedrichshafen - Skopje
+Fuerteventura - Katowice
+Fuerteventura - Warsaw
+Funchal (Madeira) - Budapest
+Funchal (Madeira) - Gdansk
+Funchal (Madeira) - Katowice
+Funchal (Madeira) - Vienna
+Funchal (Madeira) - Warsaw
+Gdansk - Aberdeen
+Gdansk - Alesund
+Gdansk - Alicante
+Gdansk - Athens
+Gdansk - Barcelona
+Gdansk - Bergen
+Gdansk - Billund
+Gdansk - Bucharest
+Gdansk - Budapest
+Gdansk - Burgas
+Gdansk - Catania
+Gdansk - Copenhagen
+Gdansk - Dortmund
+Gdansk - Eindhoven
+Gdansk - Funchal (Madeira)
+Gdansk - Gothenburg
+Gdansk - Hamburg
+Gdansk - Haugesund
+Gdansk - Heraklion (Crete)
+Gdansk - Larnaca
+Gdansk - Liverpool
+Gdansk - London
+Gdansk - Madrid
+Gdansk - Malaga
+Gdansk - Milan
+Gdansk - Nice
+Gdansk - Oslo
+Gdansk - Podgorica
+Gdansk - Poprad-Tatry
+Gdansk - Reykjavik
+Gdansk - Rome
+Gdansk - Split
+Gdansk - Stavanger
+Gdansk - Stockholm
+Gdansk - Tallinn
+Gdansk - Tenerife
+Gdansk - Tirana
+Gdansk - Tromsø
+Gdansk - Trondheim
+Gdansk - Turku
+Gdansk - Verona
+Gdansk - Vilnius
+Genoa - Budapest
+Genoa - Krakow
+Genoa - Tirana
+Genoa - Warsaw
+Glasgow - Milan
+Glasgow - Rome
+Gothenburg - Belgrade
+Gothenburg - Gdansk
+Gothenburg - Skopje
+Gothenburg - Tuzla
+Gran Canaria - Bucharest
+Gran Canaria - Budapest
+Gran Canaria - Wroclaw
+Grenoble - Belgrade
+Grenoble - London
+Grenoble - Vilnius
+Grenoble - Warsaw
+Gyumri - Larnaca
+Hamburg - Belgrade
+Hamburg - Bucharest
+Hamburg - Chisinau
+Hamburg - Gdansk
+Hamburg - Kutaisi
+Hamburg - Podgorica
+Hamburg - Sibiu
+Hamburg - Skopje
+Hamburg - Sofia
+Hamburg - Tirana
+Hamburg - Tuzla
+Hamburg - Varna
+Hamburg - Yerevan
+Haugesund - Gdansk
+Heraklion (Crete) - Bucharest
+Heraklion (Crete) - Budapest
+Heraklion (Crete) - Cluj-Napoca
+Heraklion (Crete) - Gdansk
+Heraklion (Crete) - Krakow
+Heraklion (Crete) - Milan
+Heraklion (Crete) - Rome
+Heraklion (Crete) - Warsaw
+Hurghada - Budapest
+Hurghada - London
+Hurghada - Rome
+Hurghada - Vienna
+Iasi - Barcelona
+Iasi - Basel
+Iasi - Bergamo
+Iasi - Billund
+Iasi - Bologna
+Iasi - Brussels Charleroi
+Iasi - Copenhagen
+Iasi - Dortmund
+Iasi - Eindhoven
+Iasi - Istanbul
+Iasi - Larnaca
+Iasi - Liverpool
+Iasi - London
+Iasi - Madrid
+Iasi - Memmingen
+Iasi - Paris
+Iasi - Pescara
+Iasi - Prague
+Iasi - Rome
+Iasi - Tel Aviv
+Iasi - Turin
+Iasi - Valencia
+Iasi - Venice
+Ibiza - Rome
+Istanbul - Budapest
+Istanbul - Iasi
+Istanbul - London
+Jeddah - Budapest
+Jeddah - London
+Jeddah - Milan
+Jeddah - Rome
+Jeddah - Vienna
+Karlsruhe/Baden-Baden - Belgrade
+Karlsruhe/Baden-Baden - Chisinau
+Karlsruhe/Baden-Baden - Podgorica
+Karlsruhe/Baden-Baden - Sibiu
+Karlsruhe/Baden-Baden - Skopje
+Karlsruhe/Baden-Baden - Suceava
+Karlsruhe/Baden-Baden - Timisoara
+Karlsruhe/Baden-Baden - Tirana
+Katowice - Abu Dhabi
+Katowice - Agadir
+Katowice - Alicante
+Katowice - Athens
+Katowice - Barcelona
+Katowice - Billund
+Katowice - Brasov
+Katowice - Brindisi
+Katowice - Burgas
+Katowice - Catania
+Katowice - Chisinau
+Katowice - Corfu
+Katowice - Dortmund
+Katowice - Eindhoven
+Katowice - Faro (Algarve)
+Katowice - Fuerteventura
+Katowice - Funchal (Madeira)
+Katowice - Kutaisi
+Katowice - Lamezia Terme
+Katowice - Larnaca
+Katowice - London
+Katowice - Maastricht
+Katowice - Madrid
+Katowice - Malaga
+Katowice - Malta
+Katowice - Naples
+Katowice - Ohrid
+Katowice - Pisa
+Katowice - Podgorica
+Katowice - Porto
+Katowice - Reykjavik
+Katowice - Rome
+Katowice - Split
+Katowice - Tenerife
+Katowice - Tirana
+Kaunas - London
+Košice - Bratislava
+Košice - London
+Krakow - Abu Dhabi
+Krakow - Barcelona
+Krakow - Basel
+Krakow - Bergen
+Krakow - Bilbao
+Krakow - Bucharest
+Krakow - Eindhoven
+Krakow - Genoa
+Krakow - Heraklion (Crete)
+Krakow - Larnaca
+Krakow - London
+Krakow - Lyon
+Krakow - Malaga
+Krakow - Milan
+Krakow - Nice
+Krakow - Oslo
+Krakow - Rome
+Krakow - Sofia
+Krakow - Split
+Krakow - Stavanger
+Krakow - Tallinn
+Krakow - Tel Aviv
+Krakow - Tirana
+Krakow - Valencia
+Krakow - Verona
+Krakow - Vilnius
+Kutaisi - Athens
+Kutaisi - Barcelona
+Kutaisi - Berlin
+Kutaisi - Brussels Charleroi
+Kutaisi - Budapest
+Kutaisi - Dortmund
+Kutaisi - Frankfurt
+Kutaisi - Hamburg
+Kutaisi - Katowice
+Kutaisi - Larnaca
+Kutaisi - Lyon
+Kutaisi - Madrid
+Kutaisi - Memmingen
+Kutaisi - Milan
+Kutaisi - Paris
+Kutaisi - Poznan
+Kutaisi - Prague
+Kutaisi - Rome
+Kutaisi - Thessaloniki
+Kutaisi - Venice
+Kutaisi - Vienna
+Kutaisi - Vilnius
+Kutaisi - Warsaw
+Kutaisi - Wroclaw
+Lamezia Terme - Bratislava
+Lamezia Terme - Katowice
+Lamezia Terme - Sofia
+Lampedusa - Milan
+Lampedusa - Rome
+Larnaca - Abu Dhabi
+Larnaca - Athens
+Larnaca - Barcelona
+Larnaca - Belgrade
+Larnaca - Bratislava
+Larnaca - Bucharest
+Larnaca - Budapest
+Larnaca - Chisinau
+Larnaca - Cluj-Napoca
+Larnaca - Debrecen
+Larnaca - Gdansk
+Larnaca - Gyumri
+Larnaca - Iasi
+Larnaca - Katowice
+Larnaca - Krakow
+Larnaca - Kutaisi
+Larnaca - London
+Larnaca - Milan
+Larnaca - Prague
+Larnaca - Radom
+Larnaca - Rome
+Larnaca - Skopje
+Larnaca - Sofia
+Larnaca - Suceava
+Larnaca - Tel Aviv
+Larnaca - Thessaloniki
+Larnaca - Timisoara
+Larnaca - Tirana
+Larnaca - Tuzla
+Larnaca - Venice
+Larnaca - Vienna
+Larnaca - Vilnius
+Larnaca - Warsaw
+Larnaca - Wroclaw
+Larnaca - Yerevan
+Leeds - Bucharest
+Leeds - Cluj-Napoca
+Leeds - Warsaw
+Lisbon - Bucharest
+Lisbon - Budapest
+Lisbon - Cluj-Napoca
+Lisbon - Rome
+Lisbon - Warsaw
+Liverpool - Bucharest
+Liverpool - Gdansk
+Liverpool - Iasi
+Liverpool - Warsaw
+Ljubljana - Podgorica
+Ljubljana - Skopje
+London - Amman
+London - Antalya
+London - Athens
+London - Bacau
+London - Barcelona
+London - Belgrade
+London - Bilbao
+London - Brasov
+London - Bratislava
+London - Bucharest
+London - Budapest
+London - Burgas
+London - Cairo
+London - Catania
+London - Chisinau
+London - Cluj-Napoca
+London - Constanta
+London - Craiova
+London - Dalaman
+London - Debrecen
+London - Faro (Algarve)
+London - Gdansk
+London - Grenoble
+London - Hurghada
+London - Iasi
+London - Istanbul
+London - Jeddah
+London - Katowice
+London - Kaunas
+London - Košice
+London - Krakow
+London - Larnaca
+London - Lublin
+London - Lyon
+London - Madrid
+London - Malaga
+London - Mallorca
+London - Marrakech
+London - Medina
+London - Milan
+London - Plovdiv
+London - Podgorica
+London - Poprad-Tatry
+London - Poznan
+London - Prague
+London - Pristina
+London - Rome
+London - Sarajevo
+London - Satu Mare
+London - Sevilla
+London - Sharm El Sheikh
+London - Sibiu
+London - Skopje
+London - Sofia
+London - Split
+London - Suceava
+London - Tallinn
+London - Tel Aviv
+London - Timisoara
+London - Tirana
+London - Tromsø
+London - Valencia
+London - Varna
+London - Venice
+London - Vienna
+London - Vilnius
+London - Warsaw
+London - Wroclaw
+Lublin - Burgas
+Lublin - London
+Lublin - Maastricht
+Lublin - Split
+Lyon - Bucharest
+Lyon - Cluj-Napoca
+Lyon - Krakow
+Lyon - Kutaisi
+Lyon - London
+Lyon - Skopje
+Lyon - Sofia
+Lyon - Tirana
+Maastricht - Bucharest
+Maastricht - Chisinau
+Maastricht - Katowice
+Maastricht - Lublin
+Maastricht - Podgorica
+Maastricht - Tuzla
+Madrid - Belgrade
+Madrid - Bucharest
+Madrid - Budapest
+Madrid - Cluj-Napoca
+Madrid - Craiova
+Madrid - Gdansk
+Madrid - Iasi
+Madrid - Katowice
+Madrid - Kutaisi
+Madrid - London
+Madrid - Milan
+Madrid - Rome
+Madrid - Sibiu
+Madrid - Skopje
+Madrid - Sofia
+Madrid - Timisoara
+Madrid - Tirana
+Madrid - Venice
+Madrid - Warsaw
+Madrid - Wroclaw
+Malaga - Bratislava
+Malaga - Bucharest
+Malaga - Budapest
+Malaga - Cluj-Napoca
+Malaga - Gdansk
+Malaga - Katowice
+Malaga - Krakow
+Malaga - London
+Malaga - Milan
+Malaga - Rome
+Malaga - Sofia
+Malaga - Tirana
+Malaga - Vienna
+Malaga - Vilnius
+Malaga - Warsaw
+Malaga - Wroclaw
+Mallorca - Bucharest
+Mallorca - Budapest
+Mallorca - Cluj-Napoca
+Mallorca - London
+Mallorca - Rome
+Mallorca - Sofia
+Mallorca - Warsaw
+Malmö - Belgrade
+Malmö - Cluj-Napoca
+Malmö - Podgorica
+Malmö - Skopje
+Malmö - Tirana
+Malmö - Tuzla
+Malta - Belgrade
+Malta - Bucharest
+Malta - Budapest
+Malta - Katowice
+Malta - Skopje
+Malta - Tirana
+Malta - Warsaw
+Marrakech - Bucharest
+Marrakech - Budapest
+Marrakech - Cluj-Napoca
+Marrakech - London
+Marrakech - Milan
+Marrakech - Rome
+Marrakech - Sofia
+Marrakech - Warsaw
+Marsa Alam - Milan
+Marsa Alam - Rome
+Medina - London
+Memmingen - Belgrade
+Memmingen - Brasov
+Memmingen - Bucharest
+Memmingen - Budapest
+Memmingen - Catania
+Memmingen - Chisinau
+Memmingen - Cluj-Napoca
+Memmingen - Craiova
+Memmingen - Iasi
+Memmingen - Kutaisi
+Memmingen - Niš
+Memmingen - Ohrid
+Memmingen - Podgorica
+Memmingen - Pristina
+Memmingen - Sibiu
+Memmingen - Skopje
+Memmingen - Sofia
+Memmingen - Suceava
+Memmingen - Timisoara
+Memmingen - Tirana
+Memmingen - Tuzla
+Memmingen - Varna
+Memmingen - Yerevan
+Milan - Alicante
+Milan - Amman
+Milan - Barcelona
+Milan - Brasov
+Milan - Bucharest
+Milan - Budapest
+Milan - Cairo
+Milan - Catania
+Milan - Chisinau
+Milan - Cluj-Napoca
+Milan - Corfu
+Milan - Gdansk
+Milan - Glasgow
+Milan - Heraklion (Crete)
+Milan - Jeddah
+Milan - Krakow
+Milan - Kutaisi
+Milan - Lampedusa
+Milan - Larnaca
+Milan - London
+Milan - Madrid
+Milan - Malaga
+Milan - Marrakech
+Milan - Marsa Alam
+Milan - Ohrid
+Milan - Olbia
+Milan - Podgorica
+Milan - Pristina
+Milan - Reykjavik
+Milan - Sevilla
+Milan - Sharm El Sheikh
+Milan - Skiathos
+Milan - Skopje
+Milan - Suceava
+Milan - Tel Aviv
+Milan - Tenerife
+Milan - Tirana
+Milan - Valencia
+Milan - Vilnius
+Milan - Warsaw
+Milan - Yerevan
+Milan - Zakynthos
+Mykonos - Bucharest
+Mykonos - Rome
+Naples - Brasov
+Naples - Bratislava
+Naples - Bucharest
+Naples - Budapest
+Naples - Chisinau
+Naples - Cluj-Napoca
+Naples - Craiova
+Naples - Katowice
+Naples - Sharm El Sheikh
+Naples - Skopje
+Naples - Sofia
+Naples - Tel Aviv
+Naples - Timisoara
+Naples - Tirana
+Naples - Warsaw
+Naples - Yerevan
+Nice - Belgrade
+Nice - Bucharest
+Nice - Budapest
+Nice - Chisinau
+Nice - Gdansk
+Nice - Krakow
+Nice - Rome
+Nice - Sofia
+Nice - Tirana
+Nice - Vilnius
+Nice - Warsaw
+Nice - Wroclaw
+Niš - Basel
+Niš - Bratislava
+Niš - Dortmund
+Niš - Memmingen
+Nuremberg - Brasov
+Nuremberg - Bucharest
+Nuremberg - Chisinau
+Nuremberg - Cluj-Napoca
+Nuremberg - Sibiu
+Nuremberg - Skopje
+Nuremberg - Timisoara
+Nuremberg - Tirana
+Nuremberg - Varna
+Ohrid - Basel
+Ohrid - Bratislava
+Ohrid - Dortmund
+Ohrid - Katowice
+Ohrid - Memmingen
+Ohrid - Milan
+Ohrid - Vienna
+Ohrid - Wroclaw
+Olbia - Milan
+Olbia - Rome
+Olbia - Warsaw
+Olsztyn-Mazury - Dortmund
+Oslo - Bratislava
+Oslo - Gdansk
+Oslo - Krakow
+Oslo - Palanga
+Oslo - Szczecin
+Palanga - Oslo
+Palermo - Bratislava
+Palermo - Warsaw
+Paphos - Warsaw
+Paphos - Yerevan
+Paris - Belgrade
+Paris - Bucharest
+Paris - Budapest
+Paris - Chisinau
+Paris - Cluj-Napoca
+Paris - Craiova
+Paris - Iasi
+Paris - Kutaisi
+Paris - Podgorica
+Paris - Rome
+Paris - Skopje
+Paris - Sofia
+Paris - Timisoara
+Paris - Tirana
+Paris - Tuzla
+Paris - Warsaw
+Paris - Yerevan
+Perugia - Tirana
+Pescara - Bucharest
+Pescara - Iasi
+Pescara - Tirana
+Pisa - Bucharest
+Pisa - Katowice
+Pisa - Tirana
+Pisa - Warsaw
+Plovdiv - Bratislava
+Plovdiv - London
+Podgorica - Barcelona
+Podgorica - Basel
+Podgorica - Budapest
+Podgorica - Cologne
+Podgorica - Dortmund
+Podgorica - Gdansk
+Podgorica - Hamburg
+Podgorica - Karlsruhe/Baden-Baden
+Podgorica - Katowice
+Podgorica - Ljubljana
+Podgorica - London
+Podgorica - Maastricht
+Podgorica - Malmö
+Podgorica - Memmingen
+Podgorica - Milan
+Podgorica - Paris
+Podgorica - Poznan
+Podgorica - Rome
+Podgorica - Rzeszów
+Podgorica - Vilnius
+Podgorica - Warsaw
+Podgorica - Wroclaw
+Poprad-Tatry - Gdansk
+Poprad-Tatry - London
+Porto - Bucharest
+Porto - Katowice
+Porto - Rome
+Porto - Warsaw
+Poznan - Basel
+Poznan - Kutaisi
+Poznan - London
+Poznan - Podgorica
+Poznan - Tirana
+Prague - Bucharest
+Prague - Catania
+Prague - Chisinau
+Prague - Iasi
+Prague - Kutaisi
+Prague - Larnaca
+Prague - London
+Prague - Rome
+Prague - Skopje
+Prague - Sofia
+Prague - Tirana
+Prague - Yerevan
+Pristina - Bratislava
+Pristina - Dortmund
+Pristina - London
+Pristina - Memmingen
+Pristina - Milan
+Pristina - Vienna
+Radom - Larnaca
+Reykjavik - Budapest
+Reykjavik - Gdansk
+Reykjavik - Katowice
+Reykjavik - Milan
+Reykjavik - Warsaw
+Reykjavik - Wroclaw
+Rhodes - Budapest
+Rhodes - Tel Aviv
+Rhodes - Warsaw
+Rimini - Tirana
+Rome - Alicante
+Rome - Bacau
+Rome - Baku
+Rome - Barcelona
+Rome - Belgrade
+Rome - Bilbao
+Rome - Birmingham
+Rome - Bordeaux
+Rome - Brasov
+Rome - Bratislava
+Rome - Bucharest
+Rome - Budapest
+Rome - Cairo
+Rome - Chisinau
+Rome - Cluj-Napoca
+Rome - Corfu
+Rome - Craiova
+Rome - Gdansk
+Rome - Glasgow
+Rome - Heraklion (Crete)
+Rome - Hurghada
+Rome - Iasi
+Rome - Ibiza
+Rome - Jeddah
+Rome - Katowice
+Rome - Krakow
+Rome - Kutaisi
+Rome - Lampedusa
+Rome - Larnaca
+Rome - Lisbon
+Rome - London
+Rome - Madrid
+Rome - Malaga
+Rome - Mallorca
+Rome - Marrakech
+Rome - Marsa Alam
+Rome - Mykonos
+Rome - Nice
+Rome - Olbia
+Rome - Paris
+Rome - Podgorica
+Rome - Porto
+Rome - Prague
+Rome - Rzeszów
+Rome - Santorini
+Rome - Sarajevo
+Rome - Sevilla
+Rome - Sharm El Sheikh
+Rome - Sibiu
+Rome - Skiathos
+Rome - Skopje
+Rome - Sofia
+Rome - Suceava
+Rome - Tel Aviv
+Rome - Tenerife
+Rome - Timisoara
+Rome - Tirana
+Rome - Valencia
+Rome - Warsaw
+Rome - Yerevan
+Rome - Zakynthos
+Rome - Zaragoza
+Rzeszów - Podgorica
+Rzeszów - Rome
+Sandefjord - Bucharest
+Sandefjord - Cluj-Napoca
+Sandefjord - Skopje
+Sandefjord - Tirana
+Sandefjord - Warsaw
+Santander - Bucharest
+Santorini - Bucharest
+Santorini - Budapest
+Santorini - Rome
+Santorini - Warsaw
+Sarajevo - London
+Sarajevo - Rome
+Satu Mare - London
+Sevilla - Bucharest
+Sevilla - London
+Sevilla - Milan
+Sevilla - Rome
+Sevilla - Warsaw
+Sharm El Sheikh - Budapest
+Sharm El Sheikh - Catania
+Sharm El Sheikh - London
+Sharm El Sheikh - Milan
+Sharm El Sheikh - Naples
+Sharm El Sheikh - Rome
+Sharm El Sheikh - Venice
+Sibiu - Basel
+Sibiu - Bergamo
+Sibiu - Birmingham
+Sibiu - Dortmund
+Sibiu - Frankfurt
+Sibiu - Hamburg
+Sibiu - Karlsruhe/Baden-Baden
+Sibiu - London
+Sibiu - Madrid
+Sibiu - Memmingen
+Sibiu - Nuremberg
+Sibiu - Rome
+Skiathos - Milan
+Skiathos - Rome
+Skopje - Barcelona
+Skopje - Bari
+Skopje - Basel
+Skopje - Berlin
+Skopje - Bologna
+Skopje - Bratislava
+Skopje - Brussels Charleroi
+Skopje - Budapest
+Skopje - Cologne
+Skopje - Dortmund
+Skopje - Eindhoven
+Skopje - Frankfurt
+Skopje - Friedrichshafen
+Skopje - Gothenburg
+Skopje - Hamburg
+Skopje - Karlsruhe/Baden-Baden
+Skopje - Larnaca
+Skopje - Ljubljana
+Skopje - London
+Skopje - Lyon
+Skopje - Madrid
+Skopje - Malmö
+Skopje - Malta
+Skopje - Memmingen
+Skopje - Milan
+Skopje - Naples
+Skopje - Nuremberg
+Skopje - Paris
+Skopje - Prague
+Skopje - Rome
+Skopje - Sandefjord
+Skopje - Stockholm
+Skopje - Stuttgart
+Skopje - Venice
+Sofia - Abu Dhabi
+Sofia - Alghero
+Sofia - Barcelona
+Sofia - Bari
+Sofia - Basel
+Sofia - Bergamo
+Sofia - Brussels Charleroi
+Sofia - Chisinau
+Sofia - Dortmund
+Sofia - Eindhoven
+Sofia - Hamburg
+Sofia - Krakow
+Sofia - Lamezia Terme
+Sofia - Larnaca
+Sofia - London
+Sofia - Lyon
+Sofia - Madrid
+Sofia - Malaga
+Sofia - Mallorca
+Sofia - Marrakech
+Sofia - Memmingen
+Sofia - Naples
+Sofia - Nice
+Sofia - Paris
+Sofia - Prague
+Sofia - Rome
+Sofia - Stuttgart
+Sofia - Tel Aviv
+Sofia - Turin
+Sofia - Valencia
+Sofia - Warsaw
+Split - Gdansk
+Split - Katowice
+Split - Krakow
+Split - London
+Split - Lublin
+Split - Warsaw
+Split - Wroclaw
+Stavanger - Gdansk
+Stavanger - Krakow
+Stockholm - Belgrade
+Stockholm - Bucharest
+Stockholm - Budapest
+Stockholm - Cluj-Napoca
+Stockholm - Gdansk
+Stockholm - Skopje
+Stockholm - Tirana
+Stockholm - Warsaw
+Stuttgart - Bucharest
+Stuttgart - Budapest
+Stuttgart - Cluj-Napoca
+Stuttgart - Skopje
+Stuttgart - Sofia
+Stuttgart - Tirana
+Suceava - Bergamo
+Suceava - Birmingham
+Suceava - Bologna
+Suceava - Brussels Charleroi
+Suceava - Dortmund
+Suceava - Karlsruhe/Baden-Baden
+Suceava - Larnaca
+Suceava - London
+Suceava - Memmingen
+Suceava - Milan
+Suceava - Rome
+Suceava - Venice
+Suceava - Vienna
+Szczecin - Bergen
+Szczecin - Oslo
+Tallinn - Budapest
+Tallinn - Gdansk
+Tallinn - Krakow
+Tallinn - London
+Tallinn - Venice
+Tallinn - Vilnius
+Tel Aviv - Athens
+Tel Aviv - Bratislava
+Tel Aviv - Bucharest
+Tel Aviv - Budapest
+Tel Aviv - Cluj-Napoca
+Tel Aviv - Iasi
+Tel Aviv - Krakow
+Tel Aviv - Larnaca
+Tel Aviv - London
+Tel Aviv - Milan
+Tel Aviv - Naples
+Tel Aviv - Rhodes
+Tel Aviv - Rome
+Tel Aviv - Sofia
+Tel Aviv - Thessaloniki
+Tel Aviv - Varna
+Tel Aviv - Venice
+Tel Aviv - Vienna
+Tel Aviv - Vilnius
+Tel Aviv - Warsaw
+Tenerife - Bucharest
+Tenerife - Budapest
+Tenerife - Gdansk
+Tenerife - Katowice
+Tenerife - Milan
+Tenerife - Rome
+Tenerife - Tirana
+Tenerife - Venice
+Tenerife - Vienna
+Tenerife - Warsaw
+Thessaloniki - Budapest
+Thessaloniki - Kutaisi
+Thessaloniki - Larnaca
+Thessaloniki - Tel Aviv
+Timisoara - Barcelona
+Timisoara - Bari
+Timisoara - Basel
+Timisoara - Bergamo
+Timisoara - Bologna
+Timisoara - Brussels Charleroi
+Timisoara - Dortmund
+Timisoara - Frankfurt
+Timisoara - Karlsruhe/Baden-Baden
+Timisoara - Larnaca
+Timisoara - London
+Timisoara - Madrid
+Timisoara - Memmingen
+Timisoara - Naples
+Timisoara - Nuremberg
+Timisoara - Paris
+Timisoara - Rome
+Timisoara - Valencia
+Timisoara - Venice
+Timisoara - Zakynthos
+Tirana - Ancona
+Tirana - Athens
+Tirana - Barcelona
+Tirana - Bari
+Tirana - Basel
+Tirana - Bergamo
+Tirana - Berlin
+Tirana - Billund
+Tirana - Bologna
+Tirana - Bratislava
+Tirana - Brussels Charleroi
+Tirana - Budapest
+Tirana - Cologne
+Tirana - Comiso
+Tirana - Dortmund
+Tirana - Eindhoven
+Tirana - Frankfurt
+Tirana - Gdansk
+Tirana - Genoa
+Tirana - Hamburg
+Tirana - Karlsruhe/Baden-Baden
+Tirana - Katowice
+Tirana - Krakow
+Tirana - Larnaca
+Tirana - London
+Tirana - Lyon
+Tirana - Madrid
+Tirana - Malaga
+Tirana - Malmö
+Tirana - Malta
+Tirana - Memmingen
+Tirana - Milan
+Tirana - Naples
+Tirana - Nice
+Tirana - Nuremberg
+Tirana - Paris
+Tirana - Perugia
+Tirana - Pescara
+Tirana - Pisa
+Tirana - Poznan
+Tirana - Prague
+Tirana - Rimini
+Tirana - Rome
+Tirana - Sandefjord
+Tirana - Stockholm
+Tirana - Stuttgart
+Tirana - Tenerife
+Tirana - Trieste
+Tirana - Turin
+Tirana - Valencia
+Tirana - Venice
+Tirana - Verona
+Tirana - Vienna
+Tirana - Vilnius
+Tirana - Warsaw
+Tirana - Wroclaw
+Trieste - Tirana
+Tromsø - Gdansk
+Tromsø - London
+Trondheim - Gdansk
+Turin - Bucharest
+Turin - Budapest
+Turin - Catania
+Turin - Chisinau
+Turin - Iasi
+Turin - Sofia
+Turin - Tirana
+Turin - Warsaw
+Turku - Bucharest
+Turku - Gdansk
+Turku - Vilnius
+Tuzla - Basel
+Tuzla - Berlin
+Tuzla - Bratislava
+Tuzla - Cologne
+Tuzla - Dortmund
+Tuzla - Frankfurt
+Tuzla - Gothenburg
+Tuzla - Hamburg
+Tuzla - Larnaca
+Tuzla - Maastricht
+Tuzla - Malmö
+Tuzla - Memmingen
+Tuzla - Paris
+Târgu-Mures - Budapest
+Valencia - Bucharest
+Valencia - Budapest
+Valencia - Cluj-Napoca
+Valencia - Iasi
+Valencia - Krakow
+Valencia - London
+Valencia - Milan
+Valencia - Rome
+Valencia - Sofia
+Valencia - Timisoara
+Valencia - Tirana
+Valencia - Venice
+Valencia - Warsaw
+Varna - Bergamo
+Varna - Berlin
+Varna - Bratislava
+Varna - Brussels Charleroi
+Varna - Dortmund
+Varna - Eindhoven
+Varna - Frankfurt
+Varna - Hamburg
+Varna - London
+Varna - Memmingen
+Varna - Nuremberg
+Varna - Tel Aviv
+Varna - Wroclaw
+Venice - Athens
+Venice - Barcelona
+Venice - Bordeaux
+Venice - Bucharest
+Venice - Budapest
+Venice - Catania
+Venice - Chisinau
+Venice - Cluj-Napoca
+Venice - Iasi
+Venice - Kutaisi
+Venice - Larnaca
+Venice - London
+Venice - Madrid
+Venice - Sharm El Sheikh
+Venice - Skopje
+Venice - Suceava
+Venice - Tallinn
+Venice - Tel Aviv
+Venice - Tenerife
+Venice - Timisoara
+Venice - Tirana
+Venice - Valencia
+Venice - Warsaw
+Venice - Yerevan
+Verona - Catania
+Verona - Chisinau
+Verona - Gdansk
+Verona - Krakow
+Verona - Tirana
+Verona - Warsaw
+Vienna - Barcelona
+Vienna - Chisinau
+Vienna - Cluj-Napoca
+Vienna - Funchal (Madeira)
+Vienna - Hurghada
+Vienna - Jeddah
+Vienna - Kutaisi
+Vienna - Larnaca
+Vienna - London
+Vienna - Malaga
+Vienna - Ohrid
+Vienna - Pristina
+Vienna - Suceava
+Vienna - Tel Aviv
+Vienna - Tenerife
+Vienna - Tirana
+Vienna - Yerevan
+Vilnius - Barcelona
+Vilnius - Bergen
+Vilnius - Billund
+Vilnius - Budapest
+Vilnius - Catania
+Vilnius - Dortmund
+Vilnius - Eindhoven
+Vilnius - Gdansk
+Vilnius - Grenoble
+Vilnius - Krakow
+Vilnius - Kutaisi
+Vilnius - Larnaca
+Vilnius - London
+Vilnius - Malaga
+Vilnius - Milan
+Vilnius - Nice
+Vilnius - Podgorica
+Vilnius - Tallinn
+Vilnius - Tel Aviv
+Vilnius - Tirana
+Vilnius - Turku
+Warsaw - Agadir
+Warsaw - Alghero
+Warsaw - Alicante
+Warsaw - Athens
+Warsaw - Barcelona
+Warsaw - Bari
+Warsaw - Basel
+Warsaw - Bergamo
+Warsaw - Bergen
+Warsaw - Bilbao
+Warsaw - Bologna
+Warsaw - Bratislava
+Warsaw - Brindisi
+Warsaw - Brussels Charleroi
+Warsaw - Bucharest
+Warsaw - Budapest
+Warsaw - Burgas
+Warsaw - Catania
+Warsaw - Chania (Crete)
+Warsaw - Chisinau
+Warsaw - Copenhagen
+Warsaw - Corfu
+Warsaw - Dortmund
+Warsaw - Dubrovnik
+Warsaw - Eindhoven
+Warsaw - Fuerteventura
+Warsaw - Funchal (Madeira)
+Warsaw - Genoa
+Warsaw - Grenoble
+Warsaw - Heraklion (Crete)
+Warsaw - Kutaisi
+Warsaw - Larnaca
+Warsaw - Leeds
+Warsaw - Lisbon
+Warsaw - Liverpool
+Warsaw - London
+Warsaw - Madrid
+Warsaw - Malaga
+Warsaw - Mallorca
+Warsaw - Malta
+Warsaw - Marrakech
+Warsaw - Milan
+Warsaw - Naples
+Warsaw - Nice
+Warsaw - Olbia
+Warsaw - Palermo
+Warsaw - Paphos
+Warsaw - Paris
+Warsaw - Pisa
+Warsaw - Podgorica
+Warsaw - Porto
+Warsaw - Reykjavik
+Warsaw - Rhodes
+Warsaw - Rome
+Warsaw - Sandefjord
+Warsaw - Santorini
+Warsaw - Sevilla
+Warsaw - Sofia
+Warsaw - Split
+Warsaw - Stockholm
+Warsaw - Tel Aviv
+Warsaw - Tenerife
+Warsaw - Tirana
+Warsaw - Turin
+Warsaw - Valencia
+Warsaw - Venice
+Warsaw - Verona
+Warsaw - Zakynthos
+Wroclaw - Barcelona
+Wroclaw - Bari
+Wroclaw - Basel
+Wroclaw - Bucharest
+Wroclaw - Budapest
+Wroclaw - Catania
+Wroclaw - Chisinau
+Wroclaw - Dortmund
+Wroclaw - Eindhoven
+Wroclaw - Gran Canaria
+Wroclaw - Kutaisi
+Wroclaw - Larnaca
+Wroclaw - London
+Wroclaw - Madrid
+Wroclaw - Malaga
+Wroclaw - Nice
+Wroclaw - Ohrid
+Wroclaw - Podgorica
+Wroclaw - Reykjavik
+Wroclaw - Split
+Wroclaw - Tirana
+Wroclaw - Varna
+Yerevan - Bari
+Yerevan - Bucharest
+Yerevan - Budapest
+Yerevan - Dortmund
+Yerevan - Hamburg
+Yerevan - Larnaca
+Yerevan - Memmingen
+Yerevan - Milan
+Yerevan - Naples
+Yerevan - Paphos
+Yerevan - Paris
+Yerevan - Prague
+Yerevan - Rome
+Yerevan - Venice
+Yerevan - Vienna
+Zakynthos - Bucharest
+Zakynthos - Budapest
+Zakynthos - Cluj-Napoca
+Zakynthos - Milan
+Zakynthos - Rome
+Zakynthos - Timisoara
+Zakynthos - Warsaw
+Zaragoza - Bucharest
+Zaragoza - Cluj-Napoca
+Zaragoza - Rome`;
+
+        // データパース
+        const flightsData = rawFlightData.trim().split('\n').map(line => {
+            const [from, to] = line.split(' - ');
+            return {
+                from: from.trim(),
+                to: to.trim(),
+                fromCode: airportCodes[from.trim()] || '???',
+                toCode: airportCodes[to.trim()] || '???',
+                fromCity: cityNames[from.trim()] || from.trim(),
+                toCity: cityNames[to.trim()] || to.trim(),
+                fromCountry: countryMap[from.trim()] || '',
+                toCountry: countryMap[to.trim()] || '',
+                region: regionMap[from.trim()] || '西欧'
+            };
+        });
+
+        let filteredFlights = [...flightsData];
+        let currentFilter = 'all';
+        let currentSort = 'default';
+        let uniqueCities = [];
+
+        // ユニークな都市リスト作成
+        const citySet = new Set();
+        flightsData.forEach(flight => {
+            citySet.add(JSON.stringify({
+                en: flight.from,
+                code: flight.fromCode,
+                ja: flight.fromCity,
+                country: flight.fromCountry
+            }));
+            citySet.add(JSON.stringify({
+                en: flight.to,
+                code: flight.toCode,
+                ja: flight.toCity,
+                country: flight.toCountry
+            }));
+        });
+        uniqueCities = Array.from(citySet).map(city => JSON.parse(city));
+        const cityInfoByEn = new Map(uniqueCities.map(city => [city.en, city]));
+
+        // 接続空港マップ（双方向）
+        const connectionsMap = new Map();
+        flightsData.forEach(flight => {
+            if (!connectionsMap.has(flight.from)) {
+                connectionsMap.set(flight.from, new Set());
+            }
+            if (!connectionsMap.has(flight.to)) {
+                connectionsMap.set(flight.to, new Set());
+            }
+            connectionsMap.get(flight.from).add(flight.to);
+            connectionsMap.get(flight.to).add(flight.from);
+        });
+
+        let storageAvailable = true;
+        try {
+            const testKey = '__wizz_storage_test__';
+            localStorage.setItem(testKey, '1');
+            localStorage.removeItem(testKey);
+        } catch (err) {
+            storageAvailable = false;
+        }
+
+        function safeGet(key, fallback) {
+            if (!storageAvailable) return fallback;
+            const value = localStorage.getItem(key);
+            return value === null ? fallback : value;
+        }
+
+        function safeSet(key, value) {
+            if (!storageAvailable) return;
+            localStorage.setItem(key, value);
+        }
+
+        const favorites = new Set(JSON.parse(safeGet('favorites', '[]') || '[]'));
+
+        function saveFavorites() {
+            safeSet('favorites', JSON.stringify(Array.from(favorites)));
+        }
+
+        function isFavorite(airportEn) {
+            return favorites.has(airportEn);
+        }
+
+        function toggleFavorite(airportEn) {
+            if (favorites.has(airportEn)) {
+                favorites.delete(airportEn);
+            } else {
+                favorites.add(airportEn);
+            }
+            saveFavorites();
+            renderFavoritesSection();
+            renderRankingSection();
+            displayFlights(filteredFlights);
+        }
+
+        function renderFavoritesSection() {
+            const list = Array.from(favorites).map(name => cityInfoByEn.get(name))
+                .filter(Boolean)
+                .sort((a, b) => a.ja.localeCompare(b.ja, 'ja'));
+
+            if (list.length === 0) {
+                favoritesGrid.innerHTML = `
+                    <div class="rank-meta">お気に入りがありません</div>
+                `;
+                return;
+            }
+
+            favoritesGrid.innerHTML = list.map(city => `
+                <div class="airport-chip" data-airport="${city.en}">
+                    <div class="airport-chip-code">${city.code}</div>
+                    <div class="airport-chip-name">${city.ja}</div>
+                    <div class="airport-chip-country">${city.country}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderRankingSection() {
+            const ranking = Array.from(connectionsMap.keys()).map(name => {
+                const info = cityInfoByEn.get(name) || { en: name, ja: name, code: '???', country: '' };
+                return {
+                    en: info.en,
+                    ja: info.ja,
+                    code: info.code,
+                    country: info.country,
+                    count: connectionsMap.get(name).size
+                };
+            }).sort((a, b) => b.count - a.count).slice(0, 10);
+
+            rankingGrid.innerHTML = ranking.map((item, index) => `
+                <div class="rank-item" data-airport="${item.en}">
+                    <div class="rank-left">
+                        <div class="rank-badge">${index + 1}</div>
+                        <div>
+                            <div class="airport-chip-name">${item.ja}（${item.code}）</div>
+                            <div class="rank-meta">${item.country}</div>
+                        </div>
+                    </div>
+                    <div class="rank-meta">${item.count} 接続</div>
+                </div>
+            `).join('');
+        }
+
+        function updateTabView() {
+            const isFavorites = currentFilter === 'favorites';
+            const isRanking = currentFilter === 'ranking';
+            const isHome = currentFilter === 'all';
+
+            favoritesSection.classList.toggle('is-hidden', !(isHome || isFavorites));
+            rankingSection.classList.toggle('is-hidden', !(isHome || isRanking));
+            resultsContainer.classList.toggle('is-hidden', isFavorites || isRanking);
+        }
+
+        // ひらがなをカタカナに変換
+        function hiraganaToKatakana(str) {
+            return str.replace(/[\u3041-\u3096]/g, function(match) {
+                const chr = match.charCodeAt(0) + 0x60;
+                return String.fromCharCode(chr);
+            });
+        }
+
+        // 検索機能とオートコンプリート
+        const searchInput = document.getElementById('searchInput');
+        const autocompleteDropdown = document.getElementById('autocompleteDropdown');
+        const listView = document.getElementById('listView');
+        const detailView = document.getElementById('detailView');
+        const detailTitle = document.getElementById('detailTitle');
+        const detailSub = document.getElementById('detailSub');
+        const detailCount = document.getElementById('detailCount');
+        const detailGrid = document.getElementById('detailGrid');
+        const backButton = document.getElementById('backButton');
+        const detailCopyBtn = document.getElementById('detailCopyBtn');
+        const detailFavBtn = document.getElementById('detailFavBtn');
+        const homeButton = document.getElementById('homeButton');
+        const favoritesSection = document.getElementById('favoritesSection');
+        const favoritesGrid = document.getElementById('favoritesGrid');
+        const rankingSection = document.getElementById('rankingSection');
+        const rankingGrid = document.getElementById('rankingGrid');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const toast = document.getElementById('toast');
+
+        // 初期表示
+        renderFavoritesSection();
+        renderRankingSection();
+        updateTabView();
+        filterAndDisplay('');
+
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 1600);
+        }
+
+        async function copyToClipboard(text) {
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(text);
+                } else {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    textarea.setAttribute('readonly', '');
+                    textarea.style.position = 'absolute';
+                    textarea.style.left = '-9999px';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                }
+                showToast(`${text} をコピーしました`);
+            } catch (err) {
+                showToast('コピーできませんでした');
+            }
+        }
+
+        function renderDetailView(airportEn) {
+            const info = cityInfoByEn.get(airportEn);
+            if (!info) return;
+
+            const connections = Array.from(connectionsMap.get(airportEn) || []);
+            const enriched = connections.map(name => {
+                const city = cityInfoByEn.get(name) || { en: name, ja: name, code: '???', country: '' };
+                return {
+                    en: city.en,
+                    code: city.code,
+                    ja: city.ja,
+                    country: city.country
+                };
+            }).sort((a, b) => a.ja.localeCompare(b.ja, 'ja'));
+
+            detailTitle.textContent = `${info.ja}（${info.code}）`;
+            detailSub.textContent = `${info.en} / ${info.country}`;
+            detailCount.textContent = `接続数: ${enriched.length}`;
+            detailCopyBtn.dataset.copyCode = info.code;
+            detailFavBtn.classList.toggle('active', isFavorite(info.en));
+            detailFavBtn.dataset.favAirport = info.en;
+            detailGrid.innerHTML = enriched.map(city => `
+                <div class="airport-chip" data-airport="${city.en}">
+                    <div class="airport-chip-code">${city.code}</div>
+                    <div class="airport-chip-name">${city.ja}</div>
+                    <div class="airport-chip-country">${city.country}</div>
+                </div>
+            `).join('');
+
+            listView.classList.add('is-hidden');
+            detailView.classList.remove('is-hidden');
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+
+        function openDetailView(airportEn) {
+            history.pushState({ view: 'detail', airport: airportEn }, '', location.pathname + location.search);
+            renderDetailView(airportEn);
+        }
+
+        function closeDetailView() {
+            detailView.classList.add('is-hidden');
+            listView.classList.remove('is-hidden');
+        }
+
+        function openListView() {
+            closeDetailView();
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+
+        backButton.addEventListener('click', () => {
+            if (history.state && history.state.view === 'detail') {
+                history.back();
+            } else {
+                openListView();
+            }
+        });
+        detailCopyBtn.addEventListener('click', () => {
+            const code = detailCopyBtn.dataset.copyCode;
+            if (code) {
+                copyToClipboard(code);
+            }
+        });
+
+        detailFavBtn.addEventListener('click', () => {
+            const airport = detailFavBtn.dataset.favAirport;
+            if (airport) {
+                toggleFavorite(airport);
+                detailFavBtn.classList.toggle('active', isFavorite(airport));
+            }
+        });
+
+        homeButton.addEventListener('click', () => {
+            history.pushState({ view: 'list' }, '', location.pathname + location.search);
+            currentFilter = 'all';
+            filterButtons.forEach(b => b.classList.remove('active'));
+            const allButton = document.querySelector('.filter-btn[data-filter="all"]');
+            if (allButton) {
+                allButton.classList.add('active');
+            }
+            updateTabView();
+            filterAndDisplay(searchInput.value.toLowerCase().trim());
+            openListView();
+        });
+
+        history.replaceState({ view: 'list' }, '', location.pathname + location.search);
+        window.addEventListener('popstate', (e) => {
+            const state = e.state || { view: 'list' };
+            if (state.view === 'detail' && state.airport) {
+                renderDetailView(state.airport);
+            } else {
+                openListView();
+            }
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.trim();
+            
+            if (searchTerm.length === 0) {
+                autocompleteDropdown.classList.remove('show');
+                filterAndDisplay('');
+                return;
+            }
+
+            showAutocomplete(searchTerm);
+            filterAndDisplay(searchTerm.toLowerCase());
+        });
+
+        // オートコンプリート候補を表示
+        function showAutocomplete(searchTerm) {
+            const katakanaSearchTerm = hiraganaToKatakana(searchTerm);
+            const lowerSearchTerm = searchTerm.toLowerCase();
+            
+            const matches = uniqueCities.filter(city => {
+                const jaMatch = city.ja.includes(searchTerm) || city.ja.includes(katakanaSearchTerm);
+                const enMatch = city.en.toLowerCase().includes(lowerSearchTerm);
+                const codeMatch = city.code.toLowerCase().includes(lowerSearchTerm);
+                return jaMatch || enMatch || codeMatch;
+            }).slice(0, 8);
+
+            if (matches.length === 0) {
+                autocompleteDropdown.classList.remove('show');
+                return;
+            }
+
+            autocompleteDropdown.innerHTML = matches.map(city => `
+                <div class="autocomplete-item" data-city="${city.en}">
+                    <div class="autocomplete-item-main">${city.ja} <span class="autocomplete-item-code">[${city.code}]</span></div>
+                    <div class="autocomplete-item-sub">${city.en} - ${city.country}</div>
+                </div>
+            `).join('');
+            
+            autocompleteDropdown.classList.add('show');
+
+            document.querySelectorAll('.autocomplete-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const cityEn = item.dataset.city;
+                    const selectedCity = uniqueCities.find(c => c.en === cityEn);
+                    searchInput.value = selectedCity.ja;
+                    autocompleteDropdown.classList.remove('show');
+                    filterAndDisplay(selectedCity.ja.toLowerCase());
+                });
+            });
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-input-wrapper')) {
+                autocompleteDropdown.classList.remove('show');
+            }
+        });
+
+        // フィルターボタン
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                updateTabView();
+                if (currentFilter === 'favorites' || currentFilter === 'ranking') {
+                    return;
+                }
+                filterAndDisplay(searchInput.value.toLowerCase().trim());
+            });
+        });
+
+        // ソート機能
+        const sortSelect = document.getElementById('sortSelect');
+        sortSelect.addEventListener('change', (e) => {
+            currentSort = e.target.value;
+            sortFlights();
+            displayFlights(filteredFlights);
+        });
+
+        function filterAndDisplay(searchTerm) {
+            const katakanaSearchTerm = hiraganaToKatakana(searchTerm);
+
+            if (currentFilter === 'favorites' || currentFilter === 'ranking') {
+                return;
+            }
+
+            filteredFlights = flightsData.filter(flight => {
+                const regionMatch = currentFilter === 'all' || flight.region === currentFilter;
+
+                const searchMatch = !searchTerm || 
+                    flight.fromCity.toLowerCase().includes(searchTerm) ||
+                    flight.fromCity.toLowerCase().includes(katakanaSearchTerm) ||
+                    flight.toCity.toLowerCase().includes(searchTerm) ||
+                    flight.toCity.toLowerCase().includes(katakanaSearchTerm) ||
+                    flight.fromCountry.toLowerCase().includes(searchTerm) ||
+                    flight.toCountry.toLowerCase().includes(searchTerm) ||
+                    flight.from.toLowerCase().includes(searchTerm) ||
+                    flight.to.toLowerCase().includes(searchTerm) ||
+                    flight.fromCode.toLowerCase().includes(searchTerm) ||
+                    flight.toCode.toLowerCase().includes(searchTerm);
+
+                return regionMatch && searchMatch;
+            });
+
+            sortFlights();
+            displayFlights(filteredFlights);
+        }
+
+        function sortFlights() {
+            if (currentSort === 'ja-asc') {
+                // 日本語あいうえお順（昇順）
+                filteredFlights.sort((a, b) => a.fromCity.localeCompare(b.fromCity, 'ja'));
+            } else if (currentSort === 'ja-desc') {
+                // 日本語逆順（降順）
+                filteredFlights.sort((a, b) => b.fromCity.localeCompare(a.fromCity, 'ja'));
+            }
+        }
+
+        function displayFlights(flights) {
+            const grid = document.getElementById('flightsGrid');
+            const resultCount = document.getElementById('resultCount');
+            const groupCount = document.getElementById('groupCount');
+
+            resultCount.textContent = flights.length;
+
+            if (flights.length === 0) {
+                groupCount.textContent = 0;
+                grid.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">✈️</div>
+                        <h3>検索結果なし</h3>
+                        <p>別のキーワードで<br>検索してください</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const groupMap = new Map();
+            flights.forEach(flight => {
+                if (!groupMap.has(flight.from)) {
+                    groupMap.set(flight.from, {
+                        from: flight.from,
+                        fromCode: flight.fromCode,
+                        fromCity: flight.fromCity,
+                        fromCountry: flight.fromCountry,
+                        destinations: new Map()
+                    });
+                }
+                const group = groupMap.get(flight.from);
+                if (!group.destinations.has(flight.to)) {
+                    group.destinations.set(flight.to, {
+                        to: flight.to,
+                        toCode: flight.toCode,
+                        toCity: flight.toCity,
+                        toCountry: flight.toCountry
+                    });
+                }
+            });
+
+            let groups = Array.from(groupMap.values());
+            if (currentSort === 'ja-asc') {
+                groups.sort((a, b) => a.fromCity.localeCompare(b.fromCity, 'ja'));
+            } else if (currentSort === 'ja-desc') {
+                groups.sort((a, b) => b.fromCity.localeCompare(a.fromCity, 'ja'));
+            }
+
+            groupCount.textContent = groups.length;
+
+            grid.innerHTML = groups.map((group, index) => {
+                const destinations = Array.from(group.destinations.values())
+                    .sort((a, b) => a.toCity.localeCompare(b.toCity, 'ja'));
+
+                return `
+                    <div class="flight-group" data-airport="${group.from}" style="animation-delay: ${Math.min(index * 0.015, 0.5)}s">
+                        <div class="flight-group-header">
+                            <div class="airport-title">
+                                <div class="airport-code">${group.fromCode}</div>
+                                <div>
+                                    <div class="airport-name">${group.fromCity}</div>
+                                    <div class="airport-country">${group.fromCountry}</div>
+                                </div>
+                            </div>
+                            <div class="airport-actions">
+                                <button class="star-btn ${isFavorite(group.from) ? 'active' : ''}" type="button" data-fav-airport="${group.from}">★</button>
+                            </div>
+                        </div>
+                        <div class="flight-group-body">
+                            <div class="destinations">
+                                ${destinations.map(dest => `
+                                    <div class="airport-chip" data-airport="${dest.to}">
+                                        <div class="airport-chip-code">${dest.toCode}</div>
+                                        <div class="airport-chip-name">${dest.toCity}</div>
+                                        <div class="airport-chip-country">${dest.toCountry}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        const flightsGrid = document.getElementById('flightsGrid');
+        flightsGrid.addEventListener('click', (e) => {
+            const favTarget = e.target.closest('[data-fav-airport]');
+            if (favTarget) {
+                e.stopPropagation();
+                toggleFavorite(favTarget.dataset.favAirport);
+                return;
+            }
+            const airportTarget = e.target.closest('[data-airport]');
+            if (airportTarget) {
+                openDetailView(airportTarget.dataset.airport);
+            }
+        });
+
+        detailGrid.addEventListener('click', (e) => {
+            const airportTarget = e.target.closest('[data-airport]');
+            if (airportTarget) {
+                openDetailView(airportTarget.dataset.airport);
+            }
+        });
+
+        favoritesGrid.addEventListener('click', (e) => {
+            const airportTarget = e.target.closest('[data-airport]');
+            if (airportTarget) {
+                openDetailView(airportTarget.dataset.airport);
+            }
+        });
+
+        rankingGrid.addEventListener('click', (e) => {
+            const airportTarget = e.target.closest('[data-airport]');
+            if (airportTarget) {
+                openDetailView(airportTarget.dataset.airport);
+            }
+        });
+    </script>
+</body>
+</html>

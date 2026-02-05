@@ -1,206 +1,711 @@
 (function () {
 const airportCodes = {
-    'Aberdeen': 'ABZ', 'Abu Dhabi': 'AUH', 'Agadir': 'AGA', 'Alesund': 'AES',
-    'Alghero': 'AHO', 'Alicante': 'ALC', 'Amman': 'AMM', 'Ancona': 'AOI',
+    'Aberdeen': 'ABZ',
+    'Abu Dhabi': 'AUH',
+    'Agadir': 'AGA',
+    'Alesund': 'AES',
+    'Alghero': 'AHO',
+    'Alicante': 'ALC',
+    'Amman': 'AMM',
+    'Ancona': 'AOI',
     'Ankara': 'ESB',
-    'Antalya': 'AYT', 'Athens': 'ATH', 'Bacau': 'BCM', 'Baku': 'GYD',
-    'Banja Luka': 'BNX', 'Barcelona': 'BCN', 'Bari': 'BRI', 'Basel': 'BSL',
-    'Belgrade': 'BEG', 'Bergamo': 'BGY', 'Bergen': 'BGO', 'Berlin': 'BER',
-    'Bilbao': 'BIO', 'Billund': 'BLL', 'Birmingham': 'BHX', 'Bologna': 'BLQ',
-    'Bordeaux': 'BOD', 'Brasov': 'OTP', 'Bratislava': 'BTS', 'Brindisi': 'BDS',
-    'Brussels Charleroi': 'CRL', 'Bucharest': 'OTP', 'Budapest': 'BUD',
-    'Burgas': 'BOJ', 'Cairo (Sphinx)': 'SPX', 'Castellon': 'CDT', 'Catania': 'CTA',
-    'Chania (Crete)': 'CHQ', 'Chisinau': 'RMO', 'Cluj-Napoca': 'CLJ',
-    'Cologne': 'CGN', 'Comiso': 'CIY', 'Constanta': 'CND', 'Copenhagen': 'CPH',
-    'Corfu': 'CFU', 'Craiova': 'CRA', 'Dalaman': 'DLM', 'Debrecen': 'DEB',
-    'Dortmund': 'DTM', 'Dubai': 'DXB', 'Dubrovnik': 'DBV', 'Eindhoven': 'EIN',
-    'Faro (Algarve)': 'FAO', 'Frankfurt': 'FRA', 'Friedrichshafen': 'FDH',
-    'Fuerteventura': 'FUE', 'Funchal (Madeira)': 'FNC', 'Gdansk': 'GDN',
-    'Genoa': 'GOA', 'Glasgow': 'GLA', 'Gothenburg': 'GOT', 'Gran Canaria': 'LPA',
-    'Grenoble': 'GNB', 'Gyumri': 'LWN', 'Hamburg': 'HAM', 'Haugesund': 'HAU',
-    'Heraklion (Crete)': 'HER', 'Hurghada': 'HRG', 'Iasi': 'IAS', 'Ibiza': 'IBZ',
-    'Istanbul': 'IST', 'Jeddah': 'JED', 'Karlsruhe/Baden-Baden': 'FKB', 'Katowice': 'KTW',
+    'Antalya': 'AYT',
+    'Athens': 'ATH',
+    'Bacau': 'BCM',
+    'Baku': 'GYD',
+    'Banja Luka': 'BNX',
+    'Barcelona': 'BCN',
+    'Bari': 'BRI',
+    'Basel': 'BSL',
+    'Belgrade': 'BEG',
+    'Bergamo': 'BGY',
+    'Bergen': 'BGO',
+    'Berlin': 'BER',
+    'Bilbao': 'BIO',
+    'Billund': 'BLL',
+    'Birmingham': 'BHX',
+    'Bologna': 'BLQ',
+    'Bordeaux': 'BOD',
+    'Brasov': 'GHV',
+    'Bratislava': 'BTS',
+    'Brindisi': 'BDS',
+    'Brussels Charleroi': 'CRL',
+    'Bucharest': 'OTP',
+    'Budapest': 'BUD',
+    'Burgas': 'BOJ',
+    'Cairo (Sphinx)': 'SPX',
+    'Castellon': 'CDT',
+    'Catania': 'CTA',
+    'Chania (Crete)': 'CHQ',
+    'Chisinau': 'RMO',
+    'Cluj-Napoca': 'CLJ',
+    'Cologne': 'CGN',
+    'Comiso': 'CIY',
+    'Constanta': 'CND',
+    'Copenhagen': 'CPH',
+    'Corfu': 'CFU',
+    'Craiova': 'CRA',
+    'Dalaman': 'DLM',
+    'Debrecen': 'DEB',
+    'Dortmund': 'DTM',
+    'Dubai': 'DXB',
+    'Dubrovnik': 'DBV',
+    'Eindhoven': 'EIN',
+    'Faro (Algarve)': 'FAO',
+    'Frankfurt': 'FRA',
+    'Friedrichshafen': 'FDH',
+    'Fuerteventura': 'FUE',
+    'Funchal (Madeira)': 'FNC',
+    'Gdansk': 'GDN',
+    'Genoa': 'GOA',
+    'Glasgow': 'GLA',
+    'Gothenburg': 'GOT',
+    'Gran Canaria': 'LPA',
+    'Grenoble': 'GNB',
+    'Gyumri': 'LWN',
+    'Hamburg': 'HAM',
+    'Haugesund': 'HAU',
+    'Heraklion (Crete)': 'HER',
+    'Hurghada': 'HRG',
+    'Iasi': 'IAS',
+    'Ibiza': 'IBZ',
+    'Istanbul': 'IST',
+    'Jeddah': 'JED',
     'Kalamata': 'KLX',
-    'Kaunas': 'KUN', 'Košice': 'KSC', 'Krakow': 'KRK', 'Kutaisi': 'KUT',
+    'Karlsruhe/Baden-Baden': 'FKB',
+    'Katowice': 'KTW',
+    'Kaunas': 'KUN',
     'Kefalonia': 'EFL',
-    'Lamezia Terme': 'SUF', 'Lampedusa': 'LMP', 'Larnaca': 'LCA', 'Leeds': 'LBA',
-    'Lisbon': 'LIS', 'Liverpool': 'LPL', 'Ljubljana': 'LJU', 'London': 'LTN',
-    'Lublin': 'LUZ', 'Lyon': 'LYS', 'Maastricht': 'MST', 'Madrid': 'MAD',
-    'Malaga': 'AGP', 'Mallorca': 'PMI', 'Malmö': 'MMX', 'Malta': 'MLA',
-    'Marrakech': 'RAK', 'Marsa Alam': 'RMF', 'Medina': 'MED', 'Memmingen': 'FMM',
+    'Košice': 'KSC',
+    'Krakow': 'KRK',
+    'Kutaisi': 'KUT',
+    'Lamezia Terme': 'SUF',
+    'Lampedusa': 'LMP',
+    'Larnaca': 'LCA',
+    'Leeds': 'LBA',
+    'Lisbon': 'LIS',
+    'Liverpool': 'LPL',
+    'Ljubljana': 'LJU',
+    'London (LGW)': 'LGW',
+    'London (LTN)': 'LTN',
+    'Lublin': 'LUZ',
+    'Lyon': 'LYS',
+    'Maastricht': 'MST',
+    'Madrid': 'MAD',
+    'Malaga': 'AGP',
+    'Mallorca': 'PMI',
+    'Malmö': 'MMX',
+    'Malta': 'MLA',
+    'Marrakech': 'RAK',
+    'Marsa Alam': 'RMF',
+    'Medina': 'MED',
+    'Memmingen': 'FMM',
     'Menorca': 'MAH',
-    'Milan': 'MXP', 'Mykonos': 'JMK', 'Naples': 'NAP', 'Nice': 'NCE',
-    'Niš': 'INI', 'Nuremberg': 'NUE', 'Ohrid': 'OHD', 'Olbia': 'OLB',
-    'Olsztyn-Mazury': 'SZY', 'Oslo': 'OSL', 'Palanga': 'PLQ', 'Palermo': 'PMO',
+    'Milan': 'MXP',
+    'Mykonos': 'JMK',
+    'Naples': 'NAP',
+    'Nice': 'NCE',
+    'Niš': 'INI',
+    'Nuremberg': 'NUE',
+    'Ohrid': 'OHD',
+    'Olbia': 'OLB',
+    'Olsztyn-Mazury': 'SZY',
     'Oradea': 'OMR',
-    'Paphos': 'PFO', 'Paris': 'BVA', 'Perugia': 'PEG', 'Pescara': 'PSR',
-    'Pisa': 'PSA', 'Plovdiv': 'PDV', 'Podgorica': 'TGD', 'Poprad-Tatry': 'TAT',
-    'Porto': 'OPO', 'Poznan': 'POZ', 'Prague': 'PRG', 'Pristina': 'PRN',
-    'Radom': 'RDO', 'Reykjavik': 'KEF', 'Rhodes': 'RHO', 'Rimini': 'RMI',
+    'Oslo': 'OSL',
+    'Palanga': 'PLQ',
+    'Palermo': 'PMO',
+    'Paphos': 'PFO',
+    'Paris': 'BVA',
+    'Perugia': 'PEG',
+    'Pescara': 'PSR',
+    'Pisa': 'PSA',
+    'Plovdiv': 'PDV',
+    'Podgorica': 'TGD',
+    'Poprad-Tatry': 'TAT',
+    'Porto': 'OPO',
+    'Poznan': 'POZ',
+    'Prague': 'PRG',
+    'Pristina': 'PRN',
+    'Radom': 'RDO',
+    'Reykjavik': 'KEF',
+    'Rhodes': 'RHO',
     'Rijeka': 'RJK',
-    'Rome': 'FCO', 'Rzeszów': 'RZE', 'Sandefjord': 'TRF', 'Santander': 'SDR',
-    'Santorini': 'JTR', 'Sarajevo': 'SJJ', 'Satu Mare': 'SUJ', 'Sevilla': 'SVQ',
-    'Sharm El Sheikh': 'SSH', 'Sibiu': 'SBZ', 'Skiathos': 'JSI', 'Skopje': 'SKP',
-    'Sofia': 'SOF', 'Split': 'SPU', 'Stavanger': 'SVG', 'Stockholm': 'NYO',
-    'Stuttgart': 'STR', 'Suceava': 'SCV', 'Szczecin': 'SZZ', 'Tallinn': 'TLL',
-    'Tel Aviv': 'TLV', 'Tenerife': 'TFS', 'Thessaloniki': 'SKG', 'Timisoara': 'TSR',
-    'Tirana': 'TIA', 'Trieste': 'TRS', 'Tromsø': 'TOS', 'Trondheim': 'TRD',
-    'Turin': 'TRN', 'Turku': 'TKU', 'Tuzla': 'TZL', 'Târgu-Mures': 'TGM',
-    'Valencia': 'VLC', 'Varna': 'VAR', 'Venice': 'VCE', 'Verona': 'VRN',
-    'Vienna': 'VIE', 'Vilnius': 'VNO', 'Warsaw': 'WAW', 'Wroclaw': 'WRO',
-    'Yerevan': 'EVN', 'Zakynthos': 'ZTH', 'Zaragoza': 'ZAZ'
+    'Rimini': 'RMI',
+    'Rome': 'FCO',
+    'Rzeszów': 'RZE',
+    'Sandefjord': 'TRF',
+    'Santander': 'SDR',
+    'Santorini': 'JTR',
+    'Sarajevo': 'SJJ',
+    'Satu Mare': 'SUJ',
+    'Sevilla': 'SVQ',
+    'Sharm El Sheikh': 'SSH',
+    'Sibiu': 'SBZ',
+    'Skiathos': 'JSI',
+    'Skopje': 'SKP',
+    'Sofia': 'SOF',
+    'Split': 'SPU',
+    'Stavanger': 'SVG',
+    'Stockholm': 'NYO',
+    'Stuttgart': 'STR',
+    'Suceava': 'SCV',
+    'Szczecin': 'SZZ',
+    'Tallinn': 'TLL',
+    'Tel Aviv': 'TLV',
+    'Tenerife': 'TFS',
+    'Thessaloniki': 'SKG',
+    'Timisoara': 'TSR',
+    'Tirana': 'TIA',
+    'Trieste': 'TRS',
+    'Tromsø': 'TOS',
+    'Trondheim': 'TRD',
+    'Turin': 'TRN',
+    'Turku': 'TKU',
+    'Tuzla': 'TZL',
+    'Târgu-Mures': 'TGM',
+    'Valencia': 'VLC',
+    'Varna': 'VAR',
+    'Venice': 'VCE',
+    'Verona': 'VRN',
+    'Vienna': 'VIE',
+    'Vilnius': 'VNO',
+    'Warsaw': 'WAW',
+    'Wroclaw': 'WRO',
+    'Yerevan': 'EVN',
+    'Zakynthos': 'ZTH',
+    'Zaragoza': 'ZAZ'
 };
 
-// 都市名マッピング（英語→日本語）
 const cityNames = {
-    'Aberdeen': 'アバディーン', 'Abu Dhabi': 'アブダビ', 'Agadir': 'アガディール', 'Alesund': 'オーレスン',
-    'Alghero': 'アルゲーロ', 'Alicante': 'アリカンテ', 'Amman': 'アンマン', 'Ancona': 'アンコーナ',
+    'Aberdeen': 'アバディーン',
+    'Abu Dhabi': 'アブダビ',
+    'Agadir': 'アガディール',
+    'Alesund': 'オーレスン',
+    'Alghero': 'アルゲーロ',
+    'Alicante': 'アリカンテ',
+    'Amman': 'アンマン',
+    'Ancona': 'アンコーナ',
     'Ankara': 'アンカラ',
-    'Antalya': 'アンタルヤ', 'Athens': 'アテネ', 'Bacau': 'バカウ', 'Baku': 'バクー',
-    'Banja Luka': 'バニャ・ルカ', 'Barcelona': 'バルセロナ', 'Bari': 'バーリ', 'Basel': 'バーゼル',
-    'Belgrade': 'ベオグラード', 'Bergamo': 'ベルガモ', 'Bergen': 'ベルゲン', 'Berlin': 'ベルリン',
-    'Bilbao': 'ビルバオ', 'Billund': 'ビルン', 'Birmingham': 'バーミンガム', 'Bologna': 'ボローニャ',
-    'Bordeaux': 'ボルドー', 'Brasov': 'ブラショフ', 'Bratislava': 'ブラチスラバ', 'Brindisi': 'ブリンディジ',
-    'Brussels Charleroi': 'ブリュッセル', 'Bucharest': 'ブカレスト', 'Budapest': 'ブダペスト',
-    'Burgas': 'ブルガス', 'Cairo (Sphinx)': 'カイロ（スフィンクス）', 'Castellon': 'カステリョン', 'Catania': 'カターニア',
-    'Chania (Crete)': 'ハニア', 'Chisinau': 'キシナウ', 'Cluj-Napoca': 'クルージュ',
-    'Cologne': 'ケルン', 'Comiso': 'コミーゾ', 'Constanta': 'コンスタンツァ', 'Copenhagen': 'コペンハーゲン',
-    'Corfu': 'コルフ', 'Craiova': 'クラヨーヴァ', 'Dalaman': 'ダラマン', 'Debrecen': 'デブレツェン',
-    'Dortmund': 'ドルトムント', 'Dubai': 'ドバイ', 'Dubrovnik': 'ドゥブロヴニク', 'Eindhoven': 'アイントホーフェン',
-    'Faro (Algarve)': 'ファロ', 'Frankfurt': 'フランクフルト', 'Friedrichshafen': 'フリードリヒスハーフェン',
-    'Fuerteventura': 'フエルテベントゥラ', 'Funchal (Madeira)': 'フンシャル', 'Gdansk': 'グダニスク',
-    'Genoa': 'ジェノバ', 'Glasgow': 'グラスゴー', 'Gothenburg': 'ヨーテボリ', 'Gran Canaria': 'グラン・カナリア',
-    'Grenoble': 'グルノーブル', 'Gyumri': 'ギュムリ', 'Hamburg': 'ハンブルク', 'Haugesund': 'ハウゲスン',
-    'Heraklion (Crete)': 'イラクリオン', 'Hurghada': 'フルガダ', 'Iasi': 'ヤシ', 'Ibiza': 'イビサ',
-    'Istanbul': 'イスタンブール', 'Jeddah': 'ジッダ', 'Karlsruhe/Baden-Baden': 'カールスルーエ', 'Katowice': 'カトヴィツェ',
+    'Antalya': 'アンタルヤ',
+    'Athens': 'アテネ',
+    'Bacau': 'バカウ',
+    'Baku': 'バクー',
+    'Banja Luka': 'バニャ・ルカ',
+    'Barcelona': 'バルセロナ',
+    'Bari': 'バーリ',
+    'Basel': 'バーゼル',
+    'Belgrade': 'ベオグラード',
+    'Bergamo': 'ベルガモ',
+    'Bergen': 'ベルゲン',
+    'Berlin': 'ベルリン',
+    'Bilbao': 'ビルバオ',
+    'Billund': 'ビルン',
+    'Birmingham': 'バーミンガム',
+    'Bologna': 'ボローニャ',
+    'Bordeaux': 'ボルドー',
+    'Brasov': 'ブラショフ',
+    'Bratislava': 'ブラチスラバ',
+    'Brindisi': 'ブリンディジ',
+    'Brussels Charleroi': 'ブリュッセル',
+    'Bucharest': 'ブカレスト',
+    'Budapest': 'ブダペスト',
+    'Burgas': 'ブルガス',
+    'Cairo (Sphinx)': 'カイロ（スフィンクス）',
+    'Castellon': 'カステリョン',
+    'Catania': 'カターニア',
+    'Chania (Crete)': 'ハニア',
+    'Chisinau': 'キシナウ',
+    'Cluj-Napoca': 'クルージュ',
+    'Cologne': 'ケルン',
+    'Comiso': 'コミーゾ',
+    'Constanta': 'コンスタンツァ',
+    'Copenhagen': 'コペンハーゲン',
+    'Corfu': 'コルフ',
+    'Craiova': 'クラヨーヴァ',
+    'Dalaman': 'ダラマン',
+    'Debrecen': 'デブレツェン',
+    'Dortmund': 'ドルトムント',
+    'Dubai': 'ドバイ',
+    'Dubrovnik': 'ドゥブロヴニク',
+    'Eindhoven': 'アイントホーフェン',
+    'Faro (Algarve)': 'ファロ',
+    'Frankfurt': 'フランクフルト',
+    'Friedrichshafen': 'フリードリヒスハーフェン',
+    'Fuerteventura': 'フエルテベントゥラ',
+    'Funchal (Madeira)': 'フンシャル',
+    'Gdansk': 'グダニスク',
+    'Genoa': 'ジェノバ',
+    'Glasgow': 'グラスゴー',
+    'Gothenburg': 'ヨーテボリ',
+    'Gran Canaria': 'グラン・カナリア',
+    'Grenoble': 'グルノーブル',
+    'Gyumri': 'ギュムリ',
+    'Hamburg': 'ハンブルク',
+    'Haugesund': 'ハウゲスン',
+    'Heraklion (Crete)': 'イラクリオン',
+    'Hurghada': 'フルガダ',
+    'Iasi': 'ヤシ',
+    'Ibiza': 'イビサ',
+    'Istanbul': 'イスタンブール',
+    'Jeddah': 'ジッダ',
     'Kalamata': 'カラマタ',
-    'Kaunas': 'カウナス', 'Košice': 'コシツェ', 'Krakow': 'クラクフ', 'Kutaisi': 'クタイシ',
+    'Karlsruhe/Baden-Baden': 'カールスルーエ',
+    'Katowice': 'カトヴィツェ',
+    'Kaunas': 'カウナス',
     'Kefalonia': 'ケファロニア',
-    'Lamezia Terme': 'ラメーツィア', 'Lampedusa': 'ランペドゥーザ', 'Larnaca': 'ラルナカ', 'Leeds': 'リーズ',
-    'Lisbon': 'リスボン', 'Liverpool': 'リバプール', 'Ljubljana': 'リュブリャナ', 'London': 'ロンドン',
-    'Lublin': 'ルブリン', 'Lyon': 'リヨン', 'Maastricht': 'マーストリヒト', 'Madrid': 'マドリード',
-    'Malaga': 'マラガ', 'Mallorca': 'マヨルカ', 'Malmö': 'マルメ', 'Malta': 'マルタ',
-    'Marrakech': 'マラケシュ', 'Marsa Alam': 'マルサ・アラム', 'Medina': 'メディナ', 'Memmingen': 'メミンゲン',
+    'Košice': 'コシツェ',
+    'Krakow': 'クラクフ',
+    'Kutaisi': 'クタイシ',
+    'Lamezia Terme': 'ラメーツィア',
+    'Lampedusa': 'ランペドゥーザ',
+    'Larnaca': 'ラルナカ',
+    'Leeds': 'リーズ',
+    'Lisbon': 'リスボン',
+    'Liverpool': 'リバプール',
+    'Ljubljana': 'リュブリャナ',
+    'London (LGW)': 'ロンドン・ガトウィック空港',
+    'London (LTN)': 'ロンドン・ルートン空港',
+    'Lublin': 'ルブリン',
+    'Lyon': 'リヨン',
+    'Maastricht': 'マーストリヒト',
+    'Madrid': 'マドリード',
+    'Malaga': 'マラガ',
+    'Mallorca': 'マヨルカ',
+    'Malmö': 'マルメ',
+    'Malta': 'マルタ',
+    'Marrakech': 'マラケシュ',
+    'Marsa Alam': 'マルサ・アラム',
+    'Medina': 'メディナ',
+    'Memmingen': 'メミンゲン',
     'Menorca': 'メノルカ',
-    'Milan': 'ミラノ', 'Mykonos': 'ミコノス', 'Naples': 'ナポリ', 'Nice': 'ニース',
-    'Niš': 'ニシュ', 'Nuremberg': 'ニュルンベルク', 'Ohrid': 'オフリド', 'Olbia': 'オルビア',
-    'Olsztyn-Mazury': 'オルシュティン', 'Oslo': 'オスロ', 'Palanga': 'パランガ', 'Palermo': 'パレルモ',
+    'Milan': 'ミラノ',
+    'Mykonos': 'ミコノス',
+    'Naples': 'ナポリ',
+    'Nice': 'ニース',
+    'Niš': 'ニシュ',
+    'Nuremberg': 'ニュルンベルク',
+    'Ohrid': 'オフリド',
+    'Olbia': 'オルビア',
+    'Olsztyn-Mazury': 'オルシュティン',
     'Oradea': 'オラデア',
-    'Paphos': 'パフォス', 'Paris': 'パリ', 'Perugia': 'ペルージャ', 'Pescara': 'ペスカーラ',
-    'Pisa': 'ピサ', 'Plovdiv': 'プロヴディフ', 'Podgorica': 'ポドゴリツァ', 'Poprad-Tatry': 'ポプラト',
-    'Porto': 'ポルト', 'Poznan': 'ポズナン', 'Prague': 'プラハ', 'Pristina': 'プリシュティナ',
-    'Radom': 'ラドム', 'Reykjavik': 'レイキャビク', 'Rhodes': 'ロードス', 'Rimini': 'リミニ',
+    'Oslo': 'オスロ',
+    'Palanga': 'パランガ',
+    'Palermo': 'パレルモ',
+    'Paphos': 'パフォス',
+    'Paris': 'パリ',
+    'Perugia': 'ペルージャ',
+    'Pescara': 'ペスカーラ',
+    'Pisa': 'ピサ',
+    'Plovdiv': 'プロヴディフ',
+    'Podgorica': 'ポドゴリツァ',
+    'Poprad-Tatry': 'ポプラト',
+    'Porto': 'ポルト',
+    'Poznan': 'ポズナン',
+    'Prague': 'プラハ',
+    'Pristina': 'プリシュティナ',
+    'Radom': 'ラドム',
+    'Reykjavik': 'レイキャビク',
+    'Rhodes': 'ロードス',
     'Rijeka': 'リエカ',
-    'Rome': 'ローマ', 'Rzeszów': 'ジェシュフ', 'Sandefjord': 'サンデフィヨルド', 'Santander': 'サンタンデール',
-    'Santorini': 'サントリーニ', 'Sarajevo': 'サラエボ', 'Satu Mare': 'サトゥ・マーレ', 'Sevilla': 'セビリア',
-    'Sharm El Sheikh': 'シャルム・エル・シェイク', 'Sibiu': 'シビウ', 'Skiathos': 'スキアトス', 'Skopje': 'スコピエ',
-    'Sofia': 'ソフィア', 'Split': 'スプリト', 'Stavanger': 'スタヴァンゲル', 'Stockholm': 'ストックホルム',
-    'Stuttgart': 'シュトゥットガルト', 'Suceava': 'スチャヴァ', 'Szczecin': 'シュチェチン', 'Tallinn': 'タリン',
-    'Tel Aviv': 'テルアビブ', 'Tenerife': 'テネリフェ', 'Thessaloniki': 'テッサロニキ', 'Timisoara': 'ティミショアラ',
-    'Tirana': 'ティラナ', 'Trieste': 'トリエステ', 'Tromsø': 'トロムソ', 'Trondheim': 'トロンハイム',
-    'Turin': 'トリノ', 'Turku': 'トゥルク', 'Tuzla': 'トゥズラ', 'Târgu-Mures': 'トゥルグ・ムレシュ',
-    'Valencia': 'バレンシア', 'Varna': 'ヴァルナ', 'Venice': 'ヴェネツィア', 'Verona': 'ヴェローナ',
-    'Vienna': 'ウィーン', 'Vilnius': 'ヴィリニュス', 'Warsaw': 'ワルシャワ', 'Wroclaw': 'ヴロツワフ',
-    'Yerevan': 'エレバン', 'Zakynthos': 'ザキントス', 'Zaragoza': 'サラゴサ'
+    'Rimini': 'リミニ',
+    'Rome': 'ローマ',
+    'Rzeszów': 'ジェシュフ',
+    'Sandefjord': 'サンデフィヨルド',
+    'Santander': 'サンタンデール',
+    'Santorini': 'サントリーニ',
+    'Sarajevo': 'サラエボ',
+    'Satu Mare': 'サトゥ・マーレ',
+    'Sevilla': 'セビリア',
+    'Sharm El Sheikh': 'シャルム・エル・シェイク',
+    'Sibiu': 'シビウ',
+    'Skiathos': 'スキアトス',
+    'Skopje': 'スコピエ',
+    'Sofia': 'ソフィア',
+    'Split': 'スプリト',
+    'Stavanger': 'スタヴァンゲル',
+    'Stockholm': 'ストックホルム',
+    'Stuttgart': 'シュトゥットガルト',
+    'Suceava': 'スチャヴァ',
+    'Szczecin': 'シュチェチン',
+    'Tallinn': 'タリン',
+    'Tel Aviv': 'テルアビブ',
+    'Tenerife': 'テネリフェ',
+    'Thessaloniki': 'テッサロニキ',
+    'Timisoara': 'ティミショアラ',
+    'Tirana': 'ティラナ',
+    'Trieste': 'トリエステ',
+    'Tromsø': 'トロムソ',
+    'Trondheim': 'トロンハイム',
+    'Turin': 'トリノ',
+    'Turku': 'トゥルク',
+    'Tuzla': 'トゥズラ',
+    'Târgu-Mures': 'トゥルグ・ムレシュ',
+    'Valencia': 'バレンシア',
+    'Varna': 'ヴァルナ',
+    'Venice': 'ヴェネツィア',
+    'Verona': 'ヴェローナ',
+    'Vienna': 'ウィーン',
+    'Vilnius': 'ヴィリニュス',
+    'Warsaw': 'ワルシャワ',
+    'Wroclaw': 'ヴロツワフ',
+    'Yerevan': 'エレバン',
+    'Zakynthos': 'ザキントス',
+    'Zaragoza': 'サラゴサ'
 };
 
-// 国名マッピング
 const countryMap = {
-    'Aberdeen': 'スコットランド', 'Abu Dhabi': 'UAE', 'Agadir': 'モロッコ', 'Alesund': 'ノルウェー',
-    'Alghero': 'イタリア', 'Alicante': 'スペイン', 'Amman': 'ヨルダン', 'Ancona': 'イタリア',
+    'Aberdeen': 'スコットランド',
+    'Abu Dhabi': 'UAE',
+    'Agadir': 'モロッコ',
+    'Alesund': 'ノルウェー',
+    'Alghero': 'イタリア',
+    'Alicante': 'スペイン',
+    'Amman': 'ヨルダン',
+    'Ancona': 'イタリア',
     'Ankara': 'トルコ',
-    'Antalya': 'トルコ', 'Athens': 'ギリシャ', 'Bacau': 'ルーマニア', 'Baku': 'アゼルバイジャン',
-    'Banja Luka': 'ボスニア', 'Barcelona': 'スペイン', 'Bari': 'イタリア', 'Basel': 'スイス',
-    'Belgrade': 'セルビア', 'Bergamo': 'イタリア', 'Bergen': 'ノルウェー', 'Berlin': 'ドイツ',
-    'Bilbao': 'スペイン', 'Billund': 'デンマーク', 'Birmingham': 'イギリス', 'Bologna': 'イタリア',
-    'Bordeaux': 'フランス', 'Brasov': 'ルーマニア', 'Bratislava': 'スロバキア', 'Brindisi': 'イタリア',
-    'Brussels Charleroi': 'ベルギー', 'Bucharest': 'ルーマニア', 'Budapest': 'ハンガリー', 'Burgas': 'ブルガリア',
-    'Cairo (Sphinx)': 'エジプト', 'Castellon': 'スペイン', 'Catania': 'イタリア', 'Chania (Crete)': 'ギリシャ',
-    'Chisinau': 'モルドバ', 'Cluj-Napoca': 'ルーマニア', 'Cologne': 'ドイツ', 'Comiso': 'イタリア',
-    'Constanta': 'ルーマニア', 'Copenhagen': 'デンマーク', 'Corfu': 'ギリシャ', 'Craiova': 'ルーマニア',
-    'Dalaman': 'トルコ', 'Debrecen': 'ハンガリー', 'Dortmund': 'ドイツ', 'Dubai': 'UAE',
-    'Dubrovnik': 'クロアチア', 'Eindhoven': 'オランダ', 'Faro (Algarve)': 'ポルトガル', 'Frankfurt': 'ドイツ',
-    'Friedrichshafen': 'ドイツ', 'Fuerteventura': 'スペイン', 'Funchal (Madeira)': 'ポルトガル', 'Gdansk': 'ポーランド',
-    'Genoa': 'イタリア', 'Glasgow': 'スコットランド', 'Gothenburg': 'スウェーデン', 'Gran Canaria': 'スペイン',
-    'Grenoble': 'フランス', 'Gyumri': 'アルメニア', 'Hamburg': 'ドイツ', 'Haugesund': 'ノルウェー',
-    'Heraklion (Crete)': 'ギリシャ', 'Hurghada': 'エジプト', 'Iasi': 'ルーマニア', 'Ibiza': 'スペイン',
-    'Istanbul': 'トルコ', 'Jeddah': 'サウジアラビア', 'Karlsruhe/Baden-Baden': 'ドイツ', 'Katowice': 'ポーランド',
+    'Antalya': 'トルコ',
+    'Athens': 'ギリシャ',
+    'Bacau': 'ルーマニア',
+    'Baku': 'アゼルバイジャン',
+    'Banja Luka': 'ボスニア',
+    'Barcelona': 'スペイン',
+    'Bari': 'イタリア',
+    'Basel': 'スイス',
+    'Belgrade': 'セルビア',
+    'Bergamo': 'イタリア',
+    'Bergen': 'ノルウェー',
+    'Berlin': 'ドイツ',
+    'Bilbao': 'スペイン',
+    'Billund': 'デンマーク',
+    'Birmingham': 'イギリス',
+    'Bologna': 'イタリア',
+    'Bordeaux': 'フランス',
+    'Brasov': 'ルーマニア',
+    'Bratislava': 'スロバキア',
+    'Brindisi': 'イタリア',
+    'Brussels Charleroi': 'ベルギー',
+    'Bucharest': 'ルーマニア',
+    'Budapest': 'ハンガリー',
+    'Burgas': 'ブルガリア',
+    'Cairo (Sphinx)': 'エジプト',
+    'Castellon': 'スペイン',
+    'Catania': 'イタリア',
+    'Chania (Crete)': 'ギリシャ',
+    'Chisinau': 'モルドバ',
+    'Cluj-Napoca': 'ルーマニア',
+    'Cologne': 'ドイツ',
+    'Comiso': 'イタリア',
+    'Constanta': 'ルーマニア',
+    'Copenhagen': 'デンマーク',
+    'Corfu': 'ギリシャ',
+    'Craiova': 'ルーマニア',
+    'Dalaman': 'トルコ',
+    'Debrecen': 'ハンガリー',
+    'Dortmund': 'ドイツ',
+    'Dubai': 'UAE',
+    'Dubrovnik': 'クロアチア',
+    'Eindhoven': 'オランダ',
+    'Faro (Algarve)': 'ポルトガル',
+    'Frankfurt': 'ドイツ',
+    'Friedrichshafen': 'ドイツ',
+    'Fuerteventura': 'スペイン',
+    'Funchal (Madeira)': 'ポルトガル',
+    'Gdansk': 'ポーランド',
+    'Genoa': 'イタリア',
+    'Glasgow': 'スコットランド',
+    'Gothenburg': 'スウェーデン',
+    'Gran Canaria': 'スペイン',
+    'Grenoble': 'フランス',
+    'Gyumri': 'アルメニア',
+    'Hamburg': 'ドイツ',
+    'Haugesund': 'ノルウェー',
+    'Heraklion (Crete)': 'ギリシャ',
+    'Hurghada': 'エジプト',
+    'Iasi': 'ルーマニア',
+    'Ibiza': 'スペイン',
+    'Istanbul': 'トルコ',
+    'Jeddah': 'サウジアラビア',
     'Kalamata': 'ギリシャ',
-    'Kaunas': 'リトアニア', 'Košice': 'スロバキア', 'Krakow': 'ポーランド', 'Kutaisi': 'ジョージア',
+    'Karlsruhe/Baden-Baden': 'ドイツ',
+    'Katowice': 'ポーランド',
+    'Kaunas': 'リトアニア',
     'Kefalonia': 'ギリシャ',
-    'Lamezia Terme': 'イタリア', 'Lampedusa': 'イタリア', 'Larnaca': 'キプロス', 'Leeds': 'イギリス',
-    'Lisbon': 'ポルトガル', 'Liverpool': 'イギリス', 'Ljubljana': 'スロベニア', 'London': 'イギリス',
-    'Lublin': 'ポーランド', 'Lyon': 'フランス', 'Maastricht': 'オランダ', 'Madrid': 'スペイン',
-    'Malaga': 'スペイン', 'Mallorca': 'スペイン', 'Malmö': 'スウェーデン', 'Malta': 'マルタ',
-    'Marrakech': 'モロッコ', 'Marsa Alam': 'エジプト', 'Medina': 'サウジアラビア', 'Memmingen': 'ドイツ',
+    'Košice': 'スロバキア',
+    'Krakow': 'ポーランド',
+    'Kutaisi': 'ジョージア',
+    'Lamezia Terme': 'イタリア',
+    'Lampedusa': 'イタリア',
+    'Larnaca': 'キプロス',
+    'Leeds': 'イギリス',
+    'Lisbon': 'ポルトガル',
+    'Liverpool': 'イギリス',
+    'Ljubljana': 'スロベニア',
+    'London (LGW)': 'イギリス',
+    'London (LTN)': 'イギリス',
+    'Lublin': 'ポーランド',
+    'Lyon': 'フランス',
+    'Maastricht': 'オランダ',
+    'Madrid': 'スペイン',
+    'Malaga': 'スペイン',
+    'Mallorca': 'スペイン',
+    'Malmö': 'スウェーデン',
+    'Malta': 'マルタ',
+    'Marrakech': 'モロッコ',
+    'Marsa Alam': 'エジプト',
+    'Medina': 'サウジアラビア',
+    'Memmingen': 'ドイツ',
     'Menorca': 'スペイン',
-    'Milan': 'イタリア', 'Mykonos': 'ギリシャ', 'Naples': 'イタリア', 'Nice': 'フランス',
-    'Niš': 'セルビア', 'Nuremberg': 'ドイツ', 'Ohrid': '北マケドニア', 'Olbia': 'イタリア',
-    'Olsztyn-Mazury': 'ポーランド', 'Oslo': 'ノルウェー', 'Palanga': 'リトアニア', 'Palermo': 'イタリア',
+    'Milan': 'イタリア',
+    'Mykonos': 'ギリシャ',
+    'Naples': 'イタリア',
+    'Nice': 'フランス',
+    'Niš': 'セルビア',
+    'Nuremberg': 'ドイツ',
+    'Ohrid': '北マケドニア',
+    'Olbia': 'イタリア',
+    'Olsztyn-Mazury': 'ポーランド',
     'Oradea': 'ルーマニア',
-    'Paphos': 'キプロス', 'Paris': 'フランス', 'Perugia': 'イタリア', 'Pescara': 'イタリア',
-    'Pisa': 'イタリア', 'Plovdiv': 'ブルガリア', 'Podgorica': 'モンテネグロ', 'Poprad-Tatry': 'スロバキア',
-    'Porto': 'ポルトガル', 'Poznan': 'ポーランド', 'Prague': 'チェコ', 'Pristina': 'コソボ',
-    'Radom': 'ポーランド', 'Reykjavik': 'アイスランド', 'Rhodes': 'ギリシャ', 'Rimini': 'イタリア',
+    'Oslo': 'ノルウェー',
+    'Palanga': 'リトアニア',
+    'Palermo': 'イタリア',
+    'Paphos': 'キプロス',
+    'Paris': 'フランス',
+    'Perugia': 'イタリア',
+    'Pescara': 'イタリア',
+    'Pisa': 'イタリア',
+    'Plovdiv': 'ブルガリア',
+    'Podgorica': 'モンテネグロ',
+    'Poprad-Tatry': 'スロバキア',
+    'Porto': 'ポルトガル',
+    'Poznan': 'ポーランド',
+    'Prague': 'チェコ',
+    'Pristina': 'コソボ',
+    'Radom': 'ポーランド',
+    'Reykjavik': 'アイスランド',
+    'Rhodes': 'ギリシャ',
     'Rijeka': 'クロアチア',
-    'Rome': 'イタリア', 'Rzeszów': 'ポーランド', 'Sandefjord': 'ノルウェー', 'Santander': 'スペイン',
-    'Santorini': 'ギリシャ', 'Sarajevo': 'ボスニア', 'Satu Mare': 'ルーマニア', 'Sevilla': 'スペイン',
-    'Sharm El Sheikh': 'エジプト', 'Sibiu': 'ルーマニア', 'Skiathos': 'ギリシャ', 'Skopje': '北マケドニア',
-    'Sofia': 'ブルガリア', 'Split': 'クロアチア', 'Stavanger': 'ノルウェー', 'Stockholm': 'スウェーデン',
-    'Stuttgart': 'ドイツ', 'Suceava': 'ルーマニア', 'Szczecin': 'ポーランド', 'Tallinn': 'エストニア',
-    'Tel Aviv': 'イスラエル', 'Tenerife': 'スペイン', 'Thessaloniki': 'ギリシャ', 'Timisoara': 'ルーマニア',
-    'Tirana': 'アルバニア', 'Trieste': 'イタリア', 'Tromsø': 'ノルウェー', 'Trondheim': 'ノルウェー',
-    'Turin': 'イタリア', 'Turku': 'フィンランド', 'Tuzla': 'ボスニア', 'Târgu-Mures': 'ルーマニア',
-    'Valencia': 'スペイン', 'Varna': 'ブルガリア', 'Venice': 'イタリア', 'Verona': 'イタリア',
-    'Vienna': 'オーストリア', 'Vilnius': 'リトアニア', 'Warsaw': 'ポーランド', 'Wroclaw': 'ポーランド',
-    'Yerevan': 'アルメニア', 'Zakynthos': 'ギリシャ', 'Zaragoza': 'スペイン'
+    'Rimini': 'イタリア',
+    'Rome': 'イタリア',
+    'Rzeszów': 'ポーランド',
+    'Sandefjord': 'ノルウェー',
+    'Santander': 'スペイン',
+    'Santorini': 'ギリシャ',
+    'Sarajevo': 'ボスニア',
+    'Satu Mare': 'ルーマニア',
+    'Sevilla': 'スペイン',
+    'Sharm El Sheikh': 'エジプト',
+    'Sibiu': 'ルーマニア',
+    'Skiathos': 'ギリシャ',
+    'Skopje': '北マケドニア',
+    'Sofia': 'ブルガリア',
+    'Split': 'クロアチア',
+    'Stavanger': 'ノルウェー',
+    'Stockholm': 'スウェーデン',
+    'Stuttgart': 'ドイツ',
+    'Suceava': 'ルーマニア',
+    'Szczecin': 'ポーランド',
+    'Tallinn': 'エストニア',
+    'Tel Aviv': 'イスラエル',
+    'Tenerife': 'スペイン',
+    'Thessaloniki': 'ギリシャ',
+    'Timisoara': 'ルーマニア',
+    'Tirana': 'アルバニア',
+    'Trieste': 'イタリア',
+    'Tromsø': 'ノルウェー',
+    'Trondheim': 'ノルウェー',
+    'Turin': 'イタリア',
+    'Turku': 'フィンランド',
+    'Tuzla': 'ボスニア',
+    'Târgu-Mures': 'ルーマニア',
+    'Valencia': 'スペイン',
+    'Varna': 'ブルガリア',
+    'Venice': 'イタリア',
+    'Verona': 'イタリア',
+    'Vienna': 'オーストリア',
+    'Vilnius': 'リトアニア',
+    'Warsaw': 'ポーランド',
+    'Wroclaw': 'ポーランド',
+    'Yerevan': 'アルメニア',
+    'Zakynthos': 'ギリシャ',
+    'Zaragoza': 'スペイン'
 };
 
-// 地域分類
 const regionMap = {
-    'London': '西欧', 'Paris': '西欧', 'Brussels Charleroi': '西欧', 'Eindhoven': '西欧', 'Maastricht': '西欧',
-    'Dortmund': '西欧', 'Frankfurt': '西欧', 'Hamburg': '西欧', 'Cologne': '西欧', 'Memmingen': '西欧',
-    'Nuremberg': '西欧', 'Stuttgart': '西欧', 'Karlsruhe/Baden-Baden': '西欧', 'Friedrichshafen': '西欧',
-    'Basel': '西欧', 'Birmingham': '西欧', 'Leeds': '西欧', 'Liverpool': '西欧', 'Glasgow': '西欧',
-    'Aberdeen': '西欧', 'Bordeaux': '西欧', 'Lyon': '西欧', 'Grenoble': '西欧', 'Nice': '西欧', 'Berlin': '西欧',
-    'Budapest': '東欧', 'Bucharest': '東欧', 'Warsaw': '東欧', 'Prague': '東欧', 'Bratislava': '東欧',
-    'Vienna': '東欧', 'Krakow': '東欧', 'Gdansk': '東欧', 'Katowice': '東欧', 'Wroclaw': '東欧',
-    'Poznan': '東欧', 'Lublin': '東欧', 'Szczecin': '東欧', 'Olsztyn-Mazury': '東欧', 'Radom': '東欧',
-    'Cluj-Napoca': '東欧', 'Timisoara': '東欧', 'Iasi': '東欧', 'Sibiu': '東欧', 'Craiova': '東欧',
-    'Bacau': '東欧', 'Suceava': '東欧', 'Constanta': '東欧', 'Brasov': '東欧', 'Târgu-Mures': '東欧',
-    'Satu Mare': '東欧', 'Sofia': '東欧', 'Varna': '東欧', 'Burgas': '東欧', 'Plovdiv': '東欧',
-    'Chisinau': '東欧', 'Belgrade': '東欧', 'Niš': '東欧', 'Skopje': '東欧', 'Pristina': '東欧',
-    'Tirana': '東欧', 'Podgorica': '東欧', 'Sarajevo': '東欧', 'Banja Luka': '東欧', 'Tuzla': '東欧',
-    'Ljubljana': '東欧', 'Košice': '東欧', 'Poprad-Tatry': '東欧', 'Rzeszów': '東欧', 'Ohrid': '東欧',
-    'Rome': '南欧', 'Milan': '南欧', 'Venice': '南欧', 'Bologna': '南欧', 'Naples': '南欧',
-    'Bergamo': '南欧', 'Catania': '南欧', 'Bari': '南欧', 'Pisa': '南欧', 'Turin': '南欧',
-    'Genoa': '南欧', 'Verona': '南欧', 'Ancona': '南欧', 'Pescara': '南欧', 'Brindisi': '南欧',
-    'Alghero': '南欧', 'Olbia': '南欧', 'Perugia': '南欧', 'Rimini': '南欧', 'Trieste': '南欧',
-    'Comiso': '南欧', 'Lampedusa': '南欧', 'Barcelona': '南欧', 'Madrid': '南欧', 'Valencia': '南欧',
-    'Alicante': '南欧', 'Malaga': '南欧', 'Sevilla': '南欧', 'Bilbao': '南欧', 'Santander': '南欧',
+    'Aberdeen': '西欧',
+    'Abu Dhabi': '中東',
+    'Agadir': '中東',
+    'Alesund': '北欧',
+    'Alghero': '南欧',
+    'Alicante': '南欧',
+    'Amman': '中東',
+    'Ancona': '南欧',
     'Ankara': '中東',
-    'Zaragoza': '南欧', 'Castellon': '南欧', 'Mallorca': '南欧', 'Ibiza': '南欧', 'Tenerife': '南欧',
-    'Gran Canaria': '南欧', 'Fuerteventura': '南欧', 'Athens': '南欧', 'Thessaloniki': '南欧',
-    'Heraklion (Crete)': '南欧', 'Chania (Crete)': '南欧', 'Corfu': '南欧', 'Rhodes': '南欧',
+    'Antalya': '中東',
+    'Athens': '南欧',
+    'Bacau': '東欧',
+    'Baku': '中東',
+    'Banja Luka': '東欧',
+    'Barcelona': '南欧',
+    'Bari': '南欧',
+    'Basel': '西欧',
+    'Belgrade': '東欧',
+    'Bergamo': '南欧',
+    'Bergen': '北欧',
+    'Berlin': '西欧',
+    'Bilbao': '南欧',
+    'Billund': '北欧',
+    'Birmingham': '西欧',
+    'Bologna': '南欧',
+    'Bordeaux': '西欧',
+    'Brasov': '東欧',
+    'Bratislava': '東欧',
+    'Brindisi': '南欧',
+    'Brussels Charleroi': '西欧',
+    'Bucharest': '東欧',
+    'Budapest': '東欧',
+    'Burgas': '東欧',
+    'Cairo (Sphinx)': '中東',
+    'Castellon': '南欧',
+    'Catania': '南欧',
+    'Chania (Crete)': '南欧',
+    'Chisinau': '東欧',
+    'Cluj-Napoca': '東欧',
+    'Cologne': '西欧',
+    'Comiso': '南欧',
+    'Constanta': '東欧',
+    'Copenhagen': '北欧',
+    'Corfu': '南欧',
+    'Craiova': '東欧',
+    'Dalaman': '中東',
+    'Dortmund': '西欧',
+    'Dubai': '中東',
+    'Dubrovnik': '南欧',
+    'Eindhoven': '西欧',
+    'Faro (Algarve)': '南欧',
+    'Frankfurt': '西欧',
+    'Friedrichshafen': '西欧',
+    'Fuerteventura': '南欧',
+    'Funchal (Madeira)': '南欧',
+    'Gdansk': '東欧',
+    'Genoa': '南欧',
+    'Glasgow': '西欧',
+    'Gothenburg': '北欧',
+    'Gran Canaria': '南欧',
+    'Grenoble': '西欧',
+    'Gyumri': '中東',
+    'Hamburg': '西欧',
+    'Haugesund': '北欧',
+    'Heraklion (Crete)': '南欧',
+    'Hurghada': '中東',
+    'Iasi': '東欧',
+    'Ibiza': '南欧',
+    'Istanbul': '中東',
+    'Jeddah': '中東',
     'Kalamata': '南欧',
+    'Karlsruhe/Baden-Baden': '西欧',
+    'Katowice': '東欧',
+    'Kaunas': '北欧',
     'Kefalonia': '南欧',
+    'Košice': '東欧',
+    'Krakow': '東欧',
+    'Kutaisi': '中東',
+    'Lamezia Terme': '南欧',
+    'Lampedusa': '南欧',
+    'Larnaca': '南欧',
+    'Leeds': '西欧',
+    'Lisbon': '南欧',
+    'Liverpool': '西欧',
+    'Ljubljana': '東欧',
+    'London (LGW)': '西欧',
+    'London (LTN)': '西欧',
+    'Lublin': '東欧',
+    'Lyon': '西欧',
+    'Maastricht': '西欧',
+    'Madrid': '南欧',
+    'Malaga': '南欧',
+    'Mallorca': '南欧',
+    'Malmö': '北欧',
+    'Malta': '南欧',
+    'Marrakech': '中東',
+    'Marsa Alam': '中東',
+    'Medina': '中東',
+    'Memmingen': '西欧',
     'Menorca': '南欧',
-    'Mykonos': '南欧', 'Santorini': '南欧', 'Zakynthos': '南欧', 'Skiathos': '南欧', 'Lisbon': '南欧',
+    'Milan': '南欧',
+    'Mykonos': '南欧',
+    'Naples': '南欧',
+    'Nice': '西欧',
+    'Niš': '東欧',
+    'Nuremberg': '西欧',
+    'Ohrid': '東欧',
+    'Olbia': '南欧',
+    'Olsztyn-Mazury': '東欧',
     'Oradea': '東欧',
-    'Porto': '南欧', 'Faro (Algarve)': '南欧', 'Funchal (Madeira)': '南欧', 'Lamezia Terme': '南欧',
-    'Palermo': '南欧', 'Split': '南欧', 'Dubrovnik': '南欧', 'Malta': '南欧', 'Larnaca': '南欧', 'Paphos': '南欧',
-    'Copenhagen': '北欧', 'Stockholm': '北欧', 'Oslo': '北欧', 'Bergen': '北欧', 'Stavanger': '北欧',
-    'Tromsø': '北欧', 'Trondheim': '北欧', 'Haugesund': '北欧', 'Alesund': '北欧', 'Sandefjord': '北欧',
-    'Gothenburg': '北欧', 'Malmö': '北欧', 'Reykjavik': '北欧', 'Vilnius': '北欧', 'Kaunas': '北欧',
-    'Palanga': '北欧', 'Tallinn': '北欧', 'Turku': '北欧', 'Billund': '北欧',
-    'Tel Aviv': '中東', 'Dubai': '中東', 'Abu Dhabi': '中東', 'Amman': '中東', 'Cairo (Sphinx)': '中東',
-    'Hurghada': '中東', 'Sharm El Sheikh': '中東', 'Marsa Alam': '中東', 'Jeddah': '中東',
-    'Medina': '中東', 'Istanbul': '中東', 'Antalya': '中東', 'Dalaman': '中東', 'Baku': '中東',
+    'Oslo': '北欧',
+    'Palanga': '北欧',
+    'Palermo': '南欧',
+    'Paphos': '南欧',
+    'Paris': '西欧',
+    'Perugia': '南欧',
+    'Pescara': '南欧',
+    'Pisa': '南欧',
+    'Plovdiv': '東欧',
+    'Podgorica': '東欧',
+    'Poprad-Tatry': '東欧',
+    'Porto': '南欧',
+    'Poznan': '東欧',
+    'Prague': '東欧',
+    'Pristina': '東欧',
+    'Radom': '東欧',
+    'Reykjavik': '北欧',
+    'Rhodes': '南欧',
     'Rijeka': '南欧',
-    'Yerevan': '中東', 'Gyumri': '中東', 'Kutaisi': '中東', 'Marrakech': '中東', 'Agadir': '中東'
+    'Rimini': '南欧',
+    'Rome': '南欧',
+    'Rzeszów': '東欧',
+    'Sandefjord': '北欧',
+    'Santander': '南欧',
+    'Santorini': '南欧',
+    'Sarajevo': '東欧',
+    'Satu Mare': '東欧',
+    'Sevilla': '南欧',
+    'Sharm El Sheikh': '中東',
+    'Sibiu': '東欧',
+    'Skiathos': '南欧',
+    'Skopje': '東欧',
+    'Sofia': '東欧',
+    'Split': '南欧',
+    'Stavanger': '北欧',
+    'Stockholm': '北欧',
+    'Stuttgart': '西欧',
+    'Suceava': '東欧',
+    'Szczecin': '東欧',
+    'Tallinn': '北欧',
+    'Tel Aviv': '中東',
+    'Tenerife': '南欧',
+    'Thessaloniki': '南欧',
+    'Timisoara': '東欧',
+    'Tirana': '東欧',
+    'Trieste': '南欧',
+    'Tromsø': '北欧',
+    'Trondheim': '北欧',
+    'Turin': '南欧',
+    'Turku': '北欧',
+    'Tuzla': '東欧',
+    'Târgu-Mures': '東欧',
+    'Valencia': '南欧',
+    'Varna': '東欧',
+    'Venice': '南欧',
+    'Verona': '南欧',
+    'Vienna': '東欧',
+    'Vilnius': '北欧',
+    'Warsaw': '東欧',
+    'Wroclaw': '東欧',
+    'Yerevan': '中東',
+    'Zakynthos': '南欧',
+    'Zaragoza': '南欧'
 };
 
-// フライトデータ（全路線）- 省略して元のrawFlightDataを使用
 const rawFlightData = `Aberdeen - Gdansk
 Abu Dhabi - Budapest
 Abu Dhabi - Cluj-Napoca
@@ -224,18 +729,15 @@ Alicante - Budapest
 Alicante - Cluj-Napoca
 Alicante - Gdansk
 Alicante - Katowice
-Alicante - London
 Alicante - Milan
 Alicante - Rome
 Alicante - Warsaw
 Amman - Budapest
-Amman - London
 Ancona - Tirana
 Ankara - Budapest
 Antalya - Bucharest
 Antalya - Budapest
 Antalya - Cluj-Napoca
-Antalya - London
 Athens - Bratislava
 Athens - Bucharest
 Athens - Budapest
@@ -245,12 +747,10 @@ Athens - Gdansk
 Athens - Katowice
 Athens - Kutaisi
 Athens - Larnaca
-Athens - London
 Athens - Tel Aviv
 Athens - Tirana
 Athens - Venice
 Athens - Warsaw
-Bacau - London
 Bacau - Rome
 Baku - Budapest
 Baku - Rome
@@ -269,7 +769,6 @@ Barcelona - Katowice
 Barcelona - Krakow
 Barcelona - Kutaisi
 Barcelona - Larnaca
-Barcelona - London
 Barcelona - Milan
 Barcelona - Podgorica
 Barcelona - Rome
@@ -330,7 +829,6 @@ Belgrade - Grenoble
 Belgrade - Hamburg
 Belgrade - Karlsruhe/Baden-Baden
 Belgrade - Larnaca
-Belgrade - London
 Belgrade - Madrid
 Belgrade - Malmö
 Belgrade - Malta
@@ -375,7 +873,6 @@ Berlin - Tuzla
 Berlin - Varna
 Bilbao - Budapest
 Bilbao - Krakow
-Bilbao - London
 Bilbao - Rome
 Bilbao - Warsaw
 Billund - Bucharest
@@ -405,13 +902,11 @@ Bologna - Timisoara
 Bologna - Tirana
 Bologna - Warsaw
 Bordeaux - Bucharest
-Bordeaux - London
 Bordeaux - Rome
 Bordeaux - Venice
 Brasov - Budapest
 Brasov - Dortmund
 Brasov - Katowice
-Brasov - London
 Brasov - Memmingen
 Brasov - Milan
 Brasov - Naples
@@ -430,7 +925,6 @@ Bratislava - Košice
 Bratislava - Kutaisi
 Bratislava - Lamezia Terme
 Bratislava - Larnaca
-Bratislava - London
 Bratislava - Malaga
 Bratislava - Mykonos
 Bratislava - Naples
@@ -504,7 +998,6 @@ Bucharest - Larnaca
 Bucharest - Leeds
 Bucharest - Lisbon
 Bucharest - Liverpool
-Bucharest - London
 Bucharest - Lyon
 Bucharest - Maastricht
 Bucharest - Madrid
@@ -584,7 +1077,6 @@ Budapest - Kutaisi
 Budapest - Lamezia Terme
 Budapest - Larnaca
 Budapest - Lisbon
-Budapest - London
 Budapest - Madrid
 Budapest - Malaga
 Budapest - Mallorca
@@ -624,11 +1116,9 @@ Budapest - Zakynthos
 Burgas - Budapest
 Burgas - Gdansk
 Burgas - Katowice
-Burgas - London
 Burgas - Lublin
 Burgas - Warsaw
 Cairo (Sphinx) - Budapest
-Cairo (Sphinx) - London
 Cairo (Sphinx) - Milan
 Cairo (Sphinx) - Rome
 Castellon - Bucharest
@@ -639,7 +1129,6 @@ Catania - Budapest
 Catania - Cluj-Napoca
 Catania - Gdansk
 Catania - Katowice
-Catania - London
 Catania - Memmingen
 Catania - Milan
 Catania - Prague
@@ -651,7 +1140,6 @@ Catania - Vilnius
 Catania - Warsaw
 Catania - Wroclaw
 Chania (Crete) - Belgrade
-Chania (Crete) - London
 Chania (Crete) - Rome
 Chania (Crete) - Warsaw
 Chisinau - Athens
@@ -672,7 +1160,6 @@ Chisinau - Hamburg
 Chisinau - Karlsruhe/Baden-Baden
 Chisinau - Katowice
 Chisinau - Larnaca
-Chisinau - London
 Chisinau - Maastricht
 Chisinau - Memmingen
 Chisinau - Milan
@@ -709,7 +1196,6 @@ Cluj-Napoca - Heraklion (Crete)
 Cluj-Napoca - Larnaca
 Cluj-Napoca - Leeds
 Cluj-Napoca - Lisbon
-Cluj-Napoca - London
 Cluj-Napoca - Lyon
 Cluj-Napoca - Madrid
 Cluj-Napoca - Malaga
@@ -737,7 +1223,6 @@ Cologne - Skopje
 Cologne - Tirana
 Cologne - Tuzla
 Comiso - Tirana
-Constanta - London
 Constanta - Rome
 Copenhagen - Bucharest
 Copenhagen - Budapest
@@ -749,7 +1234,6 @@ Corfu - Bucharest
 Corfu - Budapest
 Corfu - Cluj-Napoca
 Corfu - Katowice
-Corfu - London
 Corfu - Milan
 Corfu - Rome
 Corfu - Warsaw
@@ -761,16 +1245,13 @@ Craiova - Birmingham
 Craiova - Bologna
 Craiova - Brussels Charleroi
 Craiova - Dortmund
-Craiova - London
 Craiova - Madrid
 Craiova - Memmingen
 Craiova - Naples
 Craiova - Paris
 Craiova - Rome
-Dalaman - London
 Debrecen - Eindhoven
 Debrecen - Larnaca
-Debrecen - London
 Debrecen - Tel Aviv
 Dortmund - Banja Luka
 Dortmund - Belgrade
@@ -785,7 +1266,6 @@ Dortmund - Gdansk
 Dortmund - Iasi
 Dortmund - Katowice
 Dortmund - Kutaisi
-Dortmund - London
 Dortmund - Niš
 Dortmund - Ohrid
 Dortmund - Olsztyn-Mazury
@@ -827,7 +1307,6 @@ Eindhoven - Warsaw
 Eindhoven - Wroclaw
 Faro (Algarve) - Bucharest
 Faro (Algarve) - Katowice
-Faro (Algarve) - London
 Faro (Algarve) - Warsaw
 Frankfurt - Bucharest
 Frankfurt - Chisinau
@@ -869,7 +1348,6 @@ Gdansk - Haugesund
 Gdansk - Heraklion (Crete)
 Gdansk - Larnaca
 Gdansk - Liverpool
-Gdansk - London
 Gdansk - Madrid
 Gdansk - Malaga
 Gdansk - Mallorca
@@ -906,7 +1384,6 @@ Gran Canaria - Bucharest
 Gran Canaria - Budapest
 Gran Canaria - Wroclaw
 Grenoble - Belgrade
-Grenoble - London
 Grenoble - Vilnius
 Grenoble - Warsaw
 Gyumri - Larnaca
@@ -933,7 +1410,6 @@ Heraklion (Crete) - Milan
 Heraklion (Crete) - Rome
 Heraklion (Crete) - Warsaw
 Hurghada - Budapest
-Hurghada - London
 Hurghada - Rome
 Hurghada - Vienna
 Iasi - Barcelona
@@ -948,7 +1424,6 @@ Iasi - Eindhoven
 Iasi - Istanbul
 Iasi - Larnaca
 Iasi - Liverpool
-Iasi - London
 Iasi - Madrid
 Iasi - Memmingen
 Iasi - Paris
@@ -962,9 +1437,7 @@ Iasi - Venice
 Ibiza - Rome
 Istanbul - Budapest
 Istanbul - Iasi
-Istanbul - London
 Jeddah - Budapest
-Jeddah - London
 Jeddah - Milan
 Jeddah - Rome
 Jeddah - Vienna
@@ -998,7 +1471,6 @@ Katowice - Funchal (Madeira)
 Katowice - Kutaisi
 Katowice - Lamezia Terme
 Katowice - Larnaca
-Katowice - London
 Katowice - Maastricht
 Katowice - Madrid
 Katowice - Malaga
@@ -1015,12 +1487,10 @@ Katowice - Rome
 Katowice - Split
 Katowice - Tenerife
 Katowice - Tirana
-Kaunas - London
 Kefalonia - Bucharest
 Kefalonia - Budapest
 Kefalonia - Rome
 Košice - Bratislava
-Košice - London
 Košice - Rome
 Krakow - Abu Dhabi
 Krakow - Barcelona
@@ -1033,7 +1503,6 @@ Krakow - Eindhoven
 Krakow - Genoa
 Krakow - Heraklion (Crete)
 Krakow - Larnaca
-Krakow - London
 Krakow - Lyon
 Krakow - Malaga
 Krakow - Milan
@@ -1098,7 +1567,6 @@ Larnaca - Iasi
 Larnaca - Katowice
 Larnaca - Krakow
 Larnaca - Kutaisi
-Larnaca - London
 Larnaca - Milan
 Larnaca - Prague
 Larnaca - Radom
@@ -1132,87 +1600,7 @@ Liverpool - Iasi
 Liverpool - Warsaw
 Ljubljana - Podgorica
 Ljubljana - Skopje
-London - Alicante
-London - Amman
-London - Antalya
-London - Athens
-London - Bacau
-London - Barcelona
-London - Belgrade
-London - Bilbao
-London - Bordeaux
-London - Brasov
-London - Bratislava
-London - Bucharest
-London - Budapest
-London - Burgas
-London - Cairo (Sphinx)
-London - Catania
-London - Chania (Crete)
-London - Chisinau
-London - Cluj-Napoca
-London - Constanta
-London - Corfu
-London - Craiova
-London - Dalaman
-London - Debrecen
-London - Dortmund
-London - Faro (Algarve)
-London - Gdansk
-London - Grenoble
-London - Hurghada
-London - Iasi
-London - Istanbul
-London - Jeddah
-London - Katowice
-London - Kaunas
-London - Košice
-London - Krakow
-London - Larnaca
-London - Lublin
-London - Lyon
-London - Madrid
-London - Malaga
-London - Mallorca
-London - Marrakech
-London - Medina
-London - Milan
-London - Mykonos
-London - Plovdiv
-London - Podgorica
-London - Poprad-Tatry
-London - Poznan
-London - Prague
-London - Pristina
-London - Rhodes
-London - Rome
-London - Sarajevo
-London - Satu Mare
-London - Sevilla
-London - Sharm El Sheikh
-London - Sibiu
-London - Skopje
-London - Sofia
-London - Split
-London - Suceava
-London - Tallinn
-London - Tel Aviv
-London - Timisoara
-London - Tirana
-London - Tromsø
-London - Turin
-London - Târgu-Mures
-London - Valencia
-London - Varna
-London - Venice
-London - Vienna
-London - Vilnius
-London - Warsaw
-London - Wroclaw
-London - Yerevan
-London - Zakynthos
 Lublin - Burgas
-Lublin - London
 Lublin - Maastricht
 Lublin - Rijeka
 Lublin - Split
@@ -1220,7 +1608,6 @@ Lyon - Bucharest
 Lyon - Cluj-Napoca
 Lyon - Krakow
 Lyon - Kutaisi
-Lyon - London
 Lyon - Skopje
 Lyon - Sofia
 Lyon - Tirana
@@ -1239,7 +1626,6 @@ Madrid - Gdansk
 Madrid - Iasi
 Madrid - Katowice
 Madrid - Kutaisi
-Madrid - London
 Madrid - Milan
 Madrid - Rome
 Madrid - Sibiu
@@ -1257,7 +1643,6 @@ Malaga - Cluj-Napoca
 Malaga - Gdansk
 Malaga - Katowice
 Malaga - Krakow
-Malaga - London
 Malaga - Milan
 Malaga - Rome
 Malaga - Sofia
@@ -1270,7 +1655,6 @@ Mallorca - Bucharest
 Mallorca - Budapest
 Mallorca - Cluj-Napoca
 Mallorca - Gdansk
-Mallorca - London
 Mallorca - Milan
 Mallorca - Naples
 Mallorca - Rome
@@ -1294,14 +1678,12 @@ Malta - Warsaw
 Marrakech - Bucharest
 Marrakech - Budapest
 Marrakech - Cluj-Napoca
-Marrakech - London
 Marrakech - Milan
 Marrakech - Rome
 Marrakech - Sofia
 Marrakech - Warsaw
 Marsa Alam - Milan
 Marsa Alam - Rome
-Medina - London
 Memmingen - Belgrade
 Memmingen - Brasov
 Memmingen - Bucharest
@@ -1347,7 +1729,6 @@ Milan - Krakow
 Milan - Kutaisi
 Milan - Lampedusa
 Milan - Larnaca
-Milan - London
 Milan - Madrid
 Milan - Malaga
 Milan - Mallorca
@@ -1373,7 +1754,6 @@ Milan - Yerevan
 Milan - Zakynthos
 Mykonos - Bratislava
 Mykonos - Bucharest
-Mykonos - London
 Mykonos - Rome
 Naples - Brasov
 Naples - Bratislava
@@ -1471,7 +1851,6 @@ Pisa - Katowice
 Pisa - Tirana
 Pisa - Warsaw
 Plovdiv - Bratislava
-Plovdiv - London
 Podgorica - Barcelona
 Podgorica - Basel
 Podgorica - Budapest
@@ -1482,7 +1861,6 @@ Podgorica - Hamburg
 Podgorica - Karlsruhe/Baden-Baden
 Podgorica - Katowice
 Podgorica - Ljubljana
-Podgorica - London
 Podgorica - Maastricht
 Podgorica - Malmö
 Podgorica - Memmingen
@@ -1495,14 +1873,12 @@ Podgorica - Vilnius
 Podgorica - Warsaw
 Podgorica - Wroclaw
 Poprad-Tatry - Gdansk
-Poprad-Tatry - London
 Porto - Bucharest
 Porto - Katowice
 Porto - Rome
 Porto - Warsaw
 Poznan - Basel
 Poznan - Kutaisi
-Poznan - London
 Poznan - Podgorica
 Poznan - Tirana
 Prague - Bucharest
@@ -1511,7 +1887,6 @@ Prague - Chisinau
 Prague - Iasi
 Prague - Kutaisi
 Prague - Larnaca
-Prague - London
 Prague - Rome
 Prague - Skopje
 Prague - Sofia
@@ -1519,7 +1894,6 @@ Prague - Tirana
 Prague - Yerevan
 Pristina - Bratislava
 Pristina - Dortmund
-Pristina - London
 Pristina - Memmingen
 Pristina - Milan
 Pristina - Rome
@@ -1534,7 +1908,6 @@ Reykjavik - Vilnius
 Reykjavik - Warsaw
 Reykjavik - Wroclaw
 Rhodes - Budapest
-Rhodes - London
 Rhodes - Rome
 Rhodes - Tel Aviv
 Rhodes - Warsaw
@@ -1579,7 +1952,6 @@ Rome - Kutaisi
 Rome - Lampedusa
 Rome - Larnaca
 Rome - Lisbon
-Rome - London
 Rome - Madrid
 Rome - Malaga
 Rome - Mallorca
@@ -1633,17 +2005,13 @@ Santorini - Bucharest
 Santorini - Budapest
 Santorini - Rome
 Santorini - Warsaw
-Sarajevo - London
 Sarajevo - Rome
-Satu Mare - London
 Sevilla - Bucharest
-Sevilla - London
 Sevilla - Milan
 Sevilla - Rome
 Sevilla - Warsaw
 Sharm El Sheikh - Budapest
 Sharm El Sheikh - Catania
-Sharm El Sheikh - London
 Sharm El Sheikh - Milan
 Sharm El Sheikh - Naples
 Sharm El Sheikh - Rome
@@ -1655,7 +2023,6 @@ Sibiu - Dortmund
 Sibiu - Frankfurt
 Sibiu - Hamburg
 Sibiu - Karlsruhe/Baden-Baden
-Sibiu - London
 Sibiu - Madrid
 Sibiu - Memmingen
 Sibiu - Nuremberg
@@ -1680,7 +2047,6 @@ Skopje - Hamburg
 Skopje - Karlsruhe/Baden-Baden
 Skopje - Larnaca
 Skopje - Ljubljana
-Skopje - London
 Skopje - Lyon
 Skopje - Madrid
 Skopje - Malmö
@@ -1710,7 +2076,6 @@ Sofia - Hamburg
 Sofia - Krakow
 Sofia - Lamezia Terme
 Sofia - Larnaca
-Sofia - London
 Sofia - Lyon
 Sofia - Madrid
 Sofia - Malaga
@@ -1732,7 +2097,6 @@ Sofia - Warsaw
 Split - Gdansk
 Split - Katowice
 Split - Krakow
-Split - London
 Split - Lublin
 Split - Warsaw
 Split - Wroclaw
@@ -1759,7 +2123,6 @@ Suceava - Brussels Charleroi
 Suceava - Dortmund
 Suceava - Karlsruhe/Baden-Baden
 Suceava - Larnaca
-Suceava - London
 Suceava - Memmingen
 Suceava - Milan
 Suceava - Rome
@@ -1770,7 +2133,6 @@ Szczecin - Oslo
 Tallinn - Budapest
 Tallinn - Gdansk
 Tallinn - Krakow
-Tallinn - London
 Tallinn - Rome
 Tallinn - Tirana
 Tallinn - Venice
@@ -1785,7 +2147,6 @@ Tel Aviv - Debrecen
 Tel Aviv - Iasi
 Tel Aviv - Krakow
 Tel Aviv - Larnaca
-Tel Aviv - London
 Tel Aviv - Milan
 Tel Aviv - Naples
 Tel Aviv - Rhodes
@@ -1820,7 +2181,6 @@ Timisoara - Dortmund
 Timisoara - Frankfurt
 Timisoara - Karlsruhe/Baden-Baden
 Timisoara - Larnaca
-Timisoara - London
 Timisoara - Madrid
 Timisoara - Memmingen
 Timisoara - Naples
@@ -1856,7 +2216,6 @@ Tirana - Karlsruhe/Baden-Baden
 Tirana - Katowice
 Tirana - Krakow
 Tirana - Larnaca
-Tirana - London
 Tirana - Lyon
 Tirana - Madrid
 Tirana - Malaga
@@ -1894,14 +2253,12 @@ Tirana - Warsaw
 Tirana - Wroclaw
 Trieste - Tirana
 Tromsø - Gdansk
-Tromsø - London
 Trondheim - Gdansk
 Turin - Bucharest
 Turin - Budapest
 Turin - Catania
 Turin - Chisinau
 Turin - Iasi
-Turin - London
 Turin - Sofia
 Turin - Tirana
 Turin - Warsaw
@@ -1927,7 +2284,6 @@ Târgu-Mures - Brussels Charleroi
 Târgu-Mures - Budapest
 Târgu-Mures - Dortmund
 Târgu-Mures - Larnaca
-Târgu-Mures - London
 Târgu-Mures - Memmingen
 Târgu-Mures - Paris
 Târgu-Mures - Rome
@@ -1936,7 +2292,6 @@ Valencia - Budapest
 Valencia - Cluj-Napoca
 Valencia - Iasi
 Valencia - Krakow
-Valencia - London
 Valencia - Milan
 Valencia - Rome
 Valencia - Sofia
@@ -1953,7 +2308,6 @@ Varna - Dortmund
 Varna - Eindhoven
 Varna - Frankfurt
 Varna - Hamburg
-Varna - London
 Varna - Memmingen
 Varna - Nuremberg
 Varna - Rome
@@ -1971,7 +2325,6 @@ Venice - Iasi
 Venice - Krakow
 Venice - Kutaisi
 Venice - Larnaca
-Venice - London
 Venice - Madrid
 Venice - Sharm El Sheikh
 Venice - Skopje
@@ -1997,7 +2350,6 @@ Vienna - Hurghada
 Vienna - Jeddah
 Vienna - Kutaisi
 Vienna - Larnaca
-Vienna - London
 Vienna - Malaga
 Vienna - Ohrid
 Vienna - Pristina
@@ -2018,7 +2370,6 @@ Vilnius - Grenoble
 Vilnius - Krakow
 Vilnius - Kutaisi
 Vilnius - Larnaca
-Vilnius - London
 Vilnius - Malaga
 Vilnius - Milan
 Vilnius - Nice
@@ -2066,7 +2417,6 @@ Warsaw - Larnaca
 Warsaw - Leeds
 Warsaw - Lisbon
 Warsaw - Liverpool
-Warsaw - London
 Warsaw - Madrid
 Warsaw - Malaga
 Warsaw - Mallorca
@@ -2113,7 +2463,6 @@ Wroclaw - Eindhoven
 Wroclaw - Gran Canaria
 Wroclaw - Kutaisi
 Wroclaw - Larnaca
-Wroclaw - London
 Wroclaw - Madrid
 Wroclaw - Malaga
 Wroclaw - Nice
@@ -2130,7 +2479,6 @@ Yerevan - Budapest
 Yerevan - Dortmund
 Yerevan - Hamburg
 Yerevan - Larnaca
-Yerevan - London
 Yerevan - Memmingen
 Yerevan - Milan
 Yerevan - Naples
@@ -2143,14 +2491,576 @@ Yerevan - Vienna
 Zakynthos - Bucharest
 Zakynthos - Budapest
 Zakynthos - Cluj-Napoca
-Zakynthos - London
 Zakynthos - Milan
 Zakynthos - Rome
 Zakynthos - Timisoara
 Zakynthos - Warsaw
 Zaragoza - Bucharest
 Zaragoza - Cluj-Napoca
-Zaragoza - Rome`;
+Zaragoza - Rome
+London (LGW) - Antalya
+Antalya - London (LGW)
+London (LGW) - Budapest
+Budapest - London (LGW)
+London (LGW) - Catania
+Catania - London (LGW)
+London (LGW) - Dalaman
+Dalaman - London (LGW)
+London (LGW) - Faro (Algarve)
+Faro (Algarve) - London (LGW)
+London (LGW) - Grenoble
+Grenoble - London (LGW)
+London (LGW) - Istanbul
+Istanbul - London (LGW)
+London (LGW) - Jeddah
+Jeddah - London (LGW)
+London (LGW) - Krakow
+Krakow - London (LGW)
+London (LGW) - Larnaca
+Larnaca - London (LGW)
+London (LGW) - Lyon
+Lyon - London (LGW)
+London (LGW) - Medina
+Medina - London (LGW)
+London (LGW) - Malaga
+Malaga - London (LGW)
+London (LGW) - Marrakech
+Marrakech - London (LGW)
+London (LGW) - Podgorica
+Podgorica - London (LGW)
+London (LGW) - Prague
+Prague - London (LGW)
+London (LGW) - Sharm El Sheikh
+Sharm El Sheikh - London (LGW)
+London (LGW) - Tel Aviv
+Tel Aviv - London (LGW)
+London (LGW) - Tirana
+Tirana - London (LGW)
+London (LGW) - Valencia
+Valencia - London (LGW)
+London (LGW) - Varna
+Varna - London (LGW)
+London (LGW) - Warsaw
+Warsaw - London (LGW)
+London (LGW) - Wroclaw
+Wroclaw - London (LGW)
+London (LTN) - Alicante
+Alicante - London (LTN)
+London (LTN) - Amman
+Amman - London (LTN)
+London (LTN) - Antalya
+Antalya - London (LTN)
+London (LTN) - Athens
+Athens - London (LTN)
+London (LTN) - Bacau
+Bacau - London (LTN)
+London (LTN) - Barcelona
+Barcelona - London (LTN)
+London (LTN) - Belgrade
+Belgrade - London (LTN)
+London (LTN) - Bilbao
+Bilbao - London (LTN)
+London (LTN) - Bordeaux
+Bordeaux - London (LTN)
+London (LTN) - Burgas
+Burgas - London (LTN)
+London (LTN) - Brasov
+Brasov - London (LTN)
+London (LTN) - Bratislava
+Bratislava - London (LTN)
+London (LTN) - Bucharest
+Bucharest - London (LTN)
+London (LTN) - Budapest
+Budapest - London (LTN)
+London (LTN) - Cairo (Sphinx)
+Cairo (Sphinx) - London (LTN)
+London (LTN) - Chania (Crete)
+Chania (Crete) - London (LTN)
+London (LTN) - Chisinau
+Chisinau - London (LTN)
+London (LTN) - Cluj-Napoca
+Cluj-Napoca - London (LTN)
+London (LTN) - Constanta
+Constanta - London (LTN)
+London (LTN) - Corfu
+Corfu - London (LTN)
+London (LTN) - Craiova
+Craiova - London (LTN)
+London (LTN) - Debrecen
+Debrecen - London (LTN)
+London (LTN) - Dortmund
+Dortmund - London (LTN)
+London (LTN) - Faro (Algarve)
+Faro (Algarve) - London (LTN)
+London (LTN) - Gdansk
+Gdansk - London (LTN)
+London (LTN) - Grenoble
+Grenoble - London (LTN)
+London (LTN) - Hurghada
+Hurghada - London (LTN)
+London (LTN) - Iasi
+Iasi - London (LTN)
+London (LTN) - Istanbul
+Istanbul - London (LTN)
+London (LTN) - Katowice
+Katowice - London (LTN)
+London (LTN) - Kaunas
+Kaunas - London (LTN)
+London (LTN) - Košice
+Košice - London (LTN)
+London (LTN) - Krakow
+Krakow - London (LTN)
+London (LTN) - Larnaca
+Larnaca - London (LTN)
+London (LTN) - Lublin
+Lublin - London (LTN)
+London (LTN) - Lyon
+Lyon - London (LTN)
+London (LTN) - Madrid
+Madrid - London (LTN)
+London (LTN) - Milan
+Milan - London (LTN)
+London (LTN) - Mykonos
+Mykonos - London (LTN)
+London (LTN) - Mallorca
+Mallorca - London (LTN)
+London (LTN) - Plovdiv
+Plovdiv - London (LTN)
+London (LTN) - Poprad-Tatry
+Poprad-Tatry - London (LTN)
+London (LTN) - Poznan
+Poznan - London (LTN)
+London (LTN) - Prague
+Prague - London (LTN)
+London (LTN) - Pristina
+Pristina - London (LTN)
+London (LTN) - Rhodes
+Rhodes - London (LTN)
+London (LTN) - Rome
+Rome - London (LTN)
+London (LTN) - Sarajevo
+Sarajevo - London (LTN)
+London (LTN) - Satu Mare
+Satu Mare - London (LTN)
+London (LTN) - Sevilla
+Sevilla - London (LTN)
+London (LTN) - Sharm El Sheikh
+Sharm El Sheikh - London (LTN)
+London (LTN) - Sibiu
+Sibiu - London (LTN)
+London (LTN) - Skopje
+Skopje - London (LTN)
+London (LTN) - Sofia
+Sofia - London (LTN)
+London (LTN) - Split
+Split - London (LTN)
+London (LTN) - Suceava
+Suceava - London (LTN)
+London (LTN) - Tallinn
+Tallinn - London (LTN)
+London (LTN) - Tel Aviv
+Tel Aviv - London (LTN)
+London (LTN) - Timisoara
+Timisoara - London (LTN)
+London (LTN) - Tirana
+Tirana - London (LTN)
+London (LTN) - Târgu-Mures
+Târgu-Mures - London (LTN)
+London (LTN) - Tromsø
+Tromsø - London (LTN)
+London (LTN) - Turin
+Turin - London (LTN)
+London (LTN) - Valencia
+Valencia - London (LTN)
+London (LTN) - Varna
+Varna - London (LTN)
+London (LTN) - Venice
+Venice - London (LTN)
+London (LTN) - Vienna
+Vienna - London (LTN)
+London (LTN) - Vilnius
+Vilnius - London (LTN)
+London (LTN) - Warsaw
+Warsaw - London (LTN)
+London (LTN) - Wroclaw
+Wroclaw - London (LTN)
+London (LTN) - Yerevan
+Yerevan - London (LTN)
+London (LTN) - Zakynthos
+Zakynthos - London (LTN)`;
 
-window.AIRPORT_DATA = { airportCodes, cityNames, countryMap, regionMap, rawFlightData };
+const airportGoogleMap = {
+'Aberdeen': 'https://www.google.com/maps/search/Aberdeen+International+Airport+ABZ',
+'Abu Dhabi': 'https://www.google.com/maps/search/Zayed+International+Airport+AUH',
+'Agadir': 'https://www.google.com/maps/search/Agadir+Al+Massira+Airport+AGA',
+'Alesund': 'https://www.google.com/maps/search/Alesund+Airport+AES',
+'Alghero': 'https://www.google.com/maps/search/Alghero+Fertilia+Airport+AHO',
+'Alicante': 'https://www.google.com/maps/search/Alicante+Elche+Miguel+Hernandez+Airport+ALC',
+'Amman': 'https://www.google.com/maps/search/Queen+Alia+International+Airport+AMM',
+'Ancona': 'https://www.google.com/maps/search/Ancona+Airport+AOI',
+'Ankara': 'https://www.google.com/maps/search/Ankara+Esenboga+Airport+ESB',
+'Antalya': 'https://www.google.com/maps/search/Antalya+Airport+AYT',
+'Athens': 'https://www.google.com/maps/search/Athens+International+Airport+ATH',
+'Bacau': 'https://www.google.com/maps/search/Bacau+George+Enescu+International+Airport+BCM',
+'Baku': 'https://www.google.com/maps/search/Heydar+Aliyev+International+Airport+GYD',
+'Banja Luka': 'https://www.google.com/maps/search/Banja+Luka+International+Airport+BNX',
+'Barcelona': 'https://www.google.com/maps/search/Barcelona+El+Prat+Airport+BCN',
+'Bari': 'https://www.google.com/maps/search/Bari+Karol+Wojtyla+Airport+BRI',
+'Basel': 'https://www.google.com/maps/search/EuroAirport+Basel+Mulhouse+Freiburg+BSL',
+'Belgrade': 'https://www.google.com/maps/search/Belgrade+Nikola+Tesla+Airport+BEG',
+'Bergamo': 'https://www.google.com/maps/search/Orio+al+Serio+International+Airport+BGY',
+'Bergen': 'https://www.google.com/maps/search/Bergen+Airport+BGO',
+'Berlin': 'https://www.google.com/maps/search/Berlin+Brandenburg+Airport+BER',
+'Bilbao': 'https://www.google.com/maps/search/Bilbao+Airport+BIO',
+'Billund': 'https://www.google.com/maps/search/Billund+Airport+BLL',
+'Birmingham': 'https://www.google.com/maps/search/Birmingham+Airport+BHX',
+'Bologna': 'https://www.google.com/maps/search/Bologna+Guglielmo+Marconi+Airport+BLQ',
+'Bordeaux': 'https://www.google.com/maps/search/Bordeaux+Merignac+Airport+BOD',
+'Brasov': 'https://www.google.com/maps/search/Brasov+Ghimbav+International+Airport+GHV',
+'Bratislava': 'https://www.google.com/maps/search/Bratislava+Airport+BTS',
+'Brindisi': 'https://www.google.com/maps/search/Brindisi+Airport+BDS',
+'Brussels Charleroi': 'https://www.google.com/maps/search/Brussels+South+Charleroi+Airport+CRL',
+'Bucharest': 'https://www.google.com/maps/search/Henri+Coanda+International+Airport+OTP',
+'Budapest': 'https://www.google.com/maps/search/Budapest+Ferenc+Liszt+International+Airport+BUD',
+'Burgas': 'https://www.google.com/maps/search/Burgas+Airport+BOJ',
+'Cairo (Sphinx)': 'https://www.google.com/maps/search/Sphinx+International+Airport+SPX',
+'Cairo Sphinx': 'https://www.google.com/maps/search/Sphinx+International+Airport+SPX',
+'Castellon': 'https://www.google.com/maps/search/Castellon+Airport+CDT',
+'Catania': 'https://www.google.com/maps/search/Catania+Fontanarossa+Airport+CTA',
+'Chania': 'https://www.google.com/maps/search/Chania+International+Airport+CHQ',
+'Chania (Crete)': 'https://www.google.com/maps/search/Chania+%28Crete%29+Airport+CHQ%27%2C+%27Chisinau%27%3A+%27RMO%27%2C+%27Cluj-Napoca%27%3A+%27CLJ',
+'Chisinau': 'https://www.google.com/maps/search/Chisinau+International+Airport+RMO',
+'Cluj-Napoca': 'https://www.google.com/maps/search/Avram+Iancu+Cluj+International+Airport+CLJ',
+'Cologne': 'https://www.google.com/maps/search/Cologne+Bonn+Airport+CGN',
+'Comiso': 'https://www.google.com/maps/search/Comiso+Airport+CIY',
+'Constanta': 'https://www.google.com/maps/search/Mihail+Kogalniceanu+International+Airport+CND',
+'Copenhagen': 'https://www.google.com/maps/search/Copenhagen+Airport+CPH',
+'Corfu': 'https://www.google.com/maps/search/Corfu+International+Airport+CFU',
+'Craiova': 'https://www.google.com/maps/search/Craiova+International+Airport+CRA',
+'Dalaman': 'https://www.google.com/maps/search/Dalaman+Airport+DLM',
+'Debrecen': 'https://www.google.com/maps/search/Debrecen+International+Airport+DEB',
+'Dortmund': 'https://www.google.com/maps/search/Dortmund+Airport+DTM',
+'Dubai': 'https://www.google.com/maps/search/Dubai+International+Airport+DXB',
+'Dubrovnik': 'https://www.google.com/maps/search/Dubrovnik+Airport+DBV',
+'Eindhoven': 'https://www.google.com/maps/search/Eindhoven+Airport+EIN',
+'Faro': 'https://www.google.com/maps/search/Faro+Airport+FAO',
+'Faro (Algarve)': 'https://www.google.com/maps/search/Faro+%28Algarve%29+Airport+FAO%27%2C+%27Frankfurt%27%3A+%27FRA%27%2C+%27Friedrichshafen%27%3A+%27FDH',
+'Frankfurt': 'https://www.google.com/maps/search/Frankfurt+Airport+FRA',
+'Friedrichshafen': 'https://www.google.com/maps/search/Friedrichshafen+Airport+FDH',
+'Fuerteventura': 'https://www.google.com/maps/search/Fuerteventura+Airport+FUE',
+'Funchal (Madeira)': 'https://www.google.com/maps/search/Funchal+%28Madeira%29+Airport+FNC',
+'Gdansk': 'https://www.google.com/maps/search/Gdansk+Lech+Walesa+Airport+GDN',
+'Genoa': 'https://www.google.com/maps/search/Genoa+Cristoforo+Colombo+Airport+GOA',
+'Glasgow': 'https://www.google.com/maps/search/Glasgow+Airport+GLA',
+'Gothenburg': 'https://www.google.com/maps/search/Goteborg+Landvetter+Airport+GOT',
+'Gran Canaria': 'https://www.google.com/maps/search/Gran+Canaria+Airport+LPA',
+'Grenoble': 'https://www.google.com/maps/search/Grenoble+Alpes+Isere+Airport+GNB',
+'Gyumri': 'https://www.google.com/maps/search/Shirak+International+Airport+LWN',
+'Hamburg': 'https://www.google.com/maps/search/Hamburg+Airport+HAM',
+'Haugesund': 'https://www.google.com/maps/search/Haugesund+Airport+HAU',
+'Heraklion': 'https://www.google.com/maps/search/Heraklion+International+Airport+HER',
+'Heraklion (Crete)': 'https://www.google.com/maps/search/Heraklion+%28Crete%29+Airport+HER%27%2C+%27Hurghada%27%3A+%27HRG%27%2C+%27Iasi%27%3A+%27IAS%27%2C+%27Ibiza%27%3A+%27IBZ',
+'Hurghada': 'https://www.google.com/maps/search/Hurghada+International+Airport+HRG',
+'Iasi': 'https://www.google.com/maps/search/Iasi+International+Airport+IAS',
+'Ibiza': 'https://www.google.com/maps/search/Ibiza+Airport+IBZ',
+'Istanbul': 'https://www.google.com/maps/search/Istanbul+Airport+IST',
+'Jeddah': 'https://www.google.com/maps/search/King+Abdulaziz+International+Airport+JED',
+'Kalamata': 'https://www.google.com/maps/search/Kalamata+International+Airport+KLX',
+'Karlsruhe/Baden-Baden': 'https://www.google.com/maps/search/Karlsruhe+Baden+Baden+Airport+FKB',
+'Katowice': 'https://www.google.com/maps/search/Katowice+Airport+KTW',
+'Kaunas': 'https://www.google.com/maps/search/Kaunas+Airport+KUN',
+'Kefalonia': 'https://www.google.com/maps/search/Kefalonia+International+Airport+EFL',
+'Keflavik': 'https://www.google.com/maps/search/Keflavik+International+Airport+KEF',
+'Kosice': 'https://www.google.com/maps/search/Kosice+International+Airport+KSC',
+'Košice': 'https://www.google.com/maps/search/Ko%C5%A1ice+Airport+KSC',
+'Krakow': 'https://www.google.com/maps/search/Krakow+John+Paul+II+International+Airport+KRK',
+'Kutaisi': 'https://www.google.com/maps/search/Kutaisi+International+Airport+KUT',
+'Lamezia Terme': 'https://www.google.com/maps/search/Lamezia+Terme+International+Airport+SUF',
+'Lampedusa': 'https://www.google.com/maps/search/Lampedusa+Airport+LMP',
+'Larnaca': 'https://www.google.com/maps/search/Larnaca+International+Airport+LCA',
+'Leeds': 'https://www.google.com/maps/search/Leeds+Bradford+Airport+LBA',
+'Leeds Bradford': 'https://www.google.com/maps/search/Leeds+Bradford+Airport+LBA',
+'Lisbon': 'https://www.google.com/maps/search/Lisbon+Airport+LIS',
+'Liverpool': 'https://www.google.com/maps/search/Liverpool+John+Lennon+Airport+LPL',
+'Ljubljana': 'https://www.google.com/maps/search/Ljubljana+Joze+Pucnik+Airport+LJU',
+'London': 'https://www.google.com/maps/search/London+Luton+Airport+LTN',
+'London (LGW)': 'https://www.google.com/maps/search/London+Gatwick+Airport+LGW',
+'London (LTN)': 'https://www.google.com/maps/search/London+Luton+Airport+LTN',
+'London Luton': 'https://www.google.com/maps/search/London+Luton+Airport+LTN',
+'Lublin': 'https://www.google.com/maps/search/Lublin+Airport+LUZ',
+'Lyon': 'https://www.google.com/maps/search/Lyon+Saint+Exupery+Airport+LYS',
+'Maastricht': 'https://www.google.com/maps/search/Maastricht+Aachen+Airport+MST',
+'Madeira': 'https://www.google.com/maps/search/Madeira+Airport+FNC',
+'Madrid': 'https://www.google.com/maps/search/Adolfo+Suarez+Madrid+Barajas+Airport+MAD',
+'Malaga': 'https://www.google.com/maps/search/Malaga+Costa+del+Sol+Airport+AGP',
+'Mallorca': 'https://www.google.com/maps/search/Palma+de+Mallorca+Airport+PMI',
+'Malmö': 'https://www.google.com/maps/search/Malmo+Airport+MMX',
+'Malta': 'https://www.google.com/maps/search/Malta+International+Airport+MLA',
+'Marrakech': 'https://www.google.com/maps/search/Marrakesh+Menara+Airport+RAK',
+'Marsa Alam': 'https://www.google.com/maps/search/Marsa+Alam+International+Airport+RMF',
+'Medina': 'https://www.google.com/maps/search/Prince+Mohammad+bin+Abdulaziz+International+Airport+MED',
+'Memmingen': 'https://www.google.com/maps/search/Memmingen+Airport+FMM',
+'Menorca': 'https://www.google.com/maps/search/Menorca+Airport+MAH',
+'Milan': 'https://www.google.com/maps/search/Milan+Malpensa+Airport+MXP',
+'Milan Bergamo': 'https://www.google.com/maps/search/Orio+al+Serio+International+Airport+BGY',
+'Milan Malpensa': 'https://www.google.com/maps/search/Milan+Malpensa+Airport+MXP',
+'Mykonos': 'https://www.google.com/maps/search/Mykonos+International+Airport+JMK',
+'Naples': 'https://www.google.com/maps/search/Naples+International+Airport+NAP',
+'Nice': 'https://www.google.com/maps/search/Nice+Cote+d \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'Azur+Airport+NCE',
+'Nis': 'https://www.google.com/maps/search/Nis+Constantine+the+Great+Airport+INI',
+'Niš': 'https://www.google.com/maps/search/Ni%C5%A1+Airport+INI%27%2C+%27Nuremberg%27%3A+%27NUE%27%2C+%27Ohrid%27%3A+%27OHD%27%2C+%27Olbia%27%3A+%27OLB',
+'Nuremberg': 'https://www.google.com/maps/search/Nuremberg+Airport+NUE',
+'Ohrid': 'https://www.google.com/maps/search/Ohrid+St.+Paul+the+Apostle+Airport+OHD',
+'Olbia': 'https://www.google.com/maps/search/Olbia+Costa+Smeralda+Airport+OLB',
+'Olsztyn-Mazury': 'https://www.google.com/maps/search/Olsztyn+Mazury+Airport+SZY',
+'Oradea': 'https://www.google.com/maps/search/Oradea+International+Airport+OMR',
+'Oslo': 'https://www.google.com/maps/search/Oslo+Airport+OSL',
+'Palanga': 'https://www.google.com/maps/search/Palanga+International+Airport+PLQ',
+'Palermo': 'https://www.google.com/maps/search/Falcone+Borsellino+Airport+PMO',
+'Paphos': 'https://www.google.com/maps/search/Paphos+International+Airport+PFO',
+'Paris': 'https://www.google.com/maps/search/Paris+Beauvais+Airport+BVA',
+'Paris Beauvais': 'https://www.google.com/maps/search/Paris+Beauvais+Airport+BVA',
+'Perugia': 'https://www.google.com/maps/search/Perugia+San+Francesco+d \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'Assisi+Airport+PEG',
+'Pescara': 'https://www.google.com/maps/search/Abruzzo+Airport+PSR',
+'Pisa': 'https://www.google.com/maps/search/Pisa+International+Airport+PSA',
+'Plovdiv': 'https://www.google.com/maps/search/Plovdiv+Airport+PDV',
+'Podgorica': 'https://www.google.com/maps/search/Podgorica+Airport+TGD',
+'Poprad-Tatry': 'https://www.google.com/maps/search/Poprad+Tatry+Airport+TAT',
+'Porto': 'https://www.google.com/maps/search/Porto+Airport+OPO',
+'Poznan': 'https://www.google.com/maps/search/Poznan+Lawica+Airport+POZ',
+'Prague': 'https://www.google.com/maps/search/Vaclav+Havel+Airport+Prague+PRG',
+'Pristina': 'https://www.google.com/maps/search/Pristina+International+Airport+PRN',
+'Radom': 'https://www.google.com/maps/search/Warsaw+Radom+Airport+RDO',
+'Reykjavik': 'https://www.google.com/maps/search/Reykjavik+Airport+KEF',
+'Rhodes': 'https://www.google.com/maps/search/Rhodes+International+Airport+RHO',
+'Rijeka': 'https://www.google.com/maps/search/Rijeka+Airport+RJK',
+'Rimini': 'https://www.google.com/maps/search/Federico+Fellini+International+Airport+RMI',
+'Rome': 'https://www.google.com/maps/search/Rome+Fiumicino+Airport+FCO',
+'Rome Fiumicino': 'https://www.google.com/maps/search/Rome+Fiumicino+Airport+FCO',
+'Rzeszow': 'https://www.google.com/maps/search/Rzeszow+Jasionka+Airport+RZE',
+'Rzeszów': 'https://www.google.com/maps/search/Rzesz%C3%B3w+Airport+RZE',
+'Sandefjord': 'https://www.google.com/maps/search/Sandefjord+Airport+Torp+TRF',
+'Santander': 'https://www.google.com/maps/search/Santander+Airport+SDR',
+'Santorini': 'https://www.google.com/maps/search/Santorini+International+Airport+JTR',
+'Sarajevo': 'https://www.google.com/maps/search/Sarajevo+International+Airport+SJJ',
+'Satu Mare': 'https://www.google.com/maps/search/Satu+Mare+International+Airport+SUJ',
+'Sevilla': 'https://www.google.com/maps/search/Seville+Airport+SVQ',
+'Sharm El Sheikh': 'https://www.google.com/maps/search/Sharm+El+Sheikh+International+Airport+SSH',
+'Sibiu': 'https://www.google.com/maps/search/Sibiu+International+Airport+SBZ',
+'Skiathos': 'https://www.google.com/maps/search/Skiathos+International+Airport+JSI',
+'Skopje': 'https://www.google.com/maps/search/Skopje+International+Airport+SKP',
+'Sofia': 'https://www.google.com/maps/search/Sofia+Airport+SOF',
+'Split': 'https://www.google.com/maps/search/Split+Airport+SPU',
+'Stavanger': 'https://www.google.com/maps/search/Stavanger+Airport+Sola+SVG',
+'Stockholm': 'https://www.google.com/maps/search/Stockholm+Skavsta+Airport+NYO',
+'Stockholm Skavsta': 'https://www.google.com/maps/search/Stockholm+Skavsta+Airport+NYO',
+'Stuttgart': 'https://www.google.com/maps/search/Stuttgart+Airport+STR',
+'Suceava': 'https://www.google.com/maps/search/Suceava+Stefan+cel+Mare+International+Airport+SCV',
+'Szczecin': 'https://www.google.com/maps/search/Szczecin+Goleniow+Airport+SZZ',
+'Tallinn': 'https://www.google.com/maps/search/Tallinn+Airport+TLL',
+'Targu Mures': 'https://www.google.com/maps/search/Targu+Mures+Transilvania+Airport+TGM',
+'Tel Aviv': 'https://www.google.com/maps/search/Ben+Gurion+Airport+TLV',
+'Tenerife': 'https://www.google.com/maps/search/Tenerife+South+Airport+TFS',
+'Tenerife South': 'https://www.google.com/maps/search/Tenerife+South+Airport+TFS',
+'Thessaloniki': 'https://www.google.com/maps/search/Thessaloniki+Airport+Makedonia+SKG',
+'Timisoara': 'https://www.google.com/maps/search/Timisoara+Traian+Vuia+International+Airport+TSR',
+'Tirana': 'https://www.google.com/maps/search/Tirana+International+Airport+TIA',
+'Trieste': 'https://www.google.com/maps/search/Trieste+Airport+TRS',
+'Tromsø': 'https://www.google.com/maps/search/Tromso+Airport+TOS',
+'Trondheim': 'https://www.google.com/maps/search/Trondheim+Airport+TRD',
+'Turin': 'https://www.google.com/maps/search/Turin+Airport+TRN',
+'Turku': 'https://www.google.com/maps/search/Turku+Airport+TKU',
+'Tuzla': 'https://www.google.com/maps/search/Tuzla+International+Airport+TZL',
+'Târgu-Mures': 'https://www.google.com/maps/search/T%C3%A2rgu-Mures+Airport+TGM',
+'Valencia': 'https://www.google.com/maps/search/Valencia+Airport+VLC',
+'Varna': 'https://www.google.com/maps/search/Varna+Airport+VAR',
+'Venice': 'https://www.google.com/maps/search/Venice+Marco+Polo+Airport+VCE',
+'Verona': 'https://www.google.com/maps/search/Verona+Villafranca+Airport+VRN',
+'Vienna': 'https://www.google.com/maps/search/Vienna+International+Airport+VIE',
+'Vilnius': 'https://www.google.com/maps/search/Vilnius+International+Airport+VNO',
+'Warsaw': 'https://www.google.com/maps/search/Warsaw+Chopin+Airport+WAW',
+'Wroclaw': 'https://www.google.com/maps/search/Wroclaw+Copernicus+Airport+WRO',
+'Yerevan': 'https://www.google.com/maps/search/Zvartnots+International+Airport+EVN',
+'Zakynthos': 'https://www.google.com/maps/search/Zakynthos+International+Airport+ZTH',
+'Zaragoza': 'https://www.google.com/maps/search/Zaragoza+Airport+ZAZ'
+};
+
+const airportFullNames = {
+    'ABZ': 'アバディーン国際空港',
+    'AES': 'オーレスン空港',
+    'AGA': 'アガディール＝アルマシラ空港',
+    'AGP': 'マラガ＝コスタ・デル・ソル空港',
+    'AHO': 'アルゲーロ＝フェルティリア空港',
+    'ALC': 'アリカンテ＝エルチェ空港',
+    'AMM': 'クィーンアリア国際空港',
+    'AOI': 'アンコーナ空港',
+    'ATH': 'アテネ国際空港',
+    'AUH': 'ザイード国際空港',
+    'AYT': 'アンタルヤ空港',
+    'BCM': 'バカウ空港',
+    'BCN': 'バルセロナ＝エル・プラット空港',
+    'BDS': 'ブリンディジ空港',
+    'BEG': 'ベオグラード・ニコラ・テスラ空港',
+    'BER': 'ベルリン・ブランデンブルク国際空港',
+    'BGO': 'ベルゲン空港',
+    'BGY': 'ミラノ・ベルガモ空港',
+    'BHX': 'バーミンガム空港',
+    'BIO': 'ビルバオ空港',
+    'BLL': 'ビルン空港',
+    'BLQ': 'ボローニャ空港',
+    'BNX': 'バニャ・ルカ国際空港',
+    'BOD': 'ボルドー＝メリニャック空港',
+    'BOJ': 'ブルガス空港',
+    'BRI': 'バーリ空港',
+    'BSL': 'ユーロエアポート・バーゼル＝ミュールーズ空港',
+    'BTS': 'ブラチスラバ空港',
+    'BUD': 'ブダペスト・フェレンツ・リスト国際空港',
+    'BVA': 'パリ・ボーヴェ空港',
+    'CDT': 'カステリョン＝コスタ・アサール空港',
+    'CFU': 'コルフ国際空港',
+    'CGN': 'ケルン・ボン空港',
+    'CHQ': 'ハニア国際空港',
+    'CIY': 'コミゾ空港',
+    'CLJ': 'クルージュ＝ナポカ国際空港',
+    'CND': 'コンスタンツァ空港',
+    'CPH': 'コペンハーゲン空港',
+    'CRA': 'クラヨーヴァ空港',
+    'CRL': 'ブリュッセル・サウス・シャルルロワ空港',
+    'CTA': 'カターニア＝フォンターナロッサ空港',
+    'DBV': 'ドゥブロヴニク空港',
+    'DEB': 'デブレツェン国際空港',
+    'DLM': 'ダラマン空港',
+    'DTM': 'ドルトムント空港',
+    'DXB': 'ドバイ国際空港',
+    'EFL': 'ケファロニア空港',
+    'EIN': 'アイントホーフェン空港',
+    'ESB': 'エセンボーア国際空港',
+    'EVN': 'ズヴァルトノッツ国際空港',
+    'FAO': 'ファロ空港',
+    'FCO': 'ローマ・フィウミチーノ空港',
+    'FDH': 'フリードリヒスハーフェン空港',
+    'FKB': 'カールスルーエ／バーデン＝バーデン空港',
+    'FMM': 'メミンゲン空港',
+    'FNC': 'マデイラ空港',
+    'FRA': 'フランクフルト空港',
+    'FUE': 'フエルテベントゥラ空港',
+    'GDN': 'グダニスク空港',
+    'GLA': 'グラスゴー空港',
+    'GNB': 'グルノーブル空港',
+    'GOA': 'ジェノバ空港',
+    'GOT': 'ヨーテボリ・ランドヴェッテル空港',
+    'GYD': 'ヘイダル・アリエフ国際空港',
+    'HAM': 'ハンブルク空港',
+    'HAU': 'ハウゲスン空港',
+    'HER': 'ヘラクリオン国際空港',
+    'HRG': 'ハルガダ国際空港',
+    'IAS': 'ヤシ国際空港',
+    'IBZ': 'イビサ空港',
+    'INI': 'ニシュ・コンスタンティヌス大帝空港',
+    'IST': 'イスタンブール空港',
+    'JED': 'キング・アブドゥルアジーズ国際空港',
+    'JMK': 'ミコノス空港',
+    'JSI': 'スキアトス空港',
+    'JTR': 'サントリーニ空港',
+    'KEF': 'ケプラヴィーク国際空港',
+    'KLX': 'カラマタ空港',
+    'KRK': 'クラクフ空港',
+    'KSC': 'コシツェ空港',
+    'KTW': 'カトヴィツェ空港',
+    'KUN': 'カウナス空港',
+    'KUT': 'クタイシ空港',
+    'LBA': 'リーズ・ブラッドフォード空港',
+    'LCA': 'ラルナカ国際空港',
+    'LGW': 'ロンドン・ガトウィック空港',
+    'LHR': 'ロンドン・ヒースロー空港',
+    'LIS': 'リスボン空港',
+    'LJU': 'リュブリャナ空港',
+    'LMP': 'ランペドゥーザ空港',
+    'LPA': 'グラン・カナリア空港',
+    'LPL': 'リバプール空港',
+    'LTN': 'ロンドン・ルートン空港',
+    'LUZ': 'ルブリン空港',
+    'LWN': 'ギュムリ・シラク空港',
+    'LYS': 'リヨン空港',
+    'MAD': 'マドリード・バラハス空港',
+    'MAH': 'メノルカ空港',
+    'MED': 'メディナ空港',
+    'MLA': 'マルタ国際空港',
+    'MMX': 'マルメ空港',
+    'MST': 'マーストリヒト・アーヘン空港',
+    'MXP': 'ミラノ・マルペンサ空港',
+    'NAP': 'ナポリ国際空港',
+    'NCE': 'ニース・コートダジュール空港',
+    'NUE': 'ニュルンベルク空港',
+    'NYO': 'ストックホルム・スカブスタ空港',
+    'OHD': 'オフリド空港',
+    'OLB': 'オルビア空港',
+    'OMR': 'オラデア国際空港',
+    'OPO': 'ポルト空港',
+    'OSL': 'オスロ・ガーデモエン空港',
+    'OTP': 'ブカレスト・アンリ・コアンダ国際空港',
+    'PDV': 'プロヴディフ空港',
+    'PEG': 'ペルージャ空港',
+    'PFO': 'パフォス国際空港',
+    'PLQ': 'パランガ国際空港',
+    'PMI': 'パルマ・デ・マヨルカ空港',
+    'PMO': 'パレルモ空港',
+    'POZ': 'ポズナン空港',
+    'PRG': 'プラハ・ヴァーツラフ・ハヴェル空港',
+    'PRN': 'プリシュティナ国際空港',
+    'PSA': 'ピサ・ガリレオ・ガリレイ空港',
+    'PSR': 'ペスカーラ空港',
+    'RAK': 'マラケシュ・メナラ空港',
+    'RDO': 'ワルシャワ・ラドム空港',
+    'RHO': 'ロドス空港',
+    'RJK': 'リエカ空港',
+    'RMF': 'マルサアラム国際空港',
+    'RMI': 'リミニ・フェデリコ・フェリーニ空港',
+    'RMO': 'キシナウ国際空港',
+    'RZE': 'ジェシュフ＝ヤションカ空港',
+    'SBZ': 'シビウ国際空港',
+    'SCV': 'スチャヴァ空港',
+    'SDR': 'サンタンデール空港',
+    'SJJ': 'サラエボ国際空港',
+    'SKG': 'テッサロニキ空港',
+    'SKP': 'スコピエ国際空港',
+    'SOF': 'ソフィア空港',
+    'SPU': 'スプリト空港',
+    'SPX': 'スフィンクス国際空港',
+    'SSH': 'シャルム・エル・シェイク国際空港',
+    'STR': 'シュトゥットガルト空港',
+    'SUF': 'ラメーツィア・テルメ空港',
+    'SUJ': 'サトゥ・マーレ空港',
+    'SVG': 'スタヴァンゲル空港',
+    'SVQ': 'セビリア空港',
+    'SZY': 'オルシュティン＝マズーリ空港',
+    'SZZ': 'シュチェチン＝ゴレニュフ空港',
+    'TAT': 'ポプラド＝タトリ空港',
+    'TFS': 'テネリフェ・サウス空港',
+    'TGD': 'ポドゴリツァ空港',
+    'TGM': 'トゥルグ・ムレシュ空港',
+    'TIA': 'ティラナ国際空港',
+    'TKU': 'トゥルク空港',
+    'TLL': 'タリン空港',
+    'TLV': 'ベン・グリオン国際空港',
+    'TOS': 'トロムソ空港',
+    'TRD': 'トロンハイム空港',
+    'TRF': 'サンデフヨルド空港トルプ',
+    'TRN': 'トリノ空港',
+    'TRS': 'トリエステ空港',
+    'TSR': 'ティミショアラ空港',
+    'TZL': 'トゥズラ国際空港',
+    'VAR': 'ヴァルナ空港',
+    'VCE': 'ヴェネツィア・マルコ・ポーロ空港',
+    'VIE': 'ウィーン国際空港',
+    'VLC': 'バレンシア空港',
+    'VNO': 'ヴィリニュス国際空港',
+    'VRN': 'ヴェローナ空港',
+    'WAW': 'ワルシャワ・ショパン空港',
+    'WRO': 'ヴロツワフ空港',
+    'ZAZ': 'サラゴサ空港',
+    'ZTH': 'ザキントス空港'
+};
+
+window.AIRPORT_DATA = {airportCodes, cityNames, countryMap, regionMap, rawFlightData, airportGoogleMap, airportFullNames };
 })();

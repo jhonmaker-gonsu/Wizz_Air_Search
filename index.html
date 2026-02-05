@@ -455,6 +455,13 @@
             font-weight: 600;
         }
 
+        .detail-airport-name {
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
         .toast {
             position: fixed;
             bottom: 1.5rem;
@@ -776,13 +783,14 @@
                 <div class="detail-sub" id="detailSub">接続している空港一覧</div>
             </div>
             <select class="detail-sort" id="detailSort">
-                <option value="ja">あいうえお順</option>
                 <option value="count">接続数が多い順</option>
                 <option value="country">国でまとめて表示</option>
             </select>
             <div class="airport-actions">
                 <button class="star-btn" id="detailFavBtn" type="button">★</button>
                 <button class="code-copy-btn" id="detailCopyBtn" type="button">コードコピー</button>
+                <button class="ghost-btn" id="detailNameCopyBtn" type="button">空港名コピー</button>
+                <a class="ghost-btn" id="detailMapBtn" href="#" target="_blank" rel="noopener">地図を見る</a>
             </div>
         </div>
         <div class="detail-card">
@@ -805,7 +813,9 @@
             cityNames = {},
             countryMap = {},
             regionMap = {},
-            rawFlightData = ''
+            rawFlightData = '',
+            airportGoogleMap = {},
+            airportFullNames = {}
         } = window.AIRPORT_DATA || {};
         const dataLoaded = Boolean(window.AIRPORT_DATA) && Boolean(rawFlightData);
         // 空港コードマッピング
@@ -835,7 +845,7 @@ let currentSort = 'default';
 let uniqueCities = [];
 let searchMode = 'routes';
 let currentDetailAirport = '';
-let detailSortMode = 'ja';
+let detailSortMode = 'count';
 let rankingExpanded = false;
 let hasFavorites = false;
 
@@ -1014,6 +1024,10 @@ let hasFavorites = false;
             return (str || '').toLowerCase().trim();
         }
 
+        function getAirportFullName(code) {
+            return airportFullNames[code] || '';
+        }
+
         function findExactAirport(searchTerm) {
             const term = normalizeText(searchTerm);
             if (!term) return null;
@@ -1074,6 +1088,8 @@ const backButton = document.getElementById('backButton');
 const detailCopyBtn = document.getElementById('detailCopyBtn');
 const detailFavBtn = document.getElementById('detailFavBtn');
 const detailSort = document.getElementById('detailSort');
+const detailMapBtn = document.getElementById('detailMapBtn');
+const detailNameCopyBtn = document.getElementById('detailNameCopyBtn');
         const homeButton = document.getElementById('homeButton');
 const favoritesSection = document.getElementById('favoritesSection');
 const favoritesGrid = document.getElementById('favoritesGrid');
@@ -1149,12 +1165,22 @@ const toast = document.getElementById('toast');
                 };
             });
 
+            const fullName = getAirportFullName(info.code);
             detailTitle.textContent = `${info.ja}（${info.code}）`;
-            detailSub.innerHTML = `${info.en} / <span class="detail-country-link" data-country="${info.country}">${info.country}</span>`;
+            detailSub.innerHTML = `${info.en} / <span class="detail-country-link" data-country="${info.country}">${info.country}</span>${fullName ? `<span class=\"detail-airport-name\">${fullName}</span>` : ''}`;
             detailCount.textContent = `接続数: ${enriched.length}`;
             detailCopyBtn.dataset.copyCode = info.code;
             detailFavBtn.classList.toggle('active', isFavorite(info.en));
             detailFavBtn.dataset.favAirport = info.en;
+            detailNameCopyBtn.dataset.copyName = fullName || info.ja;
+            const mapUrl = airportGoogleMap[info.en];
+            if (mapUrl) {
+                detailMapBtn.href = mapUrl.trim();
+                detailMapBtn.classList.remove('is-hidden');
+            } else {
+                detailMapBtn.href = '#';
+                detailMapBtn.classList.add('is-hidden');
+            }
             currentDetailAirport = airportEn;
             renderDetailGrid(enriched);
 
@@ -1207,16 +1233,6 @@ const toast = document.getElementById('toast');
                 `).join('');
                 return;
             }
-
-            enriched.sort((a, b) => a.ja.localeCompare(b.ja, 'ja'));
-            detailGrid.innerHTML = enriched.map(city => `
-                <div class="airport-chip" data-airport="${city.en}">
-                    <div class="airport-chip-code">${city.code}</div>
-                    <div class="airport-chip-name">${city.ja}</div>
-                    <div class="airport-chip-country">${city.country}</div>
-                    <div class="detail-chip-meta">接続数: ${city.count}</div>
-                </div>
-            `).join('');
         }
 
         function openDetailView(airportEn) {
@@ -1253,6 +1269,13 @@ detailFavBtn.addEventListener('click', () => {
     if (airport) {
         toggleFavorite(airport);
         detailFavBtn.classList.toggle('active', isFavorite(airport));
+    }
+});
+
+detailNameCopyBtn.addEventListener('click', () => {
+    const name = detailNameCopyBtn.dataset.copyName;
+    if (name) {
+        copyToClipboard(name);
     }
 });
 
@@ -1604,9 +1627,13 @@ homeButton.addEventListener('click', () => {
                 return;
             }
 
-            grid.innerHTML = airports.map((city, index) => {
+            const sortedAirports = airports.map(city => {
                 const connections = connectionsMap.get(city.en);
                 const count = connections ? connections.size : 0;
+                return { ...city, count };
+            }).sort((a, b) => b.count - a.count || a.ja.localeCompare(b.ja, 'ja'));
+
+            grid.innerHTML = sortedAirports.map((city, index) => {
                 return `
                     <div class="flight-group" data-airport="${city.en}" style="animation-delay: ${Math.min(index * 0.015, 0.5)}s">
                         <div class="flight-group-header">
@@ -1615,7 +1642,7 @@ homeButton.addEventListener('click', () => {
                                 <div>
                                     <div class="airport-name">${city.ja}</div>
                                     <div class="airport-country">${city.country}</div>
-                                    <div class="airport-meta">接続数: ${count}</div>
+                                    <div class="airport-meta">接続数: ${city.count}</div>
                                 </div>
                             </div>
                             <div class="airport-actions">

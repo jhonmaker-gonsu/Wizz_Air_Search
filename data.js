@@ -9,7 +9,7 @@ const airportCodes = {
     'Bilbao': 'BIO', 'Billund': 'BLL', 'Birmingham': 'BHX', 'Bologna': 'BLQ',
     'Bordeaux': 'BOD', 'Brasov': 'OTP', 'Bratislava': 'BTS', 'Brindisi': 'BDS',
     'Brussels Charleroi': 'CRL', 'Bucharest': 'OTP', 'Budapest': 'BUD',
-    'Burgas': 'BOJ', 'Cairo': 'CAI', 'Castellon': 'CDT', 'Catania': 'CTA',
+    'Burgas': 'BOJ', 'Cairo (Sphinx)': 'SPX', 'Castellon': 'CDT', 'Catania': 'CTA',
     'Chania (Crete)': 'CHQ', 'Chisinau': 'RMO', 'Cluj-Napoca': 'CLJ',
     'Cologne': 'CGN', 'Comiso': 'CIY', 'Constanta': 'CND', 'Copenhagen': 'CPH',
     'Corfu': 'CFU', 'Craiova': 'CRA', 'Dalaman': 'DLM', 'Debrecen': 'DEB',
@@ -62,7 +62,7 @@ const cityNames = {
     'Bilbao': 'ビルバオ', 'Billund': 'ビルン', 'Birmingham': 'バーミンガム', 'Bologna': 'ボローニャ',
     'Bordeaux': 'ボルドー', 'Brasov': 'ブラショフ', 'Bratislava': 'ブラチスラバ', 'Brindisi': 'ブリンディジ',
     'Brussels Charleroi': 'ブリュッセル', 'Bucharest': 'ブカレスト', 'Budapest': 'ブダペスト',
-    'Burgas': 'ブルガス', 'Cairo': 'カイロ', 'Castellon': 'カステリョン', 'Catania': 'カターニア',
+    'Burgas': 'ブルガス', 'Cairo (Sphinx)': 'カイロ（スフィンクス）', 'Castellon': 'カステリョン', 'Catania': 'カターニア',
     'Chania (Crete)': 'ハニア', 'Chisinau': 'キシナウ', 'Cluj-Napoca': 'クルージュ',
     'Cologne': 'ケルン', 'Comiso': 'コミーゾ', 'Constanta': 'コンスタンツァ', 'Copenhagen': 'コペンハーゲン',
     'Corfu': 'コルフ', 'Craiova': 'クラヨーヴァ', 'Dalaman': 'ダラマン', 'Debrecen': 'デブレツェン',
@@ -115,7 +115,7 @@ const countryMap = {
     'Bilbao': 'スペイン', 'Billund': 'デンマーク', 'Birmingham': 'イギリス', 'Bologna': 'イタリア',
     'Bordeaux': 'フランス', 'Brasov': 'ルーマニア', 'Bratislava': 'スロバキア', 'Brindisi': 'イタリア',
     'Brussels Charleroi': 'ベルギー', 'Bucharest': 'ルーマニア', 'Budapest': 'ハンガリー', 'Burgas': 'ブルガリア',
-    'Cairo': 'エジプト', 'Castellon': 'スペイン', 'Catania': 'イタリア', 'Chania (Crete)': 'ギリシャ',
+    'Cairo (Sphinx)': 'エジプト', 'Castellon': 'スペイン', 'Catania': 'イタリア', 'Chania (Crete)': 'ギリシャ',
     'Chisinau': 'モルドバ', 'Cluj-Napoca': 'ルーマニア', 'Cologne': 'ドイツ', 'Comiso': 'イタリア',
     'Constanta': 'ルーマニア', 'Copenhagen': 'デンマーク', 'Corfu': 'ギリシャ', 'Craiova': 'ルーマニア',
     'Dalaman': 'トルコ', 'Debrecen': 'ハンガリー', 'Dortmund': 'ドイツ', 'Dubai': 'UAE',
@@ -193,7 +193,7 @@ const regionMap = {
     'Tromsø': '北欧', 'Trondheim': '北欧', 'Haugesund': '北欧', 'Alesund': '北欧', 'Sandefjord': '北欧',
     'Gothenburg': '北欧', 'Malmö': '北欧', 'Reykjavik': '北欧', 'Vilnius': '北欧', 'Kaunas': '北欧',
     'Palanga': '北欧', 'Tallinn': '北欧', 'Turku': '北欧', 'Billund': '北欧',
-    'Tel Aviv': '中東', 'Dubai': '中東', 'Abu Dhabi': '中東', 'Amman': '中東', 'Cairo': '中東',
+    'Tel Aviv': '中東', 'Dubai': '中東', 'Abu Dhabi': '中東', 'Amman': '中東', 'Cairo (Sphinx)': '中東',
     'Hurghada': '中東', 'Sharm El Sheikh': '中東', 'Marsa Alam': '中東', 'Jeddah': '中東',
     'Medina': '中東', 'Istanbul': '中東', 'Antalya': '中東', 'Dalaman': '中東', 'Baku': '中東',
     'Rijeka': '南欧',
@@ -561,7 +561,7 @@ Budapest - Brasov
 Budapest - Brussels Charleroi
 Budapest - Bucharest
 Budapest - Burgas
-Budapest - Cairo
+Budapest - Cairo (Sphinx)
 Budapest - Catania
 Budapest - Chisinau
 Budapest - Copenhagen
@@ -627,10 +627,10 @@ Burgas - Katowice
 Burgas - London
 Burgas - Lublin
 Burgas - Warsaw
-Cairo - Budapest
-Cairo - London
-Cairo - Milan
-Cairo - Rome
+Cairo (Sphinx) - Budapest
+Cairo (Sphinx) - London
+Cairo (Sphinx) - Milan
+Cairo (Sphinx) - Rome
 Castellon - Bucharest
 Castellon - Cluj-Napoca
 Catania - Bologna
@@ -1146,7 +1146,7 @@ London - Bratislava
 London - Bucharest
 London - Budapest
 London - Burgas
-London - Cairo
+London - Cairo (Sphinx)
 London - Catania
 London - Chania (Crete)
 London - Chisinau
@@ -1334,7 +1334,7 @@ Milan - Barcelona
 Milan - Brasov
 Milan - Bucharest
 Milan - Budapest
-Milan - Cairo
+Milan - Cairo (Sphinx)
 Milan - Catania
 Milan - Chisinau
 Milan - Cluj-Napoca
@@ -1557,7 +1557,7 @@ Rome - Brasov
 Rome - Bratislava
 Rome - Bucharest
 Rome - Budapest
-Rome - Cairo
+Rome - Cairo (Sphinx)
 Rome - Chania (Crete)
 Rome - Chisinau
 Rome - Cluj-Napoca

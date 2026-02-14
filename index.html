@@ -571,6 +571,29 @@
             user-select: none;
         }
 
+        /* シェンゲン協定バッジ */
+        .schengen-badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.1rem 0.35rem;
+            border-radius: 999px;
+            vertical-align: middle;
+            line-height: 1.4;
+        }
+
+        .schengen-in {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border: 1px solid #A5D6A7;
+        }
+
+        .schengen-out {
+            background: #FFF3E0;
+            color: #E65100;
+            border: 1px solid #FFCC80;
+        }
+
         .is-hidden {
             display: none;
         }
@@ -813,6 +836,7 @@
             cityNames = {},
             countryMap = {},
             regionMap = {},
+            schengenMap = {},
             rawFlightData = '',
             airportGoogleMap = {},
             airportFullNames = {}
@@ -834,7 +858,9 @@
                     toCity: cityNames[to.trim()] || to.trim(),
                     fromCountry: countryMap[from.trim()] || '',
                     toCountry: countryMap[to.trim()] || '',
-                    region: regionMap[from.trim()] || '西欧'
+                    region: regionMap[from.trim()] || '西欧',
+                    fromSchengen: schengenMap[from.trim()] !== undefined ? schengenMap[from.trim()] : null,
+                    toSchengen: schengenMap[to.trim()] !== undefined ? schengenMap[to.trim()] : null
                 };
             })
             : [];
@@ -856,13 +882,15 @@ let hasFavorites = false;
                 en: flight.from,
                 code: flight.fromCode,
                 ja: flight.fromCity,
-                country: flight.fromCountry
+                country: flight.fromCountry,
+                schengen: flight.fromSchengen
             }));
             citySet.add(JSON.stringify({
                 en: flight.to,
                 code: flight.toCode,
                 ja: flight.toCity,
-                country: flight.toCountry
+                country: flight.toCountry,
+                schengen: flight.toSchengen
             }));
         });
         uniqueCities = Array.from(citySet).map(city => JSON.parse(city));
@@ -954,7 +982,7 @@ let hasFavorites = false;
             favoritesSection.classList.remove('is-hidden');
             favoritesGrid.innerHTML = list.map(city => `
                 <div class="airport-chip" data-airport="${city.en}">
-                    <div class="airport-chip-code">${city.code}</div>
+                    <div class="airport-chip-code">${city.code} ${schengenBadge(city.schengen)}</div>
                     <div class="airport-chip-name">${city.ja}</div>
                     <div class="airport-chip-country">${city.country}</div>
                 </div>
@@ -969,6 +997,7 @@ let hasFavorites = false;
                     ja: info.ja,
                     code: info.code,
                     country: info.country,
+                    schengen: info.schengen,
                     count: connectionsMap.get(name).size
                 };
             }).sort((a, b) => b.count - a.count);
@@ -986,7 +1015,7 @@ let hasFavorites = false;
                     <div class="rank-left">
                         <div class="rank-badge">${index + 1}</div>
                         <div>
-                            <div class="airport-chip-name">${item.ja}（${item.code}）</div>
+                            <div class="airport-chip-name">${item.ja}（${item.code}）${schengenBadge(item.schengen)}</div>
                             <div class="rank-meta">${item.country}</div>
                         </div>
                     </div>
@@ -1154,19 +1183,20 @@ const toast = document.getElementById('toast');
 
             const connections = Array.from(connectionsMap.get(airportEn) || []);
             const enriched = connections.map(name => {
-                const city = cityInfoByEn.get(name) || { en: name, ja: name, code: '???', country: '' };
+                const city = cityInfoByEn.get(name) || { en: name, ja: name, code: '???', country: '', schengen: null };
                 const count = connectionsMap.get(city.en) ? connectionsMap.get(city.en).size : 0;
                 return {
                     en: city.en,
                     code: city.code,
                     ja: city.ja,
                     country: city.country,
+                    schengen: city.schengen,
                     count
                 };
             });
 
             const fullName = getAirportFullName(info.code);
-            detailTitle.textContent = `${info.ja}（${info.code}）`;
+            detailTitle.innerHTML = `${info.ja}（${info.code}）${schengenBadge(info.schengen)}`;
             detailSub.innerHTML = `${info.en} / <span class="detail-country-link" data-country="${info.country}">${info.country}</span>${fullName ? `<span class=\"detail-airport-name\">${fullName}</span>` : ''}`;
             detailCount.textContent = `接続数: ${enriched.length}`;
             detailCopyBtn.dataset.copyCode = info.code;
@@ -1189,12 +1219,18 @@ const toast = document.getElementById('toast');
             window.scrollTo({ top: 0, behavior: 'auto' });
         }
 
+        function schengenBadge(schengen) {
+            if (schengen === true) return '<span class="schengen-badge schengen-in">圏内</span>';
+            if (schengen === false) return '<span class="schengen-badge schengen-out">圏外</span>';
+            return '';
+        }
+
         function renderDetailGrid(enriched) {
             if (detailSortMode === 'count') {
                 enriched.sort((a, b) => b.count - a.count || a.ja.localeCompare(b.ja, 'ja'));
                 detailGrid.innerHTML = enriched.map(city => `
                     <div class="airport-chip" data-airport="${city.en}">
-                        <div class="airport-chip-code">${city.code}</div>
+                        <div class="airport-chip-code">${city.code} ${schengenBadge(city.schengen)}</div>
                         <div class="airport-chip-name">${city.ja}</div>
                         <div class="airport-chip-country">${city.country}</div>
                         <div class="detail-chip-meta">接続数: ${city.count}</div>
@@ -1225,7 +1261,7 @@ const toast = document.getElementById('toast');
                     });
                 detailGrid.innerHTML = ordered.map(city => `
                     <div class="airport-chip" data-airport="${city.en}" style="border-left: 4px solid ${city.color};">
-                        <div class="airport-chip-code">${city.code}</div>
+                        <div class="airport-chip-code">${city.code} ${schengenBadge(city.schengen)}</div>
                         <div class="airport-chip-name">${city.ja}</div>
                         <div class="airport-chip-country">${city.country}</div>
                         <div class="detail-chip-meta">接続数: ${city.count}</div>
@@ -1303,13 +1339,14 @@ detailSort.addEventListener('change', (e) => {
     if (!currentDetailAirport) return;
             const connections = Array.from(connectionsMap.get(currentDetailAirport) || []);
             const enriched = connections.map(name => {
-                const city = cityInfoByEn.get(name) || { en: name, ja: name, code: '???', country: '' };
+                const city = cityInfoByEn.get(name) || { en: name, ja: name, code: '???', country: '', schengen: null };
                 const count = connectionsMap.get(city.en) ? connectionsMap.get(city.en).size : 0;
                 return {
                     en: city.en,
                     code: city.code,
                     ja: city.ja,
                     country: city.country,
+                    schengen: city.schengen,
                     count
                 };
             });
@@ -1551,6 +1588,7 @@ homeButton.addEventListener('click', () => {
                         fromCode: flight.fromCode,
                         fromCity: flight.fromCity,
                         fromCountry: flight.fromCountry,
+                        fromSchengen: flight.fromSchengen,
                         destinations: new Map()
                     });
                 }
@@ -1560,7 +1598,8 @@ homeButton.addEventListener('click', () => {
                         to: flight.to,
                         toCode: flight.toCode,
                         toCity: flight.toCity,
-                        toCountry: flight.toCountry
+                        toCountry: flight.toCountry,
+                        toSchengen: flight.toSchengen
                     });
                 }
             });
@@ -1582,7 +1621,7 @@ homeButton.addEventListener('click', () => {
                     <div class="flight-group" data-airport="${group.from}" style="animation-delay: ${Math.min(index * 0.015, 0.5)}s">
                         <div class="flight-group-header">
                             <div class="airport-title">
-                                <div class="airport-code">${group.fromCode}</div>
+                                <div class="airport-code">${group.fromCode} ${schengenBadge(group.fromSchengen)}</div>
                                 <div>
                                     <div class="airport-name">${group.fromCity}</div>
                                     <div class="airport-country">${group.fromCountry}</div>
@@ -1596,7 +1635,7 @@ homeButton.addEventListener('click', () => {
                             <div class="destinations">
                                 ${destinations.map(dest => `
                                     <div class="airport-chip" data-airport="${dest.to}">
-                                        <div class="airport-chip-code">${dest.toCode}</div>
+                                        <div class="airport-chip-code">${dest.toCode} ${schengenBadge(dest.toSchengen)}</div>
                                         <div class="airport-chip-name">${dest.toCity}</div>
                                         <div class="airport-chip-country">${dest.toCountry}</div>
                                     </div>
@@ -1638,7 +1677,7 @@ homeButton.addEventListener('click', () => {
                     <div class="flight-group" data-airport="${city.en}" style="animation-delay: ${Math.min(index * 0.015, 0.5)}s">
                         <div class="flight-group-header">
                             <div class="airport-title">
-                                <div class="airport-code">${city.code}</div>
+                                <div class="airport-code">${city.code} ${schengenBadge(city.schengen)}</div>
                                 <div>
                                     <div class="airport-name">${city.ja}</div>
                                     <div class="airport-country">${city.country}</div>

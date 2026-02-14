@@ -706,6 +706,184 @@ const regionMap = {
     'Zaragoza': '南欧'
 };
 
+// シェンゲン協定圏内かどうか（true = 圏内、false = 圏外）
+const schengenMap = {
+    'Aberdeen': false,          // イギリス
+    'Abu Dhabi': false,         // UAE
+    'Agadir': false,            // モロッコ
+    'Alesund': true,            // ノルウェー（シェンゲン加盟）
+    'Alghero': true,            // イタリア
+    'Alicante': true,           // スペイン
+    'Amman': false,             // ヨルダン
+    'Ancona': true,             // イタリア
+    'Ankara': false,            // トルコ
+    'Antalya': false,           // トルコ
+    'Athens': true,             // ギリシャ
+    'Bacau': true,              // ルーマニア（2024年加盟）
+    'Baku': false,              // アゼルバイジャン
+    'Banja Luka': false,        // ボスニア・ヘルツェゴビナ
+    'Barcelona': true,          // スペイン
+    'Bari': true,               // イタリア
+    'Basel': true,              // スイス（シェンゲン加盟）
+    'Belgrade': false,          // セルビア
+    'Bergamo': true,            // イタリア
+    'Bergen': true,             // ノルウェー
+    'Berlin': true,             // ドイツ
+    'Bilbao': true,             // スペイン
+    'Billund': true,            // デンマーク
+    'Birmingham': false,        // イギリス
+    'Bologna': true,            // イタリア
+    'Bordeaux': true,           // フランス
+    'Brasov': true,             // ルーマニア
+    'Bratislava': true,         // スロバキア
+    'Brindisi': true,           // イタリア
+    'Brussels Charleroi': true, // ベルギー
+    'Bucharest': true,          // ルーマニア
+    'Budapest': true,           // ハンガリー
+    'Burgas': true,             // ブルガリア（2024年加盟）
+    'Cairo (Sphinx)': false,    // エジプト
+    'Castellon': true,          // スペイン
+    'Catania': true,            // イタリア
+    'Chania (Crete)': true,     // ギリシャ
+    'Chisinau': false,          // モルドバ
+    'Cluj-Napoca': true,        // ルーマニア
+    'Cologne': true,            // ドイツ
+    'Comiso': true,             // イタリア
+    'Constanta': true,          // ルーマニア
+    'Copenhagen': true,         // デンマーク
+    'Corfu': true,              // ギリシャ
+    'Craiova': true,            // ルーマニア
+    'Dalaman': false,           // トルコ
+    'Debrecen': true,           // ハンガリー
+    'Dortmund': true,           // ドイツ
+    'Dubai': false,             // UAE
+    'Dubrovnik': true,          // クロアチア（2023年加盟）
+    'Eindhoven': true,          // オランダ
+    'Faro (Algarve)': true,     // ポルトガル
+    'Frankfurt': true,          // ドイツ
+    'Friedrichshafen': true,    // ドイツ
+    'Fuerteventura': true,      // スペイン
+    'Funchal (Madeira)': true,  // ポルトガル
+    'Gdansk': true,             // ポーランド
+    'Genoa': true,              // イタリア
+    'Glasgow': false,           // イギリス
+    'Gothenburg': true,         // スウェーデン
+    'Gran Canaria': true,       // スペイン
+    'Grenoble': true,           // フランス
+    'Gyumri': false,            // アルメニア
+    'Hamburg': true,            // ドイツ
+    'Haugesund': true,          // ノルウェー
+    'Heraklion (Crete)': true,  // ギリシャ
+    'Hurghada': false,          // エジプト
+    'Iasi': true,               // ルーマニア
+    'Ibiza': true,              // スペイン
+    'Istanbul': false,          // トルコ
+    'Jeddah': false,            // サウジアラビア
+    'Kalamata': true,           // ギリシャ
+    'Karlsruhe/Baden-Baden': true, // ドイツ
+    'Katowice': true,           // ポーランド
+    'Kaunas': true,             // リトアニア
+    'Kefalonia': true,          // ギリシャ
+    'Košice': true,             // スロバキア
+    'Krakow': true,             // ポーランド
+    'Kutaisi': false,           // ジョージア
+    'Lamezia Terme': true,      // イタリア
+    'Lampedusa': true,          // イタリア
+    'Larnaca': false,           // キプロス（EU加盟だがシェンゲン非加盟）
+    'Leeds': false,             // イギリス
+    'Lisbon': true,             // ポルトガル
+    'Liverpool': false,         // イギリス
+    'Ljubljana': true,          // スロベニア
+    'London (LGW)': false,      // イギリス
+    'London (LTN)': false,      // イギリス
+    'Lublin': true,             // ポーランド
+    'Lyon': true,               // フランス
+    'Maastricht': true,         // オランダ
+    'Madrid': true,             // スペイン
+    'Malaga': true,             // スペイン
+    'Mallorca': true,           // スペイン
+    'Malmö': true,              // スウェーデン
+    'Malta': false,             // マルタ（EU加盟だがシェンゲン非加盟）
+    'Marrakech': false,         // モロッコ
+    'Marsa Alam': false,        // エジプト
+    'Medina': false,            // サウジアラビア
+    'Memmingen': true,          // ドイツ
+    'Menorca': true,            // スペイン
+    'Milan': true,              // イタリア
+    'Mykonos': true,            // ギリシャ
+    'Naples': true,             // イタリア
+    'Nice': true,               // フランス
+    'Niš': false,               // セルビア
+    'Nuremberg': true,          // ドイツ
+    'Ohrid': false,             // 北マケドニア
+    'Olbia': true,              // イタリア
+    'Olsztyn-Mazury': true,     // ポーランド
+    'Oradea': true,             // ルーマニア
+    'Oslo': true,               // ノルウェー
+    'Palanga': true,            // リトアニア
+    'Palermo': true,            // イタリア
+    'Paphos': false,            // キプロス
+    'Paris': true,              // フランス
+    'Perugia': true,            // イタリア
+    'Pescara': true,            // イタリア
+    'Pisa': true,               // イタリア
+    'Plovdiv': true,            // ブルガリア
+    'Podgorica': false,         // モンテネグロ
+    'Poprad-Tatry': true,       // スロバキア
+    'Porto': true,              // ポルトガル
+    'Poznan': true,             // ポーランド
+    'Prague': true,             // チェコ
+    'Pristina': false,          // コソボ
+    'Radom': true,              // ポーランド
+    'Reykjavik': true,          // アイスランド（シェンゲン加盟）
+    'Rhodes': true,             // ギリシャ
+    'Rijeka': true,             // クロアチア
+    'Rimini': true,             // イタリア
+    'Rome': true,               // イタリア
+    'Rzeszów': true,            // ポーランド
+    'Sandefjord': true,         // ノルウェー
+    'Santander': true,          // スペイン
+    'Santorini': true,          // ギリシャ
+    'Sarajevo': false,          // ボスニア・ヘルツェゴビナ
+    'Satu Mare': true,          // ルーマニア
+    'Sevilla': true,            // スペイン
+    'Sharm El Sheikh': false,   // エジプト
+    'Sibiu': true,              // ルーマニア
+    'Skiathos': true,           // ギリシャ
+    'Skopje': false,            // 北マケドニア
+    'Sofia': true,              // ブルガリア
+    'Split': true,              // クロアチア
+    'Stavanger': true,          // ノルウェー
+    'Stockholm': true,          // スウェーデン
+    'Stuttgart': true,          // ドイツ
+    'Suceava': true,            // ルーマニア
+    'Szczecin': true,           // ポーランド
+    'Tallinn': true,            // エストニア
+    'Tel Aviv': false,          // イスラエル
+    'Tenerife': true,           // スペイン
+    'Thessaloniki': true,       // ギリシャ
+    'Timisoara': true,          // ルーマニア
+    'Tirana': false,            // アルバニア
+    'Trieste': true,            // イタリア
+    'Tromsø': true,             // ノルウェー
+    'Trondheim': true,          // ノルウェー
+    'Turin': true,              // イタリア
+    'Turku': true,              // フィンランド
+    'Tuzla': false,             // ボスニア・ヘルツェゴビナ
+    'Târgu-Mures': true,        // ルーマニア
+    'Valencia': true,           // スペイン
+    'Varna': true,              // ブルガリア
+    'Venice': true,             // イタリア
+    'Verona': true,             // イタリア
+    'Vienna': true,             // オーストリア
+    'Vilnius': true,            // リトアニア
+    'Warsaw': true,             // ポーランド
+    'Wroclaw': true,            // ポーランド
+    'Yerevan': false,           // アルメニア
+    'Zakynthos': true,          // ギリシャ
+    'Zaragoza': true            // スペイン
+};
+
 const rawFlightData = `Aberdeen - Gdansk
 Abu Dhabi - Budapest
 Abu Dhabi - Cluj-Napoca
@@ -3062,5 +3240,5 @@ const airportFullNames = {
     'ZTH': 'ザキントス空港'
 };
 
-window.AIRPORT_DATA = {airportCodes, cityNames, countryMap, regionMap, rawFlightData, airportGoogleMap, airportFullNames };
+window.AIRPORT_DATA = {airportCodes, cityNames, countryMap, regionMap, schengenMap, rawFlightData, airportGoogleMap, airportFullNames };
 })();

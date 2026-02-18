@@ -373,6 +373,7 @@
             display: flex;
             align-items: center;
             gap: 0.6rem;
+            flex-wrap: nowrap;
         }
 
         .star-btn {
@@ -399,15 +400,16 @@
         }
 
         .code-copy-btn {
-            border: 1px solid var(--primary);
+            border: 1px solid var(--border);
             background: white;
-            color: var(--primary);
+            color: var(--text-primary);
             border-radius: 999px;
             padding: 0.35rem 0.7rem;
             font-size: 0.8rem;
             font-weight: 700;
             cursor: pointer;
             min-height: 36px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
         }
 
         .flight-group-body {
@@ -488,6 +490,56 @@
         .toast.show {
             opacity: 1;
             transform: translateX(-50%) translateY(-6px);
+        }
+
+        .action-sheet-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 1200;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0.8rem;
+        }
+
+        .action-sheet {
+            width: min(560px, 100%);
+            background: white;
+            border-radius: 16px;
+            padding: 0.8rem;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-sheet-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.65rem;
+            padding: 0 0.1rem;
+        }
+
+        .action-sheet-option {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--text-primary);
+            border-radius: 12px;
+            padding: 0.75rem 0.85rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 0.45rem;
+        }
+
+        .action-sheet-option:last-child {
+            margin-bottom: 0;
+        }
+
+        .action-sheet-option.primary {
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
         .no-results {
@@ -618,6 +670,11 @@
             flex-wrap: wrap;
         }
 
+        .detail-header > div:nth-child(2) {
+            min-width: 0;
+            flex: 1;
+        }
+
         .detail-sort {
             border: 2px solid var(--border);
             background: white;
@@ -670,6 +727,7 @@
         .detail-sub {
             font-size: 0.9rem;
             color: var(--text-secondary);
+            word-break: break-word;
         }
 
         .detail-country-link {
@@ -741,6 +799,47 @@
             .detail-grid {
                 grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
+
+            .detail-header {
+                display: grid;
+                grid-template-columns: auto 1fr auto;
+                align-items: center;
+                column-gap: 0.55rem;
+                row-gap: 0.55rem;
+            }
+
+            .detail-header > .airport-actions {
+                grid-column: 1 / -1;
+                display: flex;
+                align-items: center;
+                gap: 0.45rem;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 0.15rem;
+                scrollbar-width: none;
+            }
+
+            .detail-header > .airport-actions::-webkit-scrollbar {
+                display: none;
+            }
+
+            .detail-header > .airport-actions .ghost-btn,
+            .detail-header > .airport-actions .star-btn,
+            .detail-header > .airport-actions .code-copy-btn {
+                flex: 0 0 auto;
+                white-space: nowrap;
+                min-height: 34px;
+                padding: 0.32rem 0.58rem;
+                font-size: 0.76rem;
+            }
+
+            .back-btn,
+            .detail-sort {
+                min-height: 34px;
+                white-space: nowrap;
+                padding: 0.35rem 0.62rem;
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -766,15 +865,15 @@
             </div>
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="all">すべて</button>
-                <button class="filter-btn" data-filter="favorites" id="favoritesTabBtn">お気に入り</button>
                 <button class="filter-btn" data-filter="ranking">接続数の多い空港</button>
-                <button class="filter-btn" data-filter="visited-airports">行った空港</button>
-                <button class="filter-btn" data-filter="visited-countries">行った国</button>
                 <button class="filter-btn" data-filter="西欧">西欧</button>
                 <button class="filter-btn" data-filter="東欧">東欧</button>
                 <button class="filter-btn" data-filter="南欧">南欧</button>
                 <button class="filter-btn" data-filter="北欧">北欧</button>
                 <button class="filter-btn" data-filter="中東">中東</button>
+                <button class="filter-btn" data-filter="visited-airports">行った空港</button>
+                <button class="filter-btn" data-filter="visited-countries">行った国</button>
+                <button class="filter-btn" data-filter="favorites" id="favoritesTabBtn">お気に入り</button>
             </div>
         </div>
 
@@ -838,6 +937,13 @@
     </footer>
 
     <div class="toast" id="toast">コピーしました</div>
+    <div class="action-sheet-backdrop is-hidden" id="visitActionSheet">
+        <div class="action-sheet">
+            <div class="action-sheet-title" id="visitActionTitle">操作を選択</div>
+            <button class="action-sheet-option primary" id="visitAirportActionBtn" type="button">行った空港に登録</button>
+            <button class="action-sheet-option" id="visitCancelBtn" type="button">キャンセル</button>
+        </div>
+    </div>
 
     <script src="./data.js"></script>
     <script>
@@ -885,6 +991,8 @@ let detailSortMode = 'count';
 let rankingExpanded = false;
 let hasFavorites = false;
 let suppressClickUntil = 0;
+let actionSheetAirport = '';
+const REGION_FILTERS = new Set(['西欧', '東欧', '南欧', '北欧', '中東']);
 
         const countryEnglishMap = {
             'アイスランド': 'Iceland',
@@ -1004,6 +1112,7 @@ let suppressClickUntil = 0;
         function saveVisitedAirports() {
             safeSet('visitedAirports', JSON.stringify(Array.from(visitedAirports)));
         }
+
 
         function isFavorite(airportEn) {
             return favorites.has(airportEn);
@@ -1132,11 +1241,14 @@ let suppressClickUntil = 0;
             const grid = document.getElementById('flightsGrid');
             const resultCount = document.getElementById('resultCount');
             const groupCount = document.getElementById('groupCount');
-            const list = Array.from(visitedAirports)
+            const airportList = Array.from(visitedAirports)
                 .map(name => cityInfoByEn.get(name))
                 .filter(Boolean);
+            const countriesFromAirports = new Set(airportList.map(city => city.country).filter(Boolean));
+            const countriesOnly = Array.from(countriesFromAirports)
+                .sort((a, b) => a.localeCompare(b, 'ja'));
 
-            if (list.length === 0) {
+            if (countriesOnly.length === 0) {
                 resultCount.textContent = 0;
                 groupCount.textContent = 0;
                 grid.innerHTML = `
@@ -1149,22 +1261,14 @@ let suppressClickUntil = 0;
                 return;
             }
 
-            const countryMapVisited = new Map();
-            list.forEach(city => {
-                const key = city.country || 'その他';
-                if (!countryMapVisited.has(key)) {
-                    countryMapVisited.set(key, []);
-                }
-                countryMapVisited.get(key).push(city);
-            });
+            groupCount.textContent = countriesOnly.length;
+            resultCount.textContent = countriesOnly.length;
 
-            const countries = Array.from(countryMapVisited.entries())
-                .sort((a, b) => a[0].localeCompare(b[0], 'ja'));
-
-            groupCount.textContent = countries.length;
-            resultCount.textContent = list.length;
-
-            grid.innerHTML = countries.map(([country, airports], index) => `
+            grid.innerHTML = countriesOnly.map((country, index) => {
+                const airports = airportList
+                    .filter(city => city.country === country)
+                    .sort((a, b) => a.ja.localeCompare(b.ja, 'ja'));
+                return `
                 <div class="flight-group" style="animation-delay: ${Math.min(index * 0.015, 0.5)}s">
                     <div class="flight-group-header">
                         <div class="airport-title">
@@ -1177,19 +1281,30 @@ let suppressClickUntil = 0;
                     </div>
                     <div class="flight-group-body">
                         <div class="destinations">
-                            ${airports
-                                .sort((a, b) => a.ja.localeCompare(b.ja, 'ja'))
-                                .map(airport => `
+                            ${airports.map(airport => `
                                     <div class="airport-chip" data-airport="${airport.en}">
                                         <div class="airport-chip-code">${airport.code} ${schengenBadge(airport.schengen)}</div>
                                         <div class="airport-chip-name">${airport.ja}</div>
                                         <div class="airport-chip-country">${airport.en}</div>
                                     </div>
-                                `).join('')}
+                                `).join('') || '<div class="rank-meta">空港登録なし</div>'}
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
+        }
+
+        function isRegionFilter(filter) {
+            return REGION_FILTERS.has(filter);
+        }
+
+        function renderRegionAirports(region) {
+            const airports = uniqueCities
+                .filter(city => regionMap[city.en] === region)
+                .sort((a, b) => a.ja.localeCompare(b.ja, 'ja'));
+            searchMode = 'airports';
+            displayAirports(airports);
         }
 
         function updateTabView() {
@@ -1314,6 +1429,10 @@ const resultsContainer = document.getElementById('resultsContainer');
 const favoritesTabBtn = document.getElementById('favoritesTabBtn');
 const rankingToggleBtn = document.getElementById('rankingToggleBtn');
 const toast = document.getElementById('toast');
+const visitActionSheet = document.getElementById('visitActionSheet');
+const visitActionTitle = document.getElementById('visitActionTitle');
+const visitAirportActionBtn = document.getElementById('visitAirportActionBtn');
+const visitCancelBtn = document.getElementById('visitCancelBtn');
 
         // 初期表示
         if (!dataLoaded) {
@@ -1340,6 +1459,20 @@ const toast = document.getElementById('toast');
             toast._timer = setTimeout(() => {
                 toast.classList.remove('show');
             }, 1600);
+        }
+
+        function closeVisitActionSheet() {
+            actionSheetAirport = '';
+            visitActionSheet.classList.add('is-hidden');
+        }
+
+        function openVisitActionSheet(airportEn) {
+            const info = cityInfoByEn.get(airportEn);
+            if (!info) return;
+            actionSheetAirport = airportEn;
+            visitActionTitle.textContent = `${info.ja}（${info.code}）`;
+            visitAirportActionBtn.textContent = isVisited(airportEn) ? '行った空港から解除' : '行った空港に登録';
+            visitActionSheet.classList.remove('is-hidden');
         }
 
         async function copyToClipboard(text) {
@@ -1706,6 +1839,10 @@ homeButton.addEventListener('click', () => {
                 if (currentFilter === 'favorites' || currentFilter === 'ranking') {
                     return;
                 }
+                if (isRegionFilter(currentFilter)) {
+                    renderRegionAirports(currentFilter);
+                    return;
+                }
                 if (currentFilter === 'visited-airports') {
                     searchMode = 'airports';
                     renderVisitedAirportsTab();
@@ -1732,6 +1869,11 @@ homeButton.addEventListener('click', () => {
             const katakanaSearchTerm = hiraganaToKatakana(searchTerm);
 
             if (currentFilter === 'favorites' || currentFilter === 'ranking' || currentFilter === 'visited-airports' || currentFilter === 'visited-countries') {
+                return;
+            }
+
+            if (isRegionFilter(currentFilter)) {
+                renderRegionAirports(currentFilter);
                 return;
             }
 
@@ -1957,6 +2099,22 @@ rankingToggleBtn.addEventListener('click', () => {
     renderRankingSection();
 });
 
+visitAirportActionBtn.addEventListener('click', () => {
+    if (!actionSheetAirport) return;
+    toggleVisitedAirport(actionSheetAirport);
+    closeVisitActionSheet();
+});
+
+visitCancelBtn.addEventListener('click', () => {
+    closeVisitActionSheet();
+});
+
+visitActionSheet.addEventListener('click', (e) => {
+    if (e.target === visitActionSheet) {
+        closeVisitActionSheet();
+    }
+});
+
         function getLongPressAirportTarget(target) {
             if (!target) return null;
             if (target.closest('button, a, select, input, textarea, [data-fav-airport]')) return null;
@@ -1975,7 +2133,7 @@ rankingToggleBtn.addEventListener('click', () => {
             clearTimeout(longPressTimer);
             longPressAirport = airportEn;
             longPressTimer = setTimeout(() => {
-                toggleVisitedAirport(longPressAirport);
+                openVisitActionSheet(longPressAirport);
                 suppressClickUntil = Date.now() + 700;
                 longPressAirport = '';
                 longPressTimer = null;

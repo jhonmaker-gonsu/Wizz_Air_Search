@@ -391,6 +391,13 @@
             border-color: #FFC107;
         }
 
+        .visited-btn.active {
+            color: white;
+            background: var(--gradient);
+            border-color: var(--primary);
+            box-shadow: 0 3px 8px rgba(194, 24, 91, 0.22);
+        }
+
         .code-copy-btn {
             border: 1px solid var(--primary);
             background: white;
@@ -761,6 +768,8 @@
                 <button class="filter-btn active" data-filter="all">すべて</button>
                 <button class="filter-btn" data-filter="favorites" id="favoritesTabBtn">お気に入り</button>
                 <button class="filter-btn" data-filter="ranking">接続数の多い空港</button>
+                <button class="filter-btn" data-filter="visited-airports">行った空港</button>
+                <button class="filter-btn" data-filter="visited-countries">行った国</button>
                 <button class="filter-btn" data-filter="西欧">西欧</button>
                 <button class="filter-btn" data-filter="東欧">東欧</button>
                 <button class="filter-btn" data-filter="南欧">南欧</button>
@@ -810,6 +819,7 @@
                 <option value="country">国でまとめて表示</option>
             </select>
             <div class="airport-actions">
+                <button class="ghost-btn visited-btn" id="detailVisitedBtn" type="button">行った</button>
                 <button class="star-btn" id="detailFavBtn" type="button">★</button>
                 <button class="code-copy-btn" id="detailCopyBtn" type="button">コードコピー</button>
                 <button class="ghost-btn" id="detailNameCopyBtn" type="button">空港名コピー</button>
@@ -874,6 +884,7 @@ let currentDetailAirport = '';
 let detailSortMode = 'count';
 let rankingExpanded = false;
 let hasFavorites = false;
+let suppressClickUntil = 0;
 
         const countryEnglishMap = {
             'アイスランド': 'Iceland',
@@ -984,9 +995,14 @@ let hasFavorites = false;
         }
 
         const favorites = new Set(JSON.parse(safeGet('favorites', '[]') || '[]'));
+        const visitedAirports = new Set(JSON.parse(safeGet('visitedAirports', '[]') || '[]'));
 
         function saveFavorites() {
             safeSet('favorites', JSON.stringify(Array.from(favorites)));
+        }
+
+        function saveVisitedAirports() {
+            safeSet('visitedAirports', JSON.stringify(Array.from(visitedAirports)));
         }
 
         function isFavorite(airportEn) {
@@ -1003,6 +1019,31 @@ let hasFavorites = false;
             renderFavoritesSection();
             renderRankingSection();
             displayFlights(filteredFlights);
+        }
+
+        function isVisited(airportEn) {
+            return visitedAirports.has(airportEn);
+        }
+
+        function toggleVisitedAirport(airportEn) {
+            const info = cityInfoByEn.get(airportEn);
+            if (!info) return;
+            if (visitedAirports.has(airportEn)) {
+                visitedAirports.delete(airportEn);
+                showToast(`行った空港から解除: ${info.ja}（${info.code}）`);
+            } else {
+                visitedAirports.add(airportEn);
+                showToast(`行った空港に登録: ${info.ja}（${info.code}）`);
+            }
+            saveVisitedAirports();
+            if (currentFilter === 'visited-airports') {
+                renderVisitedAirportsTab();
+            } else if (currentFilter === 'visited-countries') {
+                renderVisitedCountriesTab();
+            }
+            if (currentDetailAirport === airportEn && detailVisitedBtn) {
+                detailVisitedBtn.classList.toggle('active', isVisited(airportEn));
+            }
         }
 
         function renderFavoritesSection() {
@@ -1078,15 +1119,94 @@ let hasFavorites = false;
             `).join('');
         }
 
+        function renderVisitedAirportsTab() {
+            const airports = Array.from(visitedAirports)
+                .map(name => cityInfoByEn.get(name))
+                .filter(Boolean)
+                .sort((a, b) => a.ja.localeCompare(b.ja, 'ja'));
+
+            displayAirports(airports);
+        }
+
+        function renderVisitedCountriesTab() {
+            const grid = document.getElementById('flightsGrid');
+            const resultCount = document.getElementById('resultCount');
+            const groupCount = document.getElementById('groupCount');
+            const list = Array.from(visitedAirports)
+                .map(name => cityInfoByEn.get(name))
+                .filter(Boolean);
+
+            if (list.length === 0) {
+                resultCount.textContent = 0;
+                groupCount.textContent = 0;
+                grid.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">🌍</div>
+                        <h3>行った国の登録なし</h3>
+                        <p>空港を長押しして登録してください</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const countryMapVisited = new Map();
+            list.forEach(city => {
+                const key = city.country || 'その他';
+                if (!countryMapVisited.has(key)) {
+                    countryMapVisited.set(key, []);
+                }
+                countryMapVisited.get(key).push(city);
+            });
+
+            const countries = Array.from(countryMapVisited.entries())
+                .sort((a, b) => a[0].localeCompare(b[0], 'ja'));
+
+            groupCount.textContent = countries.length;
+            resultCount.textContent = list.length;
+
+            grid.innerHTML = countries.map(([country, airports], index) => `
+                <div class="flight-group" style="animation-delay: ${Math.min(index * 0.015, 0.5)}s">
+                    <div class="flight-group-header">
+                        <div class="airport-title">
+                            <div class="airport-code">${airports.length} 空港</div>
+                            <div>
+                                <div class="airport-name">${formatCountryLabel(country)}</div>
+                                <div class="airport-country">行った空港一覧</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flight-group-body">
+                        <div class="destinations">
+                            ${airports
+                                .sort((a, b) => a.ja.localeCompare(b.ja, 'ja'))
+                                .map(airport => `
+                                    <div class="airport-chip" data-airport="${airport.en}">
+                                        <div class="airport-chip-code">${airport.code} ${schengenBadge(airport.schengen)}</div>
+                                        <div class="airport-chip-name">${airport.ja}</div>
+                                        <div class="airport-chip-country">${airport.en}</div>
+                                    </div>
+                                `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         function updateTabView() {
             const isFavorites = currentFilter === 'favorites';
             const isRanking = currentFilter === 'ranking';
+            const isVisitedAirports = currentFilter === 'visited-airports';
+            const isVisitedCountries = currentFilter === 'visited-countries';
             const isHome = currentFilter === 'all';
             const isSearching = Boolean(searchInput && searchInput.value.trim());
+            const sortSelectEl = document.getElementById('sortSelect');
 
             favoritesSection.classList.toggle('is-hidden', !(isHome || isFavorites) || isSearching || !hasFavorites);
             rankingSection.classList.toggle('is-hidden', !(isHome || isRanking) || isSearching);
             resultsContainer.classList.toggle('is-hidden', isFavorites || isRanking);
+            if (sortSelectEl) {
+                sortSelectEl.classList.toggle('is-hidden', isVisitedAirports || isVisitedCountries);
+            }
 
             renderRankingSection();
         }
@@ -1184,6 +1304,7 @@ const detailFavBtn = document.getElementById('detailFavBtn');
 const detailSort = document.getElementById('detailSort');
 const detailMapBtn = document.getElementById('detailMapBtn');
 const detailNameCopyBtn = document.getElementById('detailNameCopyBtn');
+const detailVisitedBtn = document.getElementById('detailVisitedBtn');
         const homeButton = document.getElementById('homeButton');
 const favoritesSection = document.getElementById('favoritesSection');
 const favoritesGrid = document.getElementById('favoritesGrid');
@@ -1268,6 +1389,8 @@ const toast = document.getElementById('toast');
             detailFavBtn.classList.toggle('active', isFavorite(info.en));
             detailFavBtn.dataset.favAirport = info.en;
             detailNameCopyBtn.dataset.copyName = fullName || info.ja;
+            detailVisitedBtn.classList.toggle('active', isVisited(info.en));
+            detailVisitedBtn.dataset.visitedAirport = info.en;
             const mapUrl = airportGoogleMap[info.en];
             if (mapUrl) {
                 detailMapBtn.href = mapUrl.trim();
@@ -1377,6 +1500,13 @@ detailNameCopyBtn.addEventListener('click', () => {
     const name = detailNameCopyBtn.dataset.copyName;
     if (name) {
         copyToClipboard(name);
+    }
+});
+
+detailVisitedBtn.addEventListener('click', () => {
+    const airport = detailVisitedBtn.dataset.visitedAirport;
+    if (airport) {
+        toggleVisitedAirport(airport);
     }
 });
 
@@ -1576,6 +1706,16 @@ homeButton.addEventListener('click', () => {
                 if (currentFilter === 'favorites' || currentFilter === 'ranking') {
                     return;
                 }
+                if (currentFilter === 'visited-airports') {
+                    searchMode = 'airports';
+                    renderVisitedAirportsTab();
+                    return;
+                }
+                if (currentFilter === 'visited-countries') {
+                    searchMode = 'airports';
+                    renderVisitedCountriesTab();
+                    return;
+                }
                 filterAndDisplay(searchInput.value.toLowerCase().trim());
             });
         });
@@ -1591,7 +1731,7 @@ homeButton.addEventListener('click', () => {
         function filterAndDisplay(searchTerm) {
             const katakanaSearchTerm = hiraganaToKatakana(searchTerm);
 
-            if (currentFilter === 'favorites' || currentFilter === 'ranking') {
+            if (currentFilter === 'favorites' || currentFilter === 'ranking' || currentFilter === 'visited-airports' || currentFilter === 'visited-countries') {
                 return;
             }
 
@@ -1767,6 +1907,9 @@ homeButton.addEventListener('click', () => {
 
         const flightsGrid = document.getElementById('flightsGrid');
         flightsGrid.addEventListener('click', (e) => {
+            if (Date.now() < suppressClickUntil) {
+                return;
+            }
             const favTarget = e.target.closest('[data-fav-airport]');
             if (favTarget) {
                 e.stopPropagation();
@@ -1780,6 +1923,9 @@ homeButton.addEventListener('click', () => {
         });
 
         detailGrid.addEventListener('click', (e) => {
+            if (Date.now() < suppressClickUntil) {
+                return;
+            }
             const airportTarget = e.target.closest('[data-airport]');
             if (airportTarget) {
                 openDetailView(airportTarget.dataset.airport);
@@ -1787,6 +1933,9 @@ homeButton.addEventListener('click', () => {
         });
 
         favoritesGrid.addEventListener('click', (e) => {
+            if (Date.now() < suppressClickUntil) {
+                return;
+            }
             const airportTarget = e.target.closest('[data-airport]');
             if (airportTarget) {
                 openDetailView(airportTarget.dataset.airport);
@@ -1794,6 +1943,9 @@ homeButton.addEventListener('click', () => {
         });
 
 rankingGrid.addEventListener('click', (e) => {
+    if (Date.now() < suppressClickUntil) {
+        return;
+    }
     const airportTarget = e.target.closest('[data-airport]');
     if (airportTarget) {
         openDetailView(airportTarget.dataset.airport);
@@ -1804,6 +1956,52 @@ rankingToggleBtn.addEventListener('click', () => {
     rankingExpanded = !rankingExpanded;
     renderRankingSection();
 });
+
+        function getLongPressAirportTarget(target) {
+            if (!target) return null;
+            if (target.closest('button, a, select, input, textarea, [data-fav-airport]')) return null;
+            const airportTarget = target.closest('[data-airport]');
+            if (!airportTarget) return null;
+            return airportTarget.dataset.airport || null;
+        }
+
+        const LONG_PRESS_MS = 550;
+        let longPressTimer = null;
+        let longPressAirport = '';
+
+        function startLongPress(target) {
+            const airportEn = getLongPressAirportTarget(target);
+            if (!airportEn) return;
+            clearTimeout(longPressTimer);
+            longPressAirport = airportEn;
+            longPressTimer = setTimeout(() => {
+                toggleVisitedAirport(longPressAirport);
+                suppressClickUntil = Date.now() + 700;
+                longPressAirport = '';
+                longPressTimer = null;
+            }, LONG_PRESS_MS);
+        }
+
+        function stopLongPress() {
+            if (longPressTimer) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
+            }
+            longPressAirport = '';
+        }
+
+        document.addEventListener('touchstart', (e) => {
+            if (!e.touches || e.touches.length !== 1) return;
+            startLongPress(e.target);
+        }, { passive: true });
+        document.addEventListener('touchend', stopLongPress, { passive: true });
+        document.addEventListener('touchcancel', stopLongPress, { passive: true });
+        document.addEventListener('mousedown', (e) => {
+            if (e.button !== 0) return;
+            startLongPress(e.target);
+        });
+        document.addEventListener('mouseup', stopLongPress);
+        document.addEventListener('mouseleave', stopLongPress);
     </script>
 </body>
 </html>

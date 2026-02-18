@@ -392,13 +392,6 @@
             border-color: #FFC107;
         }
 
-        .visited-btn.active {
-            color: white;
-            background: var(--gradient);
-            border-color: var(--primary);
-            box-shadow: 0 3px 8px rgba(194, 24, 91, 0.22);
-        }
-
         .code-copy-btn {
             border: 1px solid var(--border);
             background: white;
@@ -673,6 +666,14 @@
             min-width: 0;
         }
 
+        .detail-sub-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0.35rem;
+            flex-wrap: wrap;
+        }
+
         .detail-sort {
             border: 2px solid var(--border);
             background: white;
@@ -706,7 +707,6 @@
         }
 
         .detail-actions .ghost-btn,
-        .detail-actions .star-btn,
         .detail-actions .code-copy-btn {
             min-height: 36px;
             white-space: nowrap;
@@ -745,6 +745,29 @@
             font-size: 0.9rem;
             color: var(--text-secondary);
             word-break: break-word;
+            display: inline;
+        }
+
+        .detail-map-link {
+            color: var(--primary);
+            text-decoration: underline;
+            font-weight: 700;
+        }
+
+        .detail-fav-inline {
+            flex: 0 0 auto;
+            min-width: auto;
+            padding: 0;
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            font-size: 1.2rem;
+            line-height: 1;
+            color: #b0b0b0;
+        }
+
+        .detail-fav-inline.active {
+            color: #FFC107;
         }
 
         .detail-country-link {
@@ -822,6 +845,10 @@
                 row-gap: 0.55rem;
             }
 
+            .detail-sub-row {
+                align-items: flex-start;
+            }
+
             .detail-meta-row {
                 flex-direction: column;
                 align-items: stretch;
@@ -833,7 +860,6 @@
             }
 
             .detail-actions .ghost-btn,
-            .detail-actions .star-btn,
             .detail-actions .code-copy-btn {
                 min-height: 34px;
                 padding: 0.32rem 0.58rem;
@@ -847,7 +873,6 @@
             }
 
             .detail-actions .ghost-btn,
-            .detail-actions .star-btn,
             .detail-actions .code-copy-btn {
                 width: 100%;
             }
@@ -928,14 +953,14 @@
         <div class="detail-header">
             <div class="detail-main">
                 <div class="detail-title" id="detailTitle">空港詳細</div>
-                <div class="detail-sub" id="detailSub">接続している空港一覧</div>
+                <div class="detail-sub-row">
+                    <div class="detail-sub" id="detailSub">接続している空港一覧</div>
+                    <button class="star-btn detail-fav-inline" id="detailFavBtn" type="button">★</button>
+                </div>
             </div>
             <div class="airport-actions detail-actions">
-                <button class="ghost-btn visited-btn" id="detailVisitedBtn" type="button">行った</button>
-                <button class="star-btn" id="detailFavBtn" type="button">★</button>
                 <button class="code-copy-btn" id="detailCopyBtn" type="button">コードコピー</button>
                 <button class="ghost-btn" id="detailNameCopyBtn" type="button">空港名コピー</button>
-                <a class="ghost-btn" id="detailMapBtn" href="#" target="_blank" rel="noopener">地図を見る</a>
             </div>
         </div>
         <div class="detail-card">
@@ -1168,9 +1193,6 @@ const REGION_FILTERS = new Set(['西欧', '東欧', '南欧', '北欧', '中東'
                 renderVisitedAirportsTab();
             } else if (currentFilter === 'visited-countries') {
                 renderVisitedCountriesTab();
-            }
-            if (currentDetailAirport === airportEn && detailVisitedBtn) {
-                detailVisitedBtn.classList.toggle('active', isVisited(airportEn));
             }
         }
 
@@ -1435,9 +1457,7 @@ const detailGrid = document.getElementById('detailGrid');
 const detailCopyBtn = document.getElementById('detailCopyBtn');
 const detailFavBtn = document.getElementById('detailFavBtn');
 const detailSort = document.getElementById('detailSort');
-const detailMapBtn = document.getElementById('detailMapBtn');
 const detailNameCopyBtn = document.getElementById('detailNameCopyBtn');
-const detailVisitedBtn = document.getElementById('detailVisitedBtn');
         const homeButton = document.getElementById('homeButton');
 const favoritesSection = document.getElementById('favoritesSection');
 const favoritesGrid = document.getElementById('favoritesGrid');
@@ -1534,22 +1554,18 @@ const visitCancelBtn = document.getElementById('visitCancelBtn');
 
             const fullName = getAirportFullName(info.code);
             detailTitle.innerHTML = `${info.ja}（${info.code}）${schengenBadge(info.schengen)}`;
-            detailSub.innerHTML = `${info.en} / <span class="detail-country-link" data-country="${info.country}">${formatCountryLabel(info.country)}</span>${fullName ? `<span class=\"detail-airport-name\">${fullName}</span>` : ''}`;
+            const mapUrl = airportGoogleMap[info.en] ? airportGoogleMap[info.en].trim() : '';
+            const fullNameLabel = fullName
+                ? (mapUrl
+                    ? `<a class=\"detail-airport-name detail-map-link\" href=\"${mapUrl}\" target=\"_blank\" rel=\"noopener\">${fullName}</a>`
+                    : `<span class=\"detail-airport-name\">${fullName}</span>`)
+                : '';
+            detailSub.innerHTML = `${info.en} / <span class="detail-country-link" data-country="${info.country}">${formatCountryLabel(info.country)}</span>${fullNameLabel}`;
             detailCount.textContent = `接続数: ${enriched.length}`;
             detailCopyBtn.dataset.copyCode = info.code;
             detailFavBtn.classList.toggle('active', isFavorite(info.en));
             detailFavBtn.dataset.favAirport = info.en;
             detailNameCopyBtn.dataset.copyName = fullName || info.ja;
-            detailVisitedBtn.classList.toggle('active', isVisited(info.en));
-            detailVisitedBtn.dataset.visitedAirport = info.en;
-            const mapUrl = airportGoogleMap[info.en];
-            if (mapUrl) {
-                detailMapBtn.href = mapUrl.trim();
-                detailMapBtn.classList.remove('is-hidden');
-            } else {
-                detailMapBtn.href = '#';
-                detailMapBtn.classList.add('is-hidden');
-            }
             currentDetailAirport = airportEn;
             renderDetailGrid(enriched);
 
@@ -1644,13 +1660,6 @@ detailNameCopyBtn.addEventListener('click', () => {
     const name = detailNameCopyBtn.dataset.copyName;
     if (name) {
         copyToClipboard(name);
-    }
-});
-
-detailVisitedBtn.addEventListener('click', () => {
-    const airport = detailVisitedBtn.dataset.visitedAirport;
-    if (airport) {
-        toggleVisitedAirport(airport);
     }
 });
 

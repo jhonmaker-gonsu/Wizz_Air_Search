@@ -662,17 +662,15 @@
         }
 
         .detail-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.8rem;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: start;
+            gap: 0.9rem;
             margin-bottom: 1rem;
-            flex-wrap: wrap;
         }
 
-        .detail-header > div:nth-child(2) {
+        .detail-main {
             min-width: 0;
-            flex: 1;
         }
 
         .detail-sort {
@@ -684,6 +682,35 @@
             font-weight: 700;
             cursor: pointer;
             min-height: 40px;
+        }
+
+        .detail-meta-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.6rem;
+            margin-top: 0.2rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .detail-meta-row .detail-sort {
+            min-width: 168px;
+        }
+
+        .detail-actions {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            gap: 0.45rem;
+            align-items: center;
+        }
+
+        .detail-actions .ghost-btn,
+        .detail-actions .star-btn,
+        .detail-actions .code-copy-btn {
+            min-height: 36px;
+            white-space: nowrap;
+            text-align: center;
         }
 
         .country-group {
@@ -708,16 +735,6 @@
             background: rgba(255, 255, 255, 0.8);
             border: 1px solid rgba(0, 0, 0, 0.06);
         }
-        .back-btn {
-            border: 2px solid var(--border);
-            background: white;
-            border-radius: 999px;
-            padding: 0.5rem 0.9rem;
-            font-weight: 700;
-            cursor: pointer;
-            min-height: 40px;
-        }
-
         .detail-title {
             font-size: 1.2rem;
             font-weight: 800;
@@ -801,39 +818,40 @@
             }
 
             .detail-header {
-                display: grid;
-                grid-template-columns: auto 1fr auto;
-                align-items: center;
-                column-gap: 0.55rem;
+                grid-template-columns: 1fr;
                 row-gap: 0.55rem;
             }
 
-            .detail-header > .airport-actions {
-                grid-column: 1 / -1;
-                display: flex;
-                align-items: center;
-                gap: 0.45rem;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                padding-bottom: 0.15rem;
-                scrollbar-width: none;
+            .detail-meta-row {
+                flex-direction: column;
+                align-items: stretch;
             }
 
-            .detail-header > .airport-actions::-webkit-scrollbar {
-                display: none;
+            .detail-meta-row .detail-sort {
+                width: 100%;
+                min-width: 0;
             }
 
-            .detail-header > .airport-actions .ghost-btn,
-            .detail-header > .airport-actions .star-btn,
-            .detail-header > .airport-actions .code-copy-btn {
-                flex: 0 0 auto;
-                white-space: nowrap;
+            .detail-actions .ghost-btn,
+            .detail-actions .star-btn,
+            .detail-actions .code-copy-btn {
                 min-height: 34px;
                 padding: 0.32rem 0.58rem;
                 font-size: 0.76rem;
             }
 
-            .back-btn,
+            .detail-actions {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.45rem;
+            }
+
+            .detail-actions .ghost-btn,
+            .detail-actions .star-btn,
+            .detail-actions .code-copy-btn {
+                width: 100%;
+            }
+
             .detail-sort {
                 min-height: 34px;
                 white-space: nowrap;
@@ -908,16 +926,11 @@
 
     <div id="detailView" class="detail-view is-hidden">
         <div class="detail-header">
-            <button class="back-btn" id="backButton">← 戻る</button>
-            <div>
+            <div class="detail-main">
                 <div class="detail-title" id="detailTitle">空港詳細</div>
                 <div class="detail-sub" id="detailSub">接続している空港一覧</div>
             </div>
-            <select class="detail-sort" id="detailSort">
-                <option value="count">接続数が多い順</option>
-                <option value="country">国でまとめて表示</option>
-            </select>
-            <div class="airport-actions">
+            <div class="airport-actions detail-actions">
                 <button class="ghost-btn visited-btn" id="detailVisitedBtn" type="button">行った</button>
                 <button class="star-btn" id="detailFavBtn" type="button">★</button>
                 <button class="code-copy-btn" id="detailCopyBtn" type="button">コードコピー</button>
@@ -926,7 +939,13 @@
             </div>
         </div>
         <div class="detail-card">
-            <div class="detail-sub" id="detailCount">接続数: 0</div>
+            <div class="detail-meta-row">
+                <div class="detail-sub" id="detailCount">接続数: 0</div>
+                <select class="detail-sort" id="detailSort">
+                    <option value="count">接続数が多い順</option>
+                    <option value="country">国でまとめて表示</option>
+                </select>
+            </div>
             <div class="detail-grid" id="detailGrid"></div>
         </div>
     </div>
@@ -1413,7 +1432,6 @@ const REGION_FILTERS = new Set(['西欧', '東欧', '南欧', '北欧', '中東'
 const detailSub = document.getElementById('detailSub');
 const detailCount = document.getElementById('detailCount');
 const detailGrid = document.getElementById('detailGrid');
-const backButton = document.getElementById('backButton');
 const detailCopyBtn = document.getElementById('detailCopyBtn');
 const detailFavBtn = document.getElementById('detailFavBtn');
 const detailSort = document.getElementById('detailSort');
@@ -1607,13 +1625,6 @@ const visitCancelBtn = document.getElementById('visitCancelBtn');
             window.scrollTo({ top: 0, behavior: 'auto' });
         }
 
-        backButton.addEventListener('click', () => {
-            if (history.state && history.state.view === 'detail') {
-                history.back();
-            } else {
-                openListView();
-            }
-        });
 detailCopyBtn.addEventListener('click', () => {
     const code = detailCopyBtn.dataset.copyCode;
     if (code) {

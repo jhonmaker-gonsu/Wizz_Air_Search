@@ -656,7 +656,7 @@
 
         .detail-header {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
+            grid-template-columns: minmax(0, 1fr);
             align-items: start;
             gap: 0.9rem;
             margin-bottom: 1rem;
@@ -704,6 +704,11 @@
             flex-wrap: nowrap;
             gap: 0.45rem;
             align-items: center;
+            justify-content: flex-start;
+        }
+
+        .detail-toolbar {
+            margin-bottom: 0.55rem;
         }
 
         .detail-actions .ghost-btn,
@@ -884,6 +889,19 @@
                 font-size: 0.8rem;
             }
         }
+
+        @media (min-width: 601px) {
+            .detail-toolbar {
+                margin-bottom: 0.7rem;
+            }
+
+            .detail-actions .ghost-btn,
+            .detail-actions .code-copy-btn {
+                min-height: 42px;
+                padding: 0.48rem 0.92rem;
+                font-size: 0.88rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -958,6 +976,8 @@
                     <button class="star-btn detail-fav-inline" id="detailFavBtn" type="button">★</button>
                 </div>
             </div>
+        </div>
+        <div class="detail-toolbar">
             <div class="airport-actions detail-actions">
                 <button class="code-copy-btn" id="detailCopyBtn" type="button">コードコピー</button>
                 <button class="ghost-btn" id="detailNameCopyBtn" type="button">空港名コピー</button>
@@ -1037,6 +1057,8 @@ let hasFavorites = false;
 let suppressClickUntil = 0;
 let actionSheetAirport = '';
 const REGION_FILTERS = new Set(['西欧', '東欧', '南欧', '北欧', '中東']);
+let currentDetailMapQuery = '';
+let currentDetailMapFallback = '';
 
         const countryEnglishMap = {
             'アイスランド': 'Iceland',
@@ -1499,6 +1521,39 @@ const visitCancelBtn = document.getElementById('visitCancelBtn');
             }, 1600);
         }
 
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent);
+        }
+
+        function isAndroid() {
+            return /Android/.test(navigator.userAgent);
+        }
+
+        function openGoogleMapApp(query, fallbackUrl) {
+            if (!query) return;
+            const encoded = encodeURIComponent(query);
+            const webFallback = fallbackUrl || `https://www.google.com/maps/search/?api=1&query=${encoded}`;
+
+            if (!isIOS() && !isAndroid()) {
+                window.open(webFallback, '_blank', 'noopener');
+                return;
+            }
+
+            const appUrl = isIOS()
+                ? `comgooglemaps://?q=${encoded}`
+                : `geo:0,0?q=${encoded}`;
+
+            const fallbackTimer = setTimeout(() => {
+                if (!document.hidden) {
+                    window.open(webFallback, '_blank', 'noopener');
+                }
+            }, 900);
+
+            const clearFallback = () => clearTimeout(fallbackTimer);
+            document.addEventListener('visibilitychange', clearFallback, { once: true });
+            window.location.href = appUrl;
+        }
+
         function closeVisitActionSheet() {
             actionSheetAirport = '';
             visitActionSheet.classList.add('is-hidden');
@@ -1555,9 +1610,11 @@ const visitCancelBtn = document.getElementById('visitCancelBtn');
             const fullName = getAirportFullName(info.code);
             detailTitle.innerHTML = `${info.ja}（${info.code}）${schengenBadge(info.schengen)}`;
             const mapUrl = airportGoogleMap[info.en] ? airportGoogleMap[info.en].trim() : '';
+            currentDetailMapQuery = `${fullName || info.en} ${info.code}`;
+            currentDetailMapFallback = mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentDetailMapQuery)}`;
             const fullNameLabel = fullName
                 ? (mapUrl
-                    ? `<a class=\"detail-airport-name detail-map-link\" href=\"${mapUrl}\" target=\"_blank\" rel=\"noopener\">${fullName}</a>`
+                    ? `<a class=\"detail-airport-name detail-map-link\" href=\"#\" data-map-link=\"1\">${fullName}</a>`
                     : `<span class=\"detail-airport-name\">${fullName}</span>`)
                 : '';
             detailSub.innerHTML = `${info.en} / <span class="detail-country-link" data-country="${info.country}">${formatCountryLabel(info.country)}</span>${fullNameLabel}`;
@@ -1664,6 +1721,12 @@ detailNameCopyBtn.addEventListener('click', () => {
 });
 
 detailSub.addEventListener('click', (e) => {
+    const mapTarget = e.target.closest('[data-map-link]');
+    if (mapTarget) {
+        e.preventDefault();
+        openGoogleMapApp(currentDetailMapQuery, currentDetailMapFallback);
+        return;
+    }
     const target = e.target.closest('[data-country]');
     if (!target) return;
     const country = target.dataset.country;

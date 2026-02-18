@@ -875,6 +875,60 @@ let detailSortMode = 'count';
 let rankingExpanded = false;
 let hasFavorites = false;
 
+        const countryEnglishMap = {
+            'アイスランド': 'Iceland',
+            'アイルランド': 'Ireland',
+            'アラブ首長国連邦': 'United Arab Emirates',
+            'アゼルバイジャン': 'Azerbaijan',
+            'アルバニア': 'Albania',
+            'アルメニア': 'Armenia',
+            'イギリス': 'United Kingdom',
+            'エストニア': 'Estonia',
+            'イスラエル': 'Israel',
+            'イタリア': 'Italy',
+            'エジプト': 'Egypt',
+            'オランダ': 'Netherlands',
+            'オーストリア': 'Austria',
+            'コソボ': 'Kosovo',
+            'キプロス': 'Cyprus',
+            'ギリシャ': 'Greece',
+            'クロアチア': 'Croatia',
+            'サウジアラビア': 'Saudi Arabia',
+            'スコットランド': 'Scotland',
+            'ジョージア': 'Georgia',
+            'スペイン': 'Spain',
+            'スウェーデン': 'Sweden',
+            'スイス': 'Switzerland',
+            'スロバキア': 'Slovakia',
+            'スロベニア': 'Slovenia',
+            'セルビア': 'Serbia',
+            'チェコ': 'Czech Republic',
+            'デンマーク': 'Denmark',
+            'ドイツ': 'Germany',
+            'トルコ': 'Turkey',
+            'ノルウェー': 'Norway',
+            'ハンガリー': 'Hungary',
+            'フィンランド': 'Finland',
+            'フランス': 'France',
+            'ブルガリア': 'Bulgaria',
+            'ベルギー': 'Belgium',
+            'ポルトガル': 'Portugal',
+            'ポーランド': 'Poland',
+            'ボスニア': 'Bosnia',
+            'ボスニア・ヘルツェゴビナ': 'Bosnia and Herzegovina',
+            'マルタ': 'Malta',
+            'モルドバ': 'Moldova',
+            'モロッコ': 'Morocco',
+            'モンテネグロ': 'Montenegro',
+            'ラトビア': 'Latvia',
+            'リトアニア': 'Lithuania',
+            'ルクセンブルク': 'Luxembourg',
+            'ルーマニア': 'Romania',
+            'ヨルダン': 'Jordan',
+            '北マケドニア': 'North Macedonia',
+            'UAE': 'United Arab Emirates'
+        };
+
         // ユニークな都市リスト作成
         const citySet = new Set();
         flightsData.forEach(flight => {
@@ -984,7 +1038,7 @@ let hasFavorites = false;
                 <div class="airport-chip" data-airport="${city.en}">
                     <div class="airport-chip-code">${city.code} ${schengenBadge(city.schengen)}</div>
                     <div class="airport-chip-name">${city.ja}</div>
-                    <div class="airport-chip-country">${city.country}</div>
+                    <div class="airport-chip-country">${formatCountryLabel(city.country)}</div>
                 </div>
             `).join('');
         }
@@ -1016,7 +1070,7 @@ let hasFavorites = false;
                         <div class="rank-badge">${index + 1}</div>
                         <div>
                             <div class="airport-chip-name">${item.ja}（${item.code}）${schengenBadge(item.schengen)}</div>
-                            <div class="rank-meta">${item.country}</div>
+                            <div class="rank-meta">${formatCountryLabel(item.country)}</div>
                         </div>
                     </div>
                     <div class="rank-meta">${item.count} 接続</div>
@@ -1057,6 +1111,15 @@ let hasFavorites = false;
             return airportFullNames[code] || '';
         }
 
+        function getCountryEnglish(countryJa) {
+            return countryEnglishMap[countryJa] || '';
+        }
+
+        function formatCountryLabel(countryJa) {
+            const en = getCountryEnglish(countryJa);
+            return en ? `${countryJa} / ${en}` : countryJa;
+        }
+
         function findExactAirport(searchTerm) {
             const term = normalizeText(searchTerm);
             if (!term) return null;
@@ -1088,10 +1151,12 @@ let hasFavorites = false;
                 const ja = normalizeKana(city.ja);
                 const en = normalizeText(city.en);
                 const country = normalizeText(city.country);
+                const countryEn = normalizeText(getCountryEnglish(city.country));
                 return (
                     ja.includes(term) || ja.includes(katakana) ||
                     en.includes(term) ||
-                    country.includes(term)
+                    country.includes(term) ||
+                    countryEn.includes(term)
                 );
             });
 
@@ -1197,7 +1262,7 @@ const toast = document.getElementById('toast');
 
             const fullName = getAirportFullName(info.code);
             detailTitle.innerHTML = `${info.ja}（${info.code}）${schengenBadge(info.schengen)}`;
-            detailSub.innerHTML = `${info.en} / <span class="detail-country-link" data-country="${info.country}">${info.country}</span>${fullName ? `<span class=\"detail-airport-name\">${fullName}</span>` : ''}`;
+            detailSub.innerHTML = `${info.en} / <span class="detail-country-link" data-country="${info.country}">${formatCountryLabel(info.country)}</span>${fullName ? `<span class=\"detail-airport-name\">${fullName}</span>` : ''}`;
             detailCount.textContent = `接続数: ${enriched.length}`;
             detailCopyBtn.dataset.copyCode = info.code;
             detailFavBtn.classList.toggle('active', isFavorite(info.en));
@@ -1232,7 +1297,7 @@ const toast = document.getElementById('toast');
                     <div class="airport-chip" data-airport="${city.en}">
                         <div class="airport-chip-code">${city.code} ${schengenBadge(city.schengen)}</div>
                         <div class="airport-chip-name">${city.ja}</div>
-                        <div class="airport-chip-country">${city.country}</div>
+                        <div class="airport-chip-country">${formatCountryLabel(city.country)}</div>
                         <div class="detail-chip-meta">接続数: ${city.count}</div>
                     </div>
                 `).join('');
@@ -1263,7 +1328,7 @@ const toast = document.getElementById('toast');
                     <div class="airport-chip" data-airport="${city.en}" style="border-left: 4px solid ${city.color};">
                         <div class="airport-chip-code">${city.code} ${schengenBadge(city.schengen)}</div>
                         <div class="airport-chip-name">${city.ja}</div>
-                        <div class="airport-chip-country">${city.country}</div>
+                        <div class="airport-chip-country">${formatCountryLabel(city.country)}</div>
                         <div class="detail-chip-meta">接続数: ${city.count}</div>
                     </div>
                 `).join('');
@@ -1435,13 +1500,18 @@ homeButton.addEventListener('click', () => {
             uniqueCities.forEach(city => {
                 if (!city.country) return;
                 if (!countrySet.has(city.country)) {
-                    countrySet.set(city.country, city.country);
+                    countrySet.set(city.country, getCountryEnglish(city.country));
                 }
             });
 
-            const countryMatches = Array.from(countrySet.keys()).filter(country => {
-                const jaValue = normalizeKana(country);
-                return jaValue.startsWith(lowerSearchTerm) || jaValue.startsWith(katakanaLower);
+            const countryMatches = Array.from(countrySet.entries()).filter(([countryJa, countryEn]) => {
+                const jaValue = normalizeKana(countryJa);
+                const enValue = normalizeText(countryEn);
+                return (
+                    jaValue.startsWith(lowerSearchTerm) ||
+                    jaValue.startsWith(katakanaLower) ||
+                    enValue.startsWith(lowerSearchTerm)
+                );
             }).slice(0, 4);
 
             if (cityMatches.length === 0 && countryMatches.length === 0) {
@@ -1452,13 +1522,13 @@ homeButton.addEventListener('click', () => {
             const cityItems = cityMatches.map(city => `
                 <div class="autocomplete-item" data-city="${city.en}">
                     <div class="autocomplete-item-main">${city.ja} <span class="autocomplete-item-code">[${city.code}]</span></div>
-                    <div class="autocomplete-item-sub">${city.en} - ${city.country}</div>
+                    <div class="autocomplete-item-sub">${city.en} - ${formatCountryLabel(city.country)}</div>
                 </div>
             `).join('');
 
-            const countryItems = countryMatches.map(country => `
-                <div class="autocomplete-item" data-country="${country}">
-                    <div class="autocomplete-item-main">${country}</div>
+            const countryItems = countryMatches.map(([countryJa, countryEn]) => `
+                <div class="autocomplete-item" data-country="${countryJa}">
+                    <div class="autocomplete-item-main">${formatCountryLabel(countryJa)}</div>
                     <div class="autocomplete-item-sub">国名</div>
                 </div>
             `).join('');
@@ -1539,6 +1609,8 @@ homeButton.addEventListener('click', () => {
                     flight.toCity.toLowerCase().includes(katakanaSearchTerm) ||
                     flight.fromCountry.toLowerCase().includes(searchTerm) ||
                     flight.toCountry.toLowerCase().includes(searchTerm) ||
+                    getCountryEnglish(flight.fromCountry).toLowerCase().includes(searchTerm) ||
+                    getCountryEnglish(flight.toCountry).toLowerCase().includes(searchTerm) ||
                     flight.from.toLowerCase().includes(searchTerm) ||
                     flight.to.toLowerCase().includes(searchTerm) ||
                     flight.fromCode.toLowerCase().includes(searchTerm) ||
@@ -1624,7 +1696,7 @@ homeButton.addEventListener('click', () => {
                                 <div class="airport-code">${group.fromCode} ${schengenBadge(group.fromSchengen)}</div>
                                 <div>
                                     <div class="airport-name">${group.fromCity}</div>
-                                    <div class="airport-country">${group.fromCountry}</div>
+                                    <div class="airport-country">${formatCountryLabel(group.fromCountry)}</div>
                                 </div>
                             </div>
                             <div class="airport-actions">
@@ -1637,7 +1709,7 @@ homeButton.addEventListener('click', () => {
                                     <div class="airport-chip" data-airport="${dest.to}">
                                         <div class="airport-chip-code">${dest.toCode} ${schengenBadge(dest.toSchengen)}</div>
                                         <div class="airport-chip-name">${dest.toCity}</div>
-                                        <div class="airport-chip-country">${dest.toCountry}</div>
+                                        <div class="airport-chip-country">${formatCountryLabel(dest.toCountry)}</div>
                                     </div>
                                 `).join('')}
                             </div>
@@ -1680,7 +1752,7 @@ homeButton.addEventListener('click', () => {
                                 <div class="airport-code">${city.code} ${schengenBadge(city.schengen)}</div>
                                 <div>
                                     <div class="airport-name">${city.ja}</div>
-                                    <div class="airport-country">${city.country}</div>
+                                    <div class="airport-country">${formatCountryLabel(city.country)}</div>
                                     <div class="airport-meta">接続数: ${city.count}</div>
                                 </div>
                             </div>

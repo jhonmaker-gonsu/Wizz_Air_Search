@@ -485,56 +485,6 @@
             transform: translateX(-50%) translateY(-6px);
         }
 
-        .action-sheet-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.35);
-            z-index: 1200;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            padding: 0.8rem;
-        }
-
-        .action-sheet {
-            width: min(560px, 100%);
-            background: white;
-            border-radius: 16px;
-            padding: 0.8rem;
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
-        }
-
-        .action-sheet-title {
-            font-size: 0.95rem;
-            font-weight: 800;
-            color: var(--text-primary);
-            margin-bottom: 0.65rem;
-            padding: 0 0.1rem;
-        }
-
-        .action-sheet-option {
-            width: 100%;
-            border: 1px solid var(--border);
-            background: white;
-            color: var(--text-primary);
-            border-radius: 12px;
-            padding: 0.75rem 0.85rem;
-            font-size: 0.9rem;
-            font-weight: 700;
-            text-align: left;
-            cursor: pointer;
-            margin-bottom: 0.45rem;
-        }
-
-        .action-sheet-option:last-child {
-            margin-bottom: 0;
-        }
-
-        .action-sheet-option.primary {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
         .no-results {
             text-align: center;
             padding: 3rem 1.5rem;
@@ -775,6 +725,35 @@
             color: #FFC107;
         }
 
+        .detail-visited-inline {
+            flex: 0 0 auto;
+            min-width: auto;
+            padding: 0;
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            font-size: 1.05rem;
+            line-height: 1;
+            color: #b0b0b0;
+        }
+
+        .detail-visited-inline.active {
+            color: #1976D2;
+        }
+
+        .detail-chip-name-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.35rem;
+        }
+
+        .detail-chip-fav {
+            font-size: 0.82rem;
+            color: #FFC107;
+            flex: 0 0 auto;
+        }
+
         .detail-country-link {
             color: var(--primary);
             font-weight: 700;
@@ -974,6 +953,7 @@
                 <div class="detail-sub-row">
                     <div class="detail-sub" id="detailSub">接続している空港一覧</div>
                     <button class="star-btn detail-fav-inline" id="detailFavBtn" type="button">★</button>
+                    <button class="star-btn detail-visited-inline" id="detailVisitedBtn" type="button" aria-label="行った空港を切替">✔</button>
                 </div>
             </div>
         </div>
@@ -1001,13 +981,6 @@
     </footer>
 
     <div class="toast" id="toast">コピーしました</div>
-    <div class="action-sheet-backdrop is-hidden" id="visitActionSheet">
-        <div class="action-sheet">
-            <div class="action-sheet-title" id="visitActionTitle">操作を選択</div>
-            <button class="action-sheet-option primary" id="visitAirportActionBtn" type="button">行った空港に登録</button>
-            <button class="action-sheet-option" id="visitCancelBtn" type="button">キャンセル</button>
-        </div>
-    </div>
 
     <script src="./data.js"></script>
     <script>
@@ -1054,8 +1027,6 @@ let currentDetailAirport = '';
 let detailSortMode = 'count';
 let rankingExpanded = false;
 let hasFavorites = false;
-let suppressClickUntil = 0;
-let actionSheetAirport = '';
 const REGION_FILTERS = new Set(['西欧', '東欧', '南欧', '北欧', '中東']);
 let currentDetailMapQuery = '';
 let currentDetailMapFallback = '';
@@ -1225,28 +1196,12 @@ let currentDetailMapFallback = '';
             hasFavorites = list.length > 0;
 
             if (list.length === 0) {
-                if (favoritesTabBtn) {
-                    favoritesTabBtn.classList.add('is-hidden');
-                }
-                favoritesSection.classList.add('is-hidden');
-                if (currentFilter === 'favorites') {
-                    currentFilter = 'all';
-                    filterButtons.forEach(b => b.classList.remove('active'));
-                    const allButton = document.querySelector('.filter-btn[data-filter="all"]');
-                    if (allButton) {
-                        allButton.classList.add('active');
-                    }
-                }
                 favoritesGrid.innerHTML = `
                     <div class="rank-meta">お気に入りがありません</div>
                 `;
                 return;
             }
 
-            if (favoritesTabBtn) {
-                favoritesTabBtn.classList.remove('is-hidden');
-            }
-            favoritesSection.classList.remove('is-hidden');
             favoritesGrid.innerHTML = list.map(city => `
                 <div class="airport-chip" data-airport="${city.en}">
                     <div class="airport-chip-code">${city.code} ${schengenBadge(city.schengen)}</div>
@@ -1379,7 +1334,7 @@ let currentDetailMapFallback = '';
             const isSearching = Boolean(searchInput && searchInput.value.trim());
             const sortSelectEl = document.getElementById('sortSelect');
 
-            favoritesSection.classList.toggle('is-hidden', !(isHome || isFavorites) || isSearching || !hasFavorites);
+            favoritesSection.classList.toggle('is-hidden', !isFavorites);
             rankingSection.classList.toggle('is-hidden', !(isHome || isRanking) || isSearching);
             resultsContainer.classList.toggle('is-hidden', isFavorites || isRanking);
             if (sortSelectEl) {
@@ -1478,6 +1433,7 @@ const detailCount = document.getElementById('detailCount');
 const detailGrid = document.getElementById('detailGrid');
 const detailCopyBtn = document.getElementById('detailCopyBtn');
 const detailFavBtn = document.getElementById('detailFavBtn');
+const detailVisitedBtn = document.getElementById('detailVisitedBtn');
 const detailSort = document.getElementById('detailSort');
 const detailNameCopyBtn = document.getElementById('detailNameCopyBtn');
         const homeButton = document.getElementById('homeButton');
@@ -1489,10 +1445,6 @@ const resultsContainer = document.getElementById('resultsContainer');
 const favoritesTabBtn = document.getElementById('favoritesTabBtn');
 const rankingToggleBtn = document.getElementById('rankingToggleBtn');
 const toast = document.getElementById('toast');
-const visitActionSheet = document.getElementById('visitActionSheet');
-const visitActionTitle = document.getElementById('visitActionTitle');
-const visitAirportActionBtn = document.getElementById('visitAirportActionBtn');
-const visitCancelBtn = document.getElementById('visitCancelBtn');
 
         // 初期表示
         if (!dataLoaded) {
@@ -1554,20 +1506,6 @@ const visitCancelBtn = document.getElementById('visitCancelBtn');
             window.location.href = appUrl;
         }
 
-        function closeVisitActionSheet() {
-            actionSheetAirport = '';
-            visitActionSheet.classList.add('is-hidden');
-        }
-
-        function openVisitActionSheet(airportEn) {
-            const info = cityInfoByEn.get(airportEn);
-            if (!info) return;
-            actionSheetAirport = airportEn;
-            visitActionTitle.textContent = `${info.ja}（${info.code}）`;
-            visitAirportActionBtn.textContent = isVisited(airportEn) ? '行った空港から解除' : '行った空港に登録';
-            visitActionSheet.classList.remove('is-hidden');
-        }
-
         async function copyToClipboard(text) {
             try {
                 if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1622,6 +1560,8 @@ const visitCancelBtn = document.getElementById('visitCancelBtn');
             detailCopyBtn.dataset.copyCode = info.code;
             detailFavBtn.classList.toggle('active', isFavorite(info.en));
             detailFavBtn.dataset.favAirport = info.en;
+            detailVisitedBtn.classList.toggle('active', isVisited(info.en));
+            detailVisitedBtn.dataset.visitedAirport = info.en;
             detailNameCopyBtn.dataset.copyName = fullName || info.ja;
             currentDetailAirport = airportEn;
             renderDetailGrid(enriched);
@@ -1643,7 +1583,10 @@ const visitCancelBtn = document.getElementById('visitCancelBtn');
                 detailGrid.innerHTML = enriched.map(city => `
                     <div class="airport-chip" data-airport="${city.en}">
                         <div class="airport-chip-code">${city.code} ${schengenBadge(city.schengen)}</div>
-                        <div class="airport-chip-name">${city.ja}</div>
+                        <div class="detail-chip-name-row">
+                            <div class="airport-chip-name">${city.ja}</div>
+                            ${isFavorite(city.en) ? '<span class="detail-chip-fav">★</span>' : ''}
+                        </div>
                         <div class="airport-chip-country">${formatCountryLabel(city.country)}</div>
                         <div class="detail-chip-meta">接続数: ${city.count}</div>
                     </div>
@@ -1674,7 +1617,10 @@ const visitCancelBtn = document.getElementById('visitCancelBtn');
                 detailGrid.innerHTML = ordered.map(city => `
                     <div class="airport-chip" data-airport="${city.en}" style="border-left: 4px solid ${city.color};">
                         <div class="airport-chip-code">${city.code} ${schengenBadge(city.schengen)}</div>
-                        <div class="airport-chip-name">${city.ja}</div>
+                        <div class="detail-chip-name-row">
+                            <div class="airport-chip-name">${city.ja}</div>
+                            ${isFavorite(city.en) ? '<span class="detail-chip-fav">★</span>' : ''}
+                        </div>
                         <div class="airport-chip-country">${formatCountryLabel(city.country)}</div>
                         <div class="detail-chip-meta">接続数: ${city.count}</div>
                     </div>
@@ -1710,7 +1656,30 @@ detailFavBtn.addEventListener('click', () => {
     if (airport) {
         toggleFavorite(airport);
         detailFavBtn.classList.toggle('active', isFavorite(airport));
+        if (currentDetailAirport) {
+            const connections = Array.from(connectionsMap.get(currentDetailAirport) || []);
+            const enriched = connections.map(name => {
+                const city = cityInfoByEn.get(name) || { en: name, ja: name, code: '???', country: '', schengen: null };
+                const count = connectionsMap.get(city.en) ? connectionsMap.get(city.en).size : 0;
+                return {
+                    en: city.en,
+                    code: city.code,
+                    ja: city.ja,
+                    country: city.country,
+                    schengen: city.schengen,
+                    count
+                };
+            });
+            renderDetailGrid(enriched);
+        }
     }
+});
+
+detailVisitedBtn.addEventListener('click', () => {
+    const airport = detailVisitedBtn.dataset.visitedAirport;
+    if (!airport) return;
+    toggleVisitedAirport(airport);
+    detailVisitedBtn.classList.toggle('active', isVisited(airport));
 });
 
 detailNameCopyBtn.addEventListener('click', () => {
@@ -2132,9 +2101,6 @@ homeButton.addEventListener('click', () => {
 
         const flightsGrid = document.getElementById('flightsGrid');
         flightsGrid.addEventListener('click', (e) => {
-            if (Date.now() < suppressClickUntil) {
-                return;
-            }
             const favTarget = e.target.closest('[data-fav-airport]');
             if (favTarget) {
                 e.stopPropagation();
@@ -2148,9 +2114,6 @@ homeButton.addEventListener('click', () => {
         });
 
         detailGrid.addEventListener('click', (e) => {
-            if (Date.now() < suppressClickUntil) {
-                return;
-            }
             const airportTarget = e.target.closest('[data-airport]');
             if (airportTarget) {
                 openDetailView(airportTarget.dataset.airport);
@@ -2158,9 +2121,6 @@ homeButton.addEventListener('click', () => {
         });
 
         favoritesGrid.addEventListener('click', (e) => {
-            if (Date.now() < suppressClickUntil) {
-                return;
-            }
             const airportTarget = e.target.closest('[data-airport]');
             if (airportTarget) {
                 openDetailView(airportTarget.dataset.airport);
@@ -2168,9 +2128,6 @@ homeButton.addEventListener('click', () => {
         });
 
 rankingGrid.addEventListener('click', (e) => {
-    if (Date.now() < suppressClickUntil) {
-        return;
-    }
     const airportTarget = e.target.closest('[data-airport]');
     if (airportTarget) {
         openDetailView(airportTarget.dataset.airport);
@@ -2181,68 +2138,6 @@ rankingToggleBtn.addEventListener('click', () => {
     rankingExpanded = !rankingExpanded;
     renderRankingSection();
 });
-
-visitAirportActionBtn.addEventListener('click', () => {
-    if (!actionSheetAirport) return;
-    toggleVisitedAirport(actionSheetAirport);
-    closeVisitActionSheet();
-});
-
-visitCancelBtn.addEventListener('click', () => {
-    closeVisitActionSheet();
-});
-
-visitActionSheet.addEventListener('click', (e) => {
-    if (e.target === visitActionSheet) {
-        closeVisitActionSheet();
-    }
-});
-
-        function getLongPressAirportTarget(target) {
-            if (!target) return null;
-            if (target.closest('button, a, select, input, textarea, [data-fav-airport]')) return null;
-            const airportTarget = target.closest('[data-airport]');
-            if (!airportTarget) return null;
-            return airportTarget.dataset.airport || null;
-        }
-
-        const LONG_PRESS_MS = 550;
-        let longPressTimer = null;
-        let longPressAirport = '';
-
-        function startLongPress(target) {
-            const airportEn = getLongPressAirportTarget(target);
-            if (!airportEn) return;
-            clearTimeout(longPressTimer);
-            longPressAirport = airportEn;
-            longPressTimer = setTimeout(() => {
-                openVisitActionSheet(longPressAirport);
-                suppressClickUntil = Date.now() + 700;
-                longPressAirport = '';
-                longPressTimer = null;
-            }, LONG_PRESS_MS);
-        }
-
-        function stopLongPress() {
-            if (longPressTimer) {
-                clearTimeout(longPressTimer);
-                longPressTimer = null;
-            }
-            longPressAirport = '';
-        }
-
-        document.addEventListener('touchstart', (e) => {
-            if (!e.touches || e.touches.length !== 1) return;
-            startLongPress(e.target);
-        }, { passive: true });
-        document.addEventListener('touchend', stopLongPress, { passive: true });
-        document.addEventListener('touchcancel', stopLongPress, { passive: true });
-        document.addEventListener('mousedown', (e) => {
-            if (e.button !== 0) return;
-            startLongPress(e.target);
-        });
-        document.addEventListener('mouseup', stopLongPress);
-        document.addEventListener('mouseleave', stopLongPress);
     </script>
 </body>
 </html>

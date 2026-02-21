@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Wizz Air フライト検索 - モバイル版</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Montserrat:wght@700;900&display=swap"
+        rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -536,6 +539,7 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -558,7 +562,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* スクロールバー非表示（iOS対応） */
@@ -567,7 +573,11 @@
         }
 
         /* タッチフィードバック改善 */
-        .flight-group, .filter-btn, .autocomplete-item, .airport-chip, .code-copy-btn {
+        .flight-group,
+        .filter-btn,
+        .autocomplete-item,
+        .airport-chip,
+        .code-copy-btn {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
@@ -594,6 +604,25 @@
             background: #FFF3E0;
             color: #E65100;
             border: 1px solid #FFCC80;
+        }
+
+        /* ラウンジインジケーター (インライン・リンク) */
+        .airport-chip-lounge-link,
+        .airport-chip-lounge-icon {
+            font-size: 0.85rem;
+            margin-left: 0.3rem;
+            display: inline-block;
+            vertical-align: middle;
+            opacity: 0.7;
+        }
+
+        .airport-chip-lounge-link {
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .airport-chip-lounge-link:hover {
+            opacity: 1;
         }
 
         .is-hidden {
@@ -690,6 +719,7 @@
             background: rgba(255, 255, 255, 0.8);
             border: 1px solid rgba(0, 0, 0, 0.06);
         }
+
         .detail-title {
             font-size: 1.2rem;
             font-weight: 800;
@@ -705,20 +735,35 @@
 
         .detail-map-link {
             color: var(--primary);
-            text-decoration: underline;
-            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-map-link:hover {
+            opacity: 0.8;
+        }
+
+        .star-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            padding: 0;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .detail-fav-inline {
             flex: 0 0 auto;
             min-width: auto;
-            padding: 0;
-            border: none;
-            background: transparent;
-            box-shadow: none;
-            font-size: 1.2rem;
-            line-height: 1;
-            color: #b0b0b0;
+            width: 1.8rem;
+            height: 1.8rem;
+            font-size: 1.4rem;
         }
 
         .detail-fav-inline.active {
@@ -726,23 +771,26 @@
         }
 
         .detail-visited-inline {
-            flex: 0 0 auto;
-            min-width: auto;
-            padding: 0.1rem 0.28rem;
+            background: transparent;
             border: none;
-            background: rgba(25, 118, 210, 0.08);
-            border-radius: 999px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-            font-size: 1rem;
-            line-height: 1;
-            color: #5f84ad;
-            transition: all 0.18s ease;
+            cursor: pointer;
+            font-size: 1.2rem;
+            /* Match star-btn size */
+            color: #b0b0b0;
+            padding: 0;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 0.8rem;
+            /* Add spacing from the star */
         }
 
         .detail-visited-inline.active {
-            color: #ffffff;
-            background: var(--gradient);
-            box-shadow: 0 2px 8px rgba(194, 24, 91, 0.28);
+            color: #4CAF50;
+            /* Solid green text when active */
+            text-shadow: 0 0 1px rgba(76, 175, 80, 0.5);
+            /* Slight fill effect */
         }
 
         .detail-chip-name-row {
@@ -890,8 +938,69 @@
                 font-size: 0.88rem;
             }
         }
+
+        .lounge-btn-container {
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .lounge-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+            color: #ffffff;
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .lounge-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #2a2a2a 0%, #333333 100%);
+        }
+
+        .lounge-btn:active {
+            transform: translateY(1px);
+        }
+
+        .lounge-btn-premium {
+            background: linear-gradient(135deg, #2b2512 0%, #4a3f1d 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #fdf5e6;
+        }
+
+        .lounge-btn-premium:hover {
+            background: linear-gradient(135deg, #3d351a 0%, #5c4f24 100%);
+            box-shadow: 0 6px 16px rgba(212, 175, 55, 0.15);
+        }
+
+        .crown-icon {
+            font-size: 1.1rem;
+            filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.8));
+            animation: pulse-glow 2s infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                filter: drop_shadow(0 0 2px rgba(212, 175, 55, 0.5));
+            }
+
+            100% {
+                filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.9));
+            }
+        }
     </style>
 </head>
+
 <body>
     <header>
         <button class="header-title" id="homeButton" type="button">
@@ -904,25 +1013,19 @@
         <div class="search-container">
             <div class="search-input-wrapper">
                 <span class="search-icon">🔍</span>
-                <input 
-                    type="text" 
-                    id="searchInput" 
-                    placeholder="都市名で検索（ひらがな・英語OK）"
-                    autocomplete="off"
-                >
+                <input type="text" id="searchInput" placeholder="都市名で検索（ひらがな・英語OK）" autocomplete="off">
                 <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
             </div>
             <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">すべて</button>
-                <button class="filter-btn" data-filter="ranking">接続数の多い空港</button>
+                <button class="filter-btn active" data-filter="all">接続数の多い空港</button>
                 <button class="filter-btn" data-filter="西欧">西欧</button>
                 <button class="filter-btn" data-filter="東欧">東欧</button>
                 <button class="filter-btn" data-filter="南欧">南欧</button>
                 <button class="filter-btn" data-filter="北欧">北欧</button>
                 <button class="filter-btn" data-filter="中東">中東</button>
                 <button class="filter-btn" data-filter="visited-airports">行った空港</button>
-                <button class="filter-btn" data-filter="visited-countries">行った国</button>
                 <button class="filter-btn" data-filter="favorites" id="favoritesTabBtn">お気に入り</button>
+                <button class="filter-btn" data-filter="lounge">ラウンジあり</button>
             </div>
         </div>
 
@@ -934,7 +1037,6 @@
             <div class="section-card" id="rankingSection">
                 <div class="section-title">
                     接続数の多い空港
-                    <button class="ghost-btn" id="rankingToggleBtn" type="button">もっと見る</button>
                 </div>
                 <div class="chip-grid" id="rankingGrid"></div>
             </div>
@@ -962,7 +1064,8 @@
                 <div class="detail-sub-row">
                     <div class="detail-sub" id="detailSub">接続している空港一覧</div>
                     <button class="star-btn detail-fav-inline" id="detailFavBtn" type="button">★</button>
-                    <button class="star-btn detail-visited-inline" id="detailVisitedBtn" type="button" aria-label="行った空港を切替">✔</button>
+                    <button class="detail-visited-inline" id="detailVisitedBtn" type="button"
+                        aria-label="行った空港を切替">✓</button>
                 </div>
             </div>
         </div>
@@ -1001,7 +1104,9 @@
             schengenMap = {},
             rawFlightData = '',
             airportGoogleMap = {},
-            airportFullNames = {}
+            airportFullNames = {},
+            loungeData = {},
+            premiumLounges = []
         } = window.AIRPORT_DATA || {};
         const dataLoaded = Boolean(window.AIRPORT_DATA) && Boolean(rawFlightData);
         // 空港コードマッピング
@@ -1027,18 +1132,18 @@
             })
             : [];
 
-let filteredFlights = [...flightsData];
-let currentFilter = 'all';
-let currentSort = 'default';
-let uniqueCities = [];
-let searchMode = 'routes';
-let currentDetailAirport = '';
-let detailSortMode = 'count';
-let rankingExpanded = false;
-let hasFavorites = false;
-const REGION_FILTERS = new Set(['西欧', '東欧', '南欧', '北欧', '中東']);
-let currentDetailMapQuery = '';
-let currentDetailMapFallback = '';
+        let filteredFlights = [...flightsData];
+        let currentFilter = 'all';
+        let currentSort = 'default';
+        let uniqueCities = [];
+        let searchMode = 'routes';
+        let currentDetailAirport = '';
+        let detailSortMode = 'count';
+        let rankingExpanded = false;
+        let hasFavorites = false;
+        const REGION_FILTERS = new Set(['西欧', '東欧', '南欧', '北欧', '中東']);
+        let currentDetailMapQuery = '';
+        let currentDetailMapFallback = '';
 
         const countryEnglishMap = {
             'アイスランド': 'Iceland',
@@ -1213,7 +1318,7 @@ let currentDetailMapFallback = '';
 
             favoritesGrid.innerHTML = list.map(city => `
                 <div class="airport-chip" data-airport="${city.en}">
-                    <div class="airport-chip-code">${city.code} ${schengenBadge(city.schengen)}</div>
+                    <div class="airport-chip-code">${city.code} ${schengenBadge(city.schengen)} ${getLoungeIndicator(city.en)}</div>
                     <div class="airport-chip-name">${city.ja}</div>
                     <div class="airport-chip-country">${formatCountryLabel(city.country)}</div>
                 </div>
@@ -1221,7 +1326,7 @@ let currentDetailMapFallback = '';
         }
 
         function renderRankingSection() {
-            const ranking = Array.from(connectionsMap.keys()).map(name => {
+            const rankingData = Array.from(connectionsMap.keys()).map(name => {
                 const info = cityInfoByEn.get(name) || { en: name, ja: name, code: '???', country: '' };
                 return {
                     en: info.en,
@@ -1234,23 +1339,17 @@ let currentDetailMapFallback = '';
             }).sort((a, b) => b.count - a.count);
 
             const isHome = currentFilter === 'all';
-            const limit = isHome && !rankingExpanded ? 14 : ranking.length;
-            const view = ranking.slice(0, limit);
-            if (rankingToggleBtn) {
-                rankingToggleBtn.textContent = isHome && !rankingExpanded ? 'もっと見る' : '閉じる';
-                rankingToggleBtn.classList.toggle('is-hidden', !isHome);
-            }
+            const limit = rankingData.length; // Removed the limit of 20
+            const view = rankingData.slice(0, limit);
 
             rankingGrid.innerHTML = view.map((item, index) => `
-                <div class="rank-item" data-airport="${item.en}">
-                    <div class="rank-left">
-                        <div class="rank-badge">${index + 1}</div>
-                        <div>
-                            <div class="airport-chip-name">${item.ja}（${item.code}）${schengenBadge(item.schengen)}</div>
-                            <div class="rank-meta">${formatCountryLabel(item.country)}</div>
-                        </div>
+                <div class="airport-chip" data-airport="${item.en}">
+                    <div class="airport-chip-code">${item.code} ${schengenBadge(item.schengen)} ${getLoungeIndicator(item.en)}</div>
+                    <div class="airport-chip-name">${item.ja}</div>
+                    <div class="airport-chip-country">${formatCountryLabel(item.country)}</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.2rem;">
+                        接続数: <span style="font-weight:700; color:var(--primary);">${item.count}</span>
                     </div>
-                    <div class="rank-meta">${item.count} 接続</div>
                 </div>
             `).join('');
         }
@@ -1310,7 +1409,7 @@ let currentDetailMapFallback = '';
                         <div class="destinations">
                             ${airports.map(airport => `
                                     <div class="airport-chip" data-airport="${airport.en}">
-                                        <div class="airport-chip-code">${airport.code} ${schengenBadge(airport.schengen)}</div>
+                                        <div class="airport-chip-code">${airport.code} ${schengenBadge(airport.schengen)} ${getLoungeIndicator(airport.en)}</div>
                                         <div class="airport-chip-name">${airport.ja}</div>
                                         <div class="airport-chip-country">${airport.en}</div>
                                     </div>
@@ -1327,11 +1426,37 @@ let currentDetailMapFallback = '';
         }
 
         function renderRegionAirports(region) {
-            const airports = uniqueCities
-                .filter(city => regionMap[city.en] === region)
-                .sort((a, b) => a.ja.localeCompare(b.ja, 'ja'));
             searchMode = 'airports';
-            displayAirports(airports);
+            currentFilter = region;
+
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector(`.filter-btn[data-filter="${region}"]`);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            const searchTerm = searchInput.value.toLowerCase().trim();
+
+            const filteredCities = uniqueCities.filter(city => {
+                const countMatches = currentFilter === 'all' ||
+                    (!currentFilter) ||
+                    (currentFilter === 'lounge');
+
+                const cityRegion = window.AIRPORT_DATA && window.AIRPORT_DATA.regionMap ? window.AIRPORT_DATA.regionMap[city.en] : null;
+
+                if (!countMatches && cityRegion !== currentFilter) return false;
+
+                if (currentFilter === 'lounge') {
+                    const { loungeData } = window.AIRPORT_DATA || {};
+                    if (!loungeData || !loungeData[city.en]) return false;
+                }
+
+                return !searchTerm ||
+                    city.en.toLowerCase().includes(searchTerm) ||
+                    city.ja.includes(searchTerm) ||
+                    city.code.toLowerCase().includes(searchTerm) ||
+                    hiraganaToKatakana(city.ja).includes(hiraganaToKatakana(searchTerm));
+            }).sort((a, b) => a.ja.localeCompare(b.ja, 'ja'));
+
+            displayAirports(filteredCities);
         }
 
         function updateTabView() {
@@ -1344,18 +1469,23 @@ let currentDetailMapFallback = '';
             const sortSelectEl = document.getElementById('sortSelect');
 
             favoritesSection.classList.toggle('is-hidden', !isFavorites);
-            rankingSection.classList.toggle('is-hidden', !(isHome || isRanking) || isSearching);
-            resultsContainer.classList.toggle('is-hidden', isFavorites || isRanking);
+            rankingSection.classList.toggle('is-hidden', !isHome || isSearching);
+
+            // `resultsContainer` contains `flightsGrid`. Hide it only if viewing home screen (and not searching) or favorites.
+            resultsContainer.classList.toggle('is-hidden', (isHome && !isSearching) || isFavorites);
+
             if (sortSelectEl) {
                 sortSelectEl.classList.toggle('is-hidden', isVisitedAirports || isVisitedCountries);
             }
 
-            renderRankingSection();
+            if (isHome) {
+                renderRankingSection();
+            }
         }
 
         // ひらがなをカタカナに変換
         function hiraganaToKatakana(str) {
-            return str.replace(/[\u3041-\u3096]/g, function(match) {
+            return str.replace(/[\u3041-\u3096]/g, function (match) {
                 const chr = match.charCodeAt(0) + 0x60;
                 return String.fromCharCode(chr);
             });
@@ -1382,6 +1512,25 @@ let currentDetailMapFallback = '';
             return en ? `${countryJa} / ${en}` : countryJa;
         }
 
+        function getLoungeIndicator(airportEn, clickable = false) {
+            if (!window.AIRPORT_DATA || !window.AIRPORT_DATA.loungeData) return '';
+            const { loungeData, premiumLounges } = window.AIRPORT_DATA;
+            if (loungeData[airportEn]) {
+                const url = loungeData[airportEn];
+                const isPremium = premiumLounges.includes(url);
+                const icon = isPremium ? '👑' : '🛋️';
+                if (clickable) {
+                    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="airport-chip-lounge-link" title="Priority Pass Lounge" onclick="event.stopPropagation()">${icon}</a>`;
+                } else {
+                    return `<span class="airport-chip-lounge-icon" title="Priority Pass Lounge">${icon}</span>`;
+                }
+            }
+            return '';
+        }
+
+        // ==========================================
+        // UI レンダリング
+        // ==========================================
         function findExactAirport(searchTerm) {
             const term = normalizeText(searchTerm);
             if (!term) return null;
@@ -1437,23 +1586,22 @@ let currentDetailMapFallback = '';
         const listView = document.getElementById('listView');
         const detailView = document.getElementById('detailView');
         const detailTitle = document.getElementById('detailTitle');
-const detailSub = document.getElementById('detailSub');
-const detailCount = document.getElementById('detailCount');
-const detailGrid = document.getElementById('detailGrid');
-const detailCopyBtn = document.getElementById('detailCopyBtn');
-const detailFavBtn = document.getElementById('detailFavBtn');
-const detailVisitedBtn = document.getElementById('detailVisitedBtn');
-const detailSort = document.getElementById('detailSort');
-const detailNameCopyBtn = document.getElementById('detailNameCopyBtn');
+        const detailSub = document.getElementById('detailSub');
+        const detailCount = document.getElementById('detailCount');
+        const detailGrid = document.getElementById('detailGrid');
+        const detailCopyBtn = document.getElementById('detailCopyBtn');
+        const detailFavBtn = document.getElementById('detailFavBtn');
+        const detailVisitedBtn = document.getElementById('detailVisitedBtn');
+        const detailSort = document.getElementById('detailSort');
+        const detailNameCopyBtn = document.getElementById('detailNameCopyBtn');
         const homeButton = document.getElementById('homeButton');
-const favoritesSection = document.getElementById('favoritesSection');
-const favoritesGrid = document.getElementById('favoritesGrid');
-const rankingSection = document.getElementById('rankingSection');
-const rankingGrid = document.getElementById('rankingGrid');
-const resultsContainer = document.getElementById('resultsContainer');
-const favoritesTabBtn = document.getElementById('favoritesTabBtn');
-const rankingToggleBtn = document.getElementById('rankingToggleBtn');
-const toast = document.getElementById('toast');
+        const favoritesSection = document.getElementById('favoritesSection');
+        const favoritesGrid = document.getElementById('favoritesGrid');
+        const rankingSection = document.getElementById('rankingSection');
+        const rankingGrid = document.getElementById('rankingGrid');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const favoritesTabBtn = document.getElementById('favoritesTabBtn');
+        const toast = document.getElementById('toast');
 
         // 初期表示
         if (!dataLoaded) {
@@ -1555,7 +1703,7 @@ const toast = document.getElementById('toast');
             });
 
             const fullName = getAirportFullName(info.code);
-            detailTitle.innerHTML = `${info.ja}（${info.code}）${schengenBadge(info.schengen)}`;
+            detailTitle.innerHTML = `${info.ja}（${info.code}）${schengenBadge(info.schengen)} ${getLoungeIndicator(info.en, true)}`;
             const mapUrl = airportGoogleMap[info.en] ? airportGoogleMap[info.en].trim() : '';
             currentDetailMapQuery = `${fullName || info.en} ${info.code}`;
             currentDetailMapFallback = mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentDetailMapQuery)}`;
@@ -1564,7 +1712,8 @@ const toast = document.getElementById('toast');
                     ? `<a class=\"detail-airport-name detail-map-link\" href=\"#\" data-map-link=\"1\">${fullName}</a>`
                     : `<span class=\"detail-airport-name\">${fullName}</span>`)
                 : '';
-            detailSub.innerHTML = `${info.en} / <span class="detail-country-link" data-country="${info.country}">${formatCountryLabel(info.country)}</span>${fullNameLabel}`;
+
+            detailSub.innerHTML = `${info.en} / <span class="detail-country-link" data-country="${info.country}">${formatCountryLabel(info.country)}</span><br>${fullNameLabel}`;
             detailCount.textContent = `接続数: ${enriched.length}`;
             detailCopyBtn.dataset.copyCode = info.code;
             detailFavBtn.classList.toggle('active', isFavorite(info.en));
@@ -1591,7 +1740,7 @@ const toast = document.getElementById('toast');
                 enriched.sort((a, b) => b.count - a.count || a.ja.localeCompare(b.ja, 'ja'));
                 detailGrid.innerHTML = enriched.map(city => `
                     <div class="airport-chip" data-airport="${city.en}">
-                        <div class="airport-chip-code">${city.code} ${schengenBadge(city.schengen)}</div>
+                        <div class="airport-chip-code">${city.code} ${schengenBadge(city.schengen)} ${getLoungeIndicator(city.en)}</div>
                         <div class="detail-chip-name-row">
                             <div class="airport-chip-name">${city.ja}</div>
                             ${isFavorite(city.en) ? '<span class="detail-chip-fav">★</span>' : ''}
@@ -1625,7 +1774,7 @@ const toast = document.getElementById('toast');
                     });
                 detailGrid.innerHTML = ordered.map(city => `
                     <div class="airport-chip" data-airport="${city.en}" style="border-left: 4px solid ${city.color};">
-                        <div class="airport-chip-code">${city.code} ${schengenBadge(city.schengen)}</div>
+                        <div class="airport-chip-code">${city.code} ${schengenBadge(city.schengen)} ${getLoungeIndicator(city.en)}</div>
                         <div class="detail-chip-name-row">
                             <div class="airport-chip-name">${city.ja}</div>
                             ${isFavorite(city.en) ? '<span class="detail-chip-fav">★</span>' : ''}
@@ -1653,79 +1802,79 @@ const toast = document.getElementById('toast');
             window.scrollTo({ top: 0, behavior: 'auto' });
         }
 
-detailCopyBtn.addEventListener('click', () => {
-    const code = detailCopyBtn.dataset.copyCode;
-    if (code) {
-        copyToClipboard(code);
-    }
-});
+        detailCopyBtn.addEventListener('click', () => {
+            const code = detailCopyBtn.dataset.copyCode;
+            if (code) {
+                copyToClipboard(code);
+            }
+        });
 
-detailFavBtn.addEventListener('click', () => {
-    const airport = detailFavBtn.dataset.favAirport;
-    if (airport) {
-        toggleFavorite(airport);
-        detailFavBtn.classList.toggle('active', isFavorite(airport));
-        if (currentDetailAirport) {
-            const connections = Array.from(connectionsMap.get(currentDetailAirport) || []);
-            const enriched = connections.map(name => {
-                const city = cityInfoByEn.get(name) || { en: name, ja: name, code: '???', country: '', schengen: null };
-                const count = connectionsMap.get(city.en) ? connectionsMap.get(city.en).size : 0;
-                return {
-                    en: city.en,
-                    code: city.code,
-                    ja: city.ja,
-                    country: city.country,
-                    schengen: city.schengen,
-                    count
-                };
-            });
-            renderDetailGrid(enriched);
-        }
-    }
-});
+        detailFavBtn.addEventListener('click', () => {
+            const airport = detailFavBtn.dataset.favAirport;
+            if (airport) {
+                toggleFavorite(airport);
+                detailFavBtn.classList.toggle('active', isFavorite(airport));
+                if (currentDetailAirport) {
+                    const connections = Array.from(connectionsMap.get(currentDetailAirport) || []);
+                    const enriched = connections.map(name => {
+                        const city = cityInfoByEn.get(name) || { en: name, ja: name, code: '???', country: '', schengen: null };
+                        const count = connectionsMap.get(city.en) ? connectionsMap.get(city.en).size : 0;
+                        return {
+                            en: city.en,
+                            code: city.code,
+                            ja: city.ja,
+                            country: city.country,
+                            schengen: city.schengen,
+                            count
+                        };
+                    });
+                    renderDetailGrid(enriched);
+                }
+            }
+        });
 
-detailVisitedBtn.addEventListener('click', () => {
-    const airport = detailVisitedBtn.dataset.visitedAirport;
-    if (!airport) return;
-    toggleVisitedAirport(airport);
-    detailVisitedBtn.classList.toggle('active', isVisited(airport));
-});
+        detailVisitedBtn.addEventListener('click', () => {
+            const airport = detailVisitedBtn.dataset.visitedAirport;
+            if (!airport) return;
+            toggleVisitedAirport(airport);
+            detailVisitedBtn.classList.toggle('active', isVisited(airport));
+        });
 
-detailNameCopyBtn.addEventListener('click', () => {
-    const name = detailNameCopyBtn.dataset.copyName;
-    if (name) {
-        copyToClipboard(name);
-    }
-});
+        detailNameCopyBtn.addEventListener('click', () => {
+            const name = detailNameCopyBtn.dataset.copyName;
+            if (name) {
+                copyToClipboard(name);
+            }
+        });
 
-detailSub.addEventListener('click', (e) => {
-    const mapTarget = e.target.closest('[data-map-link]');
-    if (mapTarget) {
-        e.preventDefault();
-        openGoogleMapApp(currentDetailMapQuery, currentDetailMapFallback);
-        return;
-    }
-    const target = e.target.closest('[data-country]');
-    if (!target) return;
-    const country = target.dataset.country;
-    if (!country) return;
-    searchInput.value = country;
-    currentFilter = 'all';
-    filterButtons.forEach(b => b.classList.remove('active'));
-    const allButton = document.querySelector('.filter-btn[data-filter="all"]');
-    if (allButton) {
-        allButton.classList.add('active');
-    }
-    const airportList = getAirportsByCityOrCountry(country);
-    searchMode = 'airports';
-    displayAirports(airportList);
-    updateTabView();
-    openListView();
-});
+        detailSub.addEventListener('click', (e) => {
+            const mapTarget = e.target.closest('[data-map-link]');
+            if (mapTarget) {
+                e.preventDefault();
+                openGoogleMapApp(currentDetailMapQuery, currentDetailMapFallback);
+                return;
+            }
+            const target = e.target.closest('[data-country]');
+            if (!target) return;
+            const country = target.dataset.country;
+            if (!country) return;
+            searchInput.value = country;
+            currentFilter = 'all';
+            filterButtons.forEach(b => b.classList.remove('active'));
+            const allButton = document.querySelector('.filter-btn[data-filter="all"]');
+            if (allButton) {
+                allButton.classList.add('active');
+            }
+            const airportList = getAirportsByCityOrCountry(country);
+            searchMode = 'airports';
+            displayAirports(airportList);
+            updateTabView();
+            openListView();
+        });
 
-detailSort.addEventListener('change', (e) => {
-    detailSortMode = e.target.value;
-    if (!currentDetailAirport) return;
+        detailSort.addEventListener('change', (e) => {
+            detailSortMode = e.target.value;
+            if (!currentDetailAirport) return;
             const connections = Array.from(connectionsMap.get(currentDetailAirport) || []);
             const enriched = connections.map(name => {
                 const city = cityInfoByEn.get(name) || { en: name, ja: name, code: '???', country: '', schengen: null };
@@ -1742,21 +1891,21 @@ detailSort.addEventListener('change', (e) => {
             renderDetailGrid(enriched);
         });
 
-homeButton.addEventListener('click', () => {
-    history.pushState({ view: 'list' }, '', location.pathname + location.search);
-    currentFilter = 'all';
-    filterButtons.forEach(b => b.classList.remove('active'));
-    const allButton = document.querySelector('.filter-btn[data-filter="all"]');
-    if (allButton) {
-        allButton.classList.add('active');
-    }
-    searchInput.value = '';
-    autocompleteDropdown.classList.remove('show');
-    searchMode = 'routes';
-    filterAndDisplay('');
-    updateTabView();
-    openListView();
-});
+        homeButton.addEventListener('click', () => {
+            history.pushState({ view: 'list' }, '', location.pathname + location.search);
+            currentFilter = 'all';
+            filterButtons.forEach(b => b.classList.remove('active'));
+            const allButton = document.querySelector('.filter-btn[data-filter="all"]');
+            if (allButton) {
+                allButton.classList.add('active');
+            }
+            searchInput.value = '';
+            autocompleteDropdown.classList.remove('show');
+            searchMode = 'routes';
+            filterAndDisplay('');
+            updateTabView();
+            openListView();
+        });
 
         history.replaceState({ view: 'list' }, '', location.pathname + location.search);
         window.addEventListener('popstate', (e) => {
@@ -1770,7 +1919,7 @@ homeButton.addEventListener('click', () => {
 
         searchInput.addEventListener('input', (e) => {
             const searchTerm = e.target.value.trim();
-            
+
             if (searchTerm.length === 0) {
                 autocompleteDropdown.classList.remove('show');
                 searchMode = 'routes';
@@ -1933,7 +2082,7 @@ homeButton.addEventListener('click', () => {
                 return;
             }
 
-            if (isRegionFilter(currentFilter)) {
+            if (isRegionFilter(currentFilter) || currentFilter === 'lounge') {
                 renderRegionAirports(currentFilter);
                 return;
             }
@@ -1945,7 +2094,7 @@ homeButton.addEventListener('click', () => {
             filteredFlights = flightsData.filter(flight => {
                 const regionMatch = currentFilter === 'all' || flight.region === currentFilter;
 
-                const searchMatch = !searchTerm || 
+                const searchMatch = !searchTerm ||
                     flight.fromCity.toLowerCase().includes(searchTerm) ||
                     flight.fromCity.toLowerCase().includes(katakanaSearchTerm) ||
                     flight.toCity.toLowerCase().includes(searchTerm) ||
@@ -2051,7 +2200,7 @@ homeButton.addEventListener('click', () => {
                                 ${destinations.map(dest => `
                                     <div class="airport-chip" data-airport="${dest.to}">
                                         <div class="airport-chip-code">${dest.toCode} ${schengenBadge(dest.toSchengen)}</div>
-                                        <div class="airport-chip-name">${dest.toCity}</div>
+                                        <div class="airport-chip-name">${dest.toCity} ${getLoungeIndicator(dest.to)}</div>
                                         <div class="airport-chip-country">${formatCountryLabel(dest.toCountry)}</div>
                                     </div>
                                 `).join('')}
@@ -2061,6 +2210,8 @@ homeButton.addEventListener('click', () => {
                 `;
             }).join('');
         }
+
+
 
         function displayAirports(airports) {
             const grid = document.getElementById('flightsGrid');
@@ -2094,7 +2245,7 @@ homeButton.addEventListener('click', () => {
                             <div class="airport-title">
                                 <div class="airport-code">${city.code} ${schengenBadge(city.schengen)}</div>
                                 <div>
-                                    <div class="airport-name">${city.ja}</div>
+                                    <div class="airport-name">${city.ja} ${getLoungeIndicator(city.en)}</div>
                                     <div class="airport-country">${formatCountryLabel(city.country)}</div>
                                     <div class="airport-meta">接続数: ${city.count}</div>
                                 </div>
@@ -2136,17 +2287,13 @@ homeButton.addEventListener('click', () => {
             }
         });
 
-rankingGrid.addEventListener('click', (e) => {
-    const airportTarget = e.target.closest('[data-airport]');
-    if (airportTarget) {
-        openDetailView(airportTarget.dataset.airport);
-    }
-});
-
-rankingToggleBtn.addEventListener('click', () => {
-    rankingExpanded = !rankingExpanded;
-    renderRankingSection();
-});
+        rankingGrid.addEventListener('click', (e) => {
+            const airportTarget = e.target.closest('[data-airport]');
+            if (airportTarget) {
+                openDetailView(airportTarget.dataset.airport);
+            }
+        });
     </script>
 </body>
+
 </html>

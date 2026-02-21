@@ -1,0 +1,559 @@
+地域	空港（ラウンジ設置先）	URL
+アフリカ	アガディール・アル・マシーラ国際空港(Agadir Al Massira Intl)	https://www.prioritypass.com/ja/lounges/morocco/agadir-al-massira-intl
+アフリカ	アクラ・コトカ国際空港(Accra Kotoka International)	https://www.prioritypass.com/ja/lounges/ghana/accra-kotoka-international
+アフリカ	アサバ国際空港(Asaba International)	https://www.prioritypass.com/ja/lounges/nigeria/asaba-international
+アフリカ	アスワン国際空港(Aswan Intl)	https://www.prioritypass.com/ja/lounges/egypt/aswan-intl
+アフリカ	アディスアベバ・ボレ国際空港(Addis Ababa Bole International)	https://www.prioritypass.com/ja/lounges/ethiopia/addis-ababa-bole-international
+アフリカ	アブジャ・ンナムディ・アジキウェ国際空港(Abuja Nnamdi Azikiwe Intl)	https://www.prioritypass.com/ja/lounges/nigeria/abuja-nnamdi-azikiwe-intl
+アフリカ	アレクサンドリア ボルグ・エル・アラブ国際空港(Alexandria Borg El Arab Intl)	https://www.prioritypass.com/ja/lounges/egypt/alexandria-borg-el-arab-intl
+アフリカ	アンタナナリボ イヴァト国際空港(Antananarivo Ivato International)	https://www.prioritypass.com/ja/lounges/madagascar/antananarivo-ivato-international
+アフリカ	イーストロンドン(East London)	https://www.prioritypass.com/ja/lounges/south-africa/east-london-airport
+アフリカ	ヴィクトリアフォールズ国際空港(Victoria Falls Intl)	https://www.prioritypass.com/ja/lounges/zimbabwe/victoria-falls-intl
+アフリカ	ウィンドフック・ホセア・クタコ国際空港(Windhoek Hosea Kutako Intl)	https://www.prioritypass.com/ja/lounges/namibia/windhoek-intl
+アフリカ	ウジダ・アンガデス空港(Oujda Angads)	https://www.prioritypass.com/ja/lounges/morocco/oujda-angads
+アフリカ	エンテベ国際空港(Entebbe International)	https://www.prioritypass.com/ja/lounges/uganda/entebbe-international
+アフリカ	エンフィダ＝ハンマメット国際空港(Enfidha Hammamet International)	https://www.prioritypass.com/ja/lounges/tunisia/enfidha-hammamet-international
+アフリカ	カイロ国際空港(Cairo International)	https://www.prioritypass.com/ja/lounges/egypt/cairo-international
+アフリカ	カサネ (Kasane)	https://www.prioritypass.com/ja/lounges/botswana/kasane-airport
+アフリカ	カサブランカ・ムハンマド5世国際空港(Casablanca Mohammed V Intl)	https://www.prioritypass.com/ja/lounges/morocco/casablanca-mohammed-v-intl
+アフリカ	カノ・マラム・アミヌ・カノ国際空港(Kano Mallam Aminu Kano Intl)	https://www.prioritypass.com/ja/lounges/nigeria/kano-mallam-aminu-kano-intl
+アフリカ	キガリ国際空港(Kigali International)	https://www.prioritypass.com/ja/lounges/rwanda/kigali-international
+アフリカ	ギザ・スフィンクス国際空港(Giza Sphinx International)	https://www.prioritypass.com/ja/lounges/egypt/giza-sphinx-international
+アフリカ	キリマンジャロ国際空港(Kilimanjaro International)	https://www.prioritypass.com/ja/lounges/tanzania/kilimanjaro-international
+アフリカ	クルーガー・ムプマランガ国際空港(Kruger Mpumalanga Intl)	https://www.prioritypass.com/ja/lounges/south-africa/kruger-mpumalanga-intl
+アフリカ	ケープタウン国際空港(Cape Town International)	https://www.prioritypass.com/ja/lounges/south-africa/cape-town-international
+アフリカ	コトヌー・カジェフォウン空港(Cotonou Cadjehoun Intl)	https://www.prioritypass.com/ja/lounges/benin/cotonou-cadjehoun-intl
+アフリカ	コナクリ・ベシア国際空港(Conakry Gbessia International)	https://www.prioritypass.com/ja/lounges/republic-of-guinea/conakry-gbessia-international
+アフリカ	ザンジバル・アビード・アマニ・カルーム国際空港(Zanzibar Abeid Amani Karume Intl)	https://www.prioritypass.com/ja/lounges/tanzania/zanzibar-abeid-amani-karume-intl
+アフリカ	シャルム・エル・シェイク国際空港(Sharm el- Sheikh Intl)	https://www.prioritypass.com/ja/lounges/egypt/sharm-el--sheikh-intl
+アフリカ	ジョージ空港(George)	https://www.prioritypass.com/ja/lounges/south-africa/george-airport
+アフリカ	ダーバン・キング・シャカ国際空港(Durban King Shaka Intl)	https://www.prioritypass.com/ja/lounges/south-africa/durban-king-shaka-intl
+アフリカ	ダバ・エル・アラメイン国際空港(Dabaa El Alamein International)	https://www.prioritypass.com/ja/lounges/egypt/dabaa-el-alamein-international
+アフリカ	ダフラ(Dakhla)	https://www.prioritypass.com/ja/lounges/morocco/dakhla-airport
+アフリカ	ダルエスサラーム・ジュリウス・ニエレレ国際空港(Dar-es-Salaam Julius Nyerere Intl)	https://www.prioritypass.com/ja/lounges/tanzania/dar-es-salaam-julius-nyerere-intl
+アフリカ	タンジェ・イブン・バットゥータ国際空港(Tangier Ibn Battouta Intl)	https://www.prioritypass.com/ja/lounges/morocco/tangier-ibn-battouta-intl
+アフリカ	チュニス＝カルタゴ国際空港(Tunis Carthage)	https://www.prioritypass.com/ja/lounges/tunisia/tunis-carthage
+アフリカ	ドゥアラ国際空港(Douala International)	https://www.prioritypass.com/ja/lounges/cameroon/douala-international
+アフリカ	ナイロビ・ジョモ・ケニヤッタ国際空港(Nairobi Jomo Kenyatta Intl)	https://www.prioritypass.com/ja/lounges/kenya/nairobi-jomo-kenyatta-intl
+アフリカ	ナドール・アル・アロウイ空港(Nador El Aroui)	https://www.prioritypass.com/ja/lounges/morocco/nador-el-aroui
+アフリカ	ハボローネ・セレツェカーマ国際空港(Gaborone Sir Seretse Khama Intl)	https://www.prioritypass.com/ja/lounges/botswana/gaborone-sir-seretse-khama
+アフリカ	バマコ・セヌー国際空港(Bamako-Senou International)	https://www.prioritypass.com/ja/lounges/mali/bamako-senou-international
+アフリカ	ハラレ国際空港(Harare Intl)	https://www.prioritypass.com/ja/lounges/zimbabwe/harare-international
+アフリカ	バンジュール国際空港(Banjul International)	https://www.prioritypass.com/ja/lounges/gambia/banjul-international
+アフリカ	フェズ・サイス国際空港(Fes Saiss International)	https://www.prioritypass.com/ja/lounges/morocco/fes-saiss-international
+アフリカ	ブラザビル・マヤマヤ空港(Brazzaville Maya Maya)	https://www.prioritypass.com/ja/lounges/republic-of-congo/brazzaville-maya-maya
+アフリカ	ブラワヨ・ジョシュア・ムカブコ・ンコモ国際空港(Bulawayo J.M. Nkomo Intl)	https://www.prioritypass.com/ja/lounges/zimbabwe/bulawayo-jm-nkomo-intl
+アフリカ	ブルームフォンテイン国際空港(Bloemfontein International)	https://www.prioritypass.com/ja/lounges/south-africa/bloemfontein-international
+アフリカ	フルガダ国際空港(Hurghada Intl)	https://www.prioritypass.com/ja/lounges/egypt/hurghada-intl
+アフリカ	ポートエリザベス国際空港(Port Elizabeth Intl)	https://www.prioritypass.com/ja/lounges/south-africa/port-elizabeth
+アフリカ	ポワントノワール・アントニオ・アゴスティーニョ・ネト国際空港(Pointe-Noire Antonio Agostinho-Neto Intl)	https://www.prioritypass.com/ja/lounges/republic-of-congo/pointe-noire-antonio-agostinho-neto-intl
+アフリカ	マウン国際空港(Maun International)	https://www.prioritypass.com/ja/lounges/botswana/maun-international
+アフリカ	マプト国際空港(Maputo International)	https://www.prioritypass.com/ja/lounges/mozambique/maputo-international
+アフリカ	マルサ・アラム国際空港(Marsa Alam Intl)	https://www.prioritypass.com/ja/lounges/egypt/marsa-alam-intl
+アフリカ	モーリシャス・サー・シウサガル・ラングーラム国際空港(Mauritius S.S.R. International)	https://www.prioritypass.com/ja/lounges/mauritius/mauritius-ssr-international
+アフリカ	モナスティル・ハビブ・ブルギバ国際空港(Monastir Habib Bourguiba Intl)	https://www.prioritypass.com/ja/lounges/tunisia/mir
+アフリカ	モンバサ・モワ国際空港(Mombasa Moi International)	https://www.prioritypass.com/ja/lounges/kenya/mombasa-moi-international
+アフリカ	ヨハネスブルグ・O・R・タンボ国際空港 (Johannesburg O.R. Tambo Intl)	https://www.prioritypass.com/ja/lounges/south-africa/johannesburg-or-tambo-intl
+アフリカ	ヨハネスブルグ・ランセリア国際空港(Johannesburg Lanseria International)	https://www.prioritypass.com/ja/lounges/south-africa/johannesburg-lanseria-international
+アフリカ	ラゴス・ムルタラ・モハンマド国際空港(Lagos Murtala Muhammed)	https://www.prioritypass.com/ja/lounges/nigeria/lagos-murtala-muhammed
+アフリカ	リーブルヴィル・レオン・ムバ国際空港(Libreville Leon Mba International)	https://www.prioritypass.com/ja/lounges/gabon/libreville-leon-mba-international
+アフリカ	リビングストン国際空港(Livingstone International)	https://www.prioritypass.com/ja/lounges/zambia/livingstone-international
+アフリカ	ルアンダ・クアトロ・デ・フェベレイロ空港(Luanda 4 De Fevereiro)	https://www.prioritypass.com/ja/lounges/angola/luanda-4-de-fevereiro
+アフリカ	ルクソール国際空港(Luxor Intl)	https://www.prioritypass.com/ja/lounges/egypt/luxor-intl
+アフリカ	ルサカ・ケネス・カウンダ国際空港(Lusaka Kenneth Kaunda Intl)	https://www.prioritypass.com/ja/lounges/zambia/lusaka-kenneth-kaunda-intl
+アフリカ	ルブンバシ国際空港(Lubumbashi Luano International)	https://www.prioritypass.com/ja/lounges/democratic-republic-of-the-congo/lubumbashi-luano-international
+アジア太平洋		https://www.prioritypass.com/ja/lounges/japan/saga
+アジア太平洋	Chongqing Jiangbei Intl	https://www.prioritypass.com/ja/lounges/china/chongqing-jiangbei-intl
+アジア太平洋	Guiyang North Railway Station	https://www.prioritypass.com/ja/lounges/china/guiyang-north-railway-station
+アジア太平洋	Lianyungang Huaguoshan Intl	https://www.prioritypass.com/ja/lounges/china/lianyungang-huaguoshan-intl
+アジア太平洋	Linfen Qiaoli	https://www.prioritypass.com/ja/lounges/china/linfen-qiaoli
+アジア太平洋	Navi Mumbai International	https://www.prioritypass.com/ja/lounges/india/navi-mumbai-international
+アジア太平洋	Ranchi Birsa Munda	https://www.prioritypass.com/ja/lounges/india/ranchi-birsa-munda
+アジア太平洋	アーメダバード国際空港(Ahmedabad SVBP International)	https://www.prioritypass.com/ja/lounges/india/ahmedabad-svbp-international
+アジア太平洋	アガルタラ・マハラジャ・ビル・ビクラム(Agartala Maharaja Bir Bikram)	https://www.prioritypass.com/ja/lounges/india/agartala-maharaja-bir-bikram
+アジア太平洋	アスタナ国際空港(Astana Nursultan Nazarbayev Intl)	https://www.prioritypass.com/ja/lounges/kazakhstan/astana-nursultan-nazarbayev-intl
+アジア太平洋	アティラウ(Atyrau)	https://www.prioritypass.com/ja/lounges/kazakhstan/atyrau
+アジア太平洋	アデレード国際空港(Adelaide International)	https://www.prioritypass.com/ja/lounges/australia/adelaide-airport
+アジア太平洋	アムリトサル・シュリー・グル・ラーム・ダース・ジー国際空港(Amritsar Sri Guru Ram Dass Jee Intl)	https://www.prioritypass.com/ja/lounges/india/amritsar-sri-guru-ram-dass-jee-intl
+アジア太平洋	アルマトイ国際空港(Almaty International)	https://www.prioritypass.com/ja/lounges/kazakhstan/almaty-international
+アジア太平洋	アンボン・パティムラ国際空港(Ambon Pattimura International)	https://www.prioritypass.com/ja/lounges/indonesia/ambon-pattimura-international
+アジア太平洋	イスラマバード国際空港(Islamabad International)	https://www.prioritypass.com/ja/lounges/pakistan/islamabad-benazir-bhutto-intl
+アジア太平洋	インドール・デヴィ・アヒルヤバイ・ホルカール(Indore Devi Ahilya Bai Holkar)	https://www.prioritypass.com/ja/lounges/india/devi-ahilyabai-holkar
+アジア太平洋	イ坊市(Weifang)	https://www.prioritypass.com/ja/lounges/china/weifang-airport
+アジア太平洋	ヴィシャーカパトナム空港(Vishakhapatnam)	https://www.prioritypass.com/ja/lounges/india/vishakhapatnam
+アジア太平洋	ヴィン国際空港(Vinh International)	https://www.prioritypass.com/ja/lounges/vietnam/vinh-international
+アジア太平洋	ウドンタニ国際空港(Udon Thani Intl)	https://www.prioritypass.com/ja/lounges/thailand/udon-thani-intl
+アジア太平洋	ウルムチ天山国際空港(Urumqi Tianshan International)	https://www.prioritypass.com/ja/lounges/china/urumqi-diwopu-international
+アジア太平洋	エレンホト・サイウス国際空港(Erenhot Saiwusu Intl)	https://www.prioritypass.com/ja/lounges/china/erenhot-saiwusu-intl
+アジア太平洋	オークランド国際空港(Auckland Intl)	https://www.prioritypass.com/ja/lounges/new-zealand/auckland-international
+アジア太平洋	オラル・アク・ゾル空港(Uralsk Ak Zhol)	https://www.prioritypass.com/ja/lounges/kazakhstan/uralsk-ak-zhol
+アジア太平洋	カトマンズ国際空港(Kathmandu International)	https://www.prioritypass.com/ja/lounges/nepal/kathmandu-international
+アジア太平洋	カラガンダ・サリ・アルカ空港(Karaganda Sary-Arka)	https://www.prioritypass.com/ja/lounges/kazakhstan/karaganda-sary-arka
+アジア太平洋	カラチ ジンナー国際空港(Karachi Jinnah International)	https://www.prioritypass.com/ja/lounges/pakistan/karachi-international
+アジア太平洋	カントー国際空港(Can Tho International)	https://www.prioritypass.com/ja/lounges/vietnam/can-tho-international
+アジア太平洋	カンヌール国際空港(Kannur International)	https://www.prioritypass.com/ja/lounges/india/kannur-international
+アジア太平洋	キャンベラ(Canberra)	https://www.prioritypass.com/ja/lounges/australia/canberra
+アジア太平洋	グアム国際空港(Guam Intl)	https://www.prioritypass.com/ja/lounges/guam/guam-intl
+アジア太平洋	クアラルンプール国際空港(Kuala Lumpur Intl)	https://www.prioritypass.com/ja/lounges/malaysia/kuala-lumpur-klia
+アジア太平洋	クイーンズタウン国際空港(Queenstown Intl)	https://www.prioritypass.com/ja/lounges/new-zealand/queenstown-international
+アジア太平洋	クイニョン・フーカット空港	https://www.prioritypass.com/ja/lounges/vietnam/quy-nhon-phu-cat
+アジア太平洋	クーランガッタ ゴールドコースト空港(Gold Coast Coolangatta)	https://www.prioritypass.com/ja/lounges/australia/gold-coast-coolangatta
+アジア太平洋	クチン国際空港(Kuching International)	https://www.prioritypass.com/ja/lounges/malaysia/kuching-international
+アジア太平洋	クパン・エルタリ国際空港 (Kupang El Tari International)	https://www.prioritypass.com/ja/lounges/indonesia/kupang-el-tari
+アジア太平洋	クラーク国際空港(Clark International)	https://www.prioritypass.com/ja/lounges/philippines/clark-international
+アジア太平洋	クライストチャーチ国際空港(Christchurch Intl)	https://www.prioritypass.com/ja/lounges/new-zealand/christchurch-international
+アジア太平洋	クラビ国際空港(Krabi International)	https://www.prioritypass.com/ja/lounges/thailand/krabi-international
+アジア太平洋	グワーハーティー国際空港(Guwahati L.G.B International)	https://www.prioritypass.com/ja/lounges/india/guwahati-lgb-international
+アジア太平洋	グワリオール(Gwalior)	https://www.prioritypass.com/ja/lounges/india/gwalior
+アジア太平洋	ケアンズ国際空港(Cairns International)	https://www.prioritypass.com/ja/lounges/australia/cairns-international
+アジア太平洋	ゴア・ダボリム(Goa Dabolim)	https://www.prioritypass.com/ja/lounges/india/goa-dabolim
+アジア太平洋	ゴア・モパ国際空港(Goa Mopa International)	https://www.prioritypass.com/ja/lounges/india/goa-mopa-international
+アジア太平洋	コインバトール国際空港(Coimbatore International)	https://www.prioritypass.com/ja/lounges/india/coimbatore-international
+アジア太平洋	コーチン国際空港(Cochin International)	https://www.prioritypass.com/ja/lounges/india/cochin-international
+アジア太平洋	コーリコード・カリカット国際空港(Kozhikode Calicut International)	https://www.prioritypass.com/ja/lounges/india/kozhikode-calicut-international
+アジア太平洋	コタキナバル国際空港(Kota Kinabalu International)	https://www.prioritypass.com/ja/lounges/malaysia/kota-kinabalu-international
+アジア太平洋	コルカタ・ネータージー・スバース・チャンドラ・ボース国際空港(Kolkata Netaji Subhash Chandra Bose Intl)	https://www.prioritypass.com/ja/lounges/india/kolkata-netaji-subhash-chandra-bose-intl
+アジア太平洋	コロンボ・バンダラナイケ国際空港(Colombo Bandaranaike Intl)	https://www.prioritypass.com/ja/lounges/sri-lanka/colombo-bandaranaike-intl
+アジア太平洋	コンダオ・コーオン空港(Con Dao Island Co Ong)	https://www.prioritypass.com/ja/lounges/vietnam/con-dao-island-co-ong
+アジア太平洋	サイパン国際空港(Saipan International)	https://www.prioritypass.com/ja/lounges/saipan/saipan-international
+アジア太平洋	サマリンダAPトゥムンッグンプラノト国際空港(Samarinda AP Tumenggung Pranoto Intl)	https://www.prioritypass.com/ja/lounges/indonesia/samarinda-ap-tumenggung-pranoto-intl
+アジア太平洋	サマルカンド国際空港(Samarkand International)	https://www.prioritypass.com/ja/lounges/uzbekistan/samarkand-international
+アジア太平洋	サムイ国際空港(Samui International)	https://www.prioritypass.com/ja/lounges/thailand/samui-international
+アジア太平洋	シェムリアップ・アンコール国際空港(Siem Reap Angkor Intl)	https://www.prioritypass.com/ja/lounges/cambodia/siem-reap-angkor-intl
+アジア太平洋	シエムリアプ(Siem Reap) - アンコール(Angkor)	https://www.prioritypass.com/ja/lounges/cambodia/siem-reap---angkor
+アジア太平洋	シドニー・キングスフォード・スミス国際空港(Sydney Kingsford Smith)	https://www.prioritypass.com/ja/lounges/australia/sydney-kingsford-smith
+アジア太平洋	シムケント国際空港(Shymkent International)	https://www.prioritypass.com/ja/lounges/kazakhstan/shymkent-international
+アジア太平洋	ジャイプル国際空港(Jaipur International)	https://www.prioritypass.com/ja/lounges/india/jaipur-international
+アジア太平洋	ジャカルタ・スカルノ・ハッタ国際空港(Jakarta Soekarno-Hatta Intl)	https://www.prioritypass.com/ja/lounges/indonesia/jakarta-soekarno-hatta-intl
+アジア太平洋	ジャカルタ・ハリム・ペルダナクスマ国際空港(Jakarta Halim Perdana Kusumah)	https://www.prioritypass.com/ja/lounges/indonesia/jakarta-halim-perdana-kusumah
+アジア太平洋	ジャンビ・スルタンタハ空港(Jambi Sultan Thaha)	https://www.prioritypass.com/ja/lounges/indonesia/jambi-sultan-thaha
+アジア太平洋	ジャンムー(Jammu)	https://www.prioritypass.com/ja/lounges/india/jammu
+アジア太平洋	ジョグジャカルタ・新ジョグジャカルタ国際空港(Yogyakarta New Yogyakarta International)	https://www.prioritypass.com/ja/lounges/indonesia/yogyakarta-new-yogyakarta-international
+アジア太平洋	ジョホールバル・スナイ国際空港(Johor Baru Senai International)	https://www.prioritypass.com/ja/lounges/malaysia/johor-baru-senai-international
+アジア太平洋	シンガポール・チャンギ国際空港(Singapore Changi Intl)	https://www.prioritypass.com/ja/lounges/singapore/singapore-changi
+アジア太平洋	スバン・スルタン・アブドゥル・アジズ・シャー空港(Subang Sultan Abdul Aziz Shah)	https://www.prioritypass.com/ja/lounges/malaysia/subang-sultan-abdul-aziz-shah
+アジア太平洋	スマラン・アフマド・ヤニ国際空港(Semarang Ahmad Yani)	https://www.prioritypass.com/ja/lounges/indonesia/semarang-ahmad-yani
+アジア太平洋	スラバヤ・ジュアンダ国際空港(Surabaya Juanda Intl)	https://www.prioritypass.com/ja/lounges/indonesia/surabaya-juanda-intl
+アジア太平洋	スリナガル・シーク・ウルアラム国際空港(Srinagar Sheikh Ul-Alam International)	https://www.prioritypass.com/ja/lounges/india/srinagar-sheikh-ul-alam-international
+アジア太平洋	ソウル・金浦国際空港(Seoul Gimpo International)	https://www.prioritypass.com/ja/lounges/south-korea/seoul-gimpo-international
+アジア太平洋	ソウル・仁川国際空港(Seoul Incheon Intl)	https://www.prioritypass.com/ja/lounges/south-korea/seoul-incheon-international
+アジア太平洋	ソロ・アディスマルモ国際空港(Solo City Adisumarmo)	https://www.prioritypass.com/ja/lounges/indonesia/solo-city-adisumarmo
+アジア太平洋	タインホア・トースアン空港	https://www.prioritypass.com/ja/lounges/vietnam/thanh-hoa-tho-xuan
+アジア太平洋	タウンズビル国際空港(Townsville International)	https://www.prioritypass.com/ja/lounges/australia/townsville-international
+アジア太平洋	タシュケント国際空港(Tashkent International)	https://www.prioritypass.com/ja/lounges/uzbekistan/tashkent-international
+アジア太平洋	ダナン国際空港 (Da Nang International)	https://www.prioritypass.com/ja/lounges/vietnam/da-nang-international
+アジア太平洋	ダバオ・フランシスコ･バンゴイ国際空港 (Davao Francisco Bangoy Int'l)	https://www.prioritypass.com/ja/lounges/philippines/davao-francisco-bangoy-intl
+アジア太平洋	タラカン・ジュワタ空港(Tarakan Juwata)	https://www.prioritypass.com/ja/lounges/indonesia/tarakan-juwata
+アジア太平洋	タラケン・ジュワタ (Taraken Juwata)	https://www.prioritypass.com/ja/lounges/indonesia/taraken-juwata
+アジア太平洋	ダラット・リエンクオン空港(Da Lat Lien Khuong)	https://www.prioritypass.com/ja/lounges/vietnam/da-lat-lien-khuong
+アジア太平洋	ダラバンドゥ空港(Dharavandhoo)	https://www.prioritypass.com/ja/lounges/maldives/dharavandhoo-airport
+アジア太平洋	チェンナイ国際空港(Chennai International)	https://www.prioritypass.com/ja/lounges/india/chennai-international
+アジア太平洋	チェンマイ国際空港(Chiang Mai Intl)	https://www.prioritypass.com/ja/lounges/thailand/chiang-mai-intl
+アジア太平洋	チェンライ国際空港(Chiang Rai Intl)	https://www.prioritypass.com/ja/lounges/thailand/chiang-rai-intl
+アジア太平洋	チャンディーガル国際空港(Chandigarh International)	https://www.prioritypass.com/ja/lounges/india/chandigarh
+アジア太平洋	チューライ国際空港(Chu Lai International)	https://www.prioritypass.com/ja/lounges/vietnam/chu-lai-international
+アジア太平洋	ディエンビエンフー空港(Dien Bien Phu)	https://www.prioritypass.com/ja/lounges/vietnam/dien-bien-phu
+アジア太平洋	ディブルガル・モハンバリ空港(Dibrugarh Mohanbari)	https://www.prioritypass.com/ja/lounges/india/dibrugarh-mohanbari
+アジア太平洋	ティルヴァナンタプラム国際空港(Thiruvananthapuram Intl)	https://www.prioritypass.com/ja/lounges/india/thiruvananthapuram-intl
+アジア太平洋	ティルチラーパッリ国際空港(Tiruchirappalli International)	https://www.prioritypass.com/ja/lounges/india/tiruchirappalli-international
+アジア太平洋	デラドゥン・ジョリー・グラント空港(Dehra Dun Jolly Grant)	https://www.prioritypass.com/ja/lounges/india/dehradun-jolly-grant
+アジア太平洋	トゥイホア(Tuy Hoa)	https://www.prioritypass.com/ja/lounges/vietnam/tuy-hoa-dong-tac
+アジア太平洋	ドンホイ(Dong Hoi)	https://www.prioritypass.com/ja/lounges/vietnam/dong-hoi
+アジア太平洋	ナーグプル・Dr.ババサヘブ・アンベッカー国際空港(Nagpur Dr. Babasaheb Ambedkar Intl)	https://www.prioritypass.com/ja/lounges/india/nagpur-dr-ambedkar-intl
+アジア太平洋	ナンディ国際空港(Nadi International)	https://www.prioritypass.com/ja/lounges/fiji/nadi-international
+アジア太平洋	ニャチャン・カムラン国際空港(Nha Trang Cam Ranh International)	https://www.prioritypass.com/ja/lounges/vietnam/nha-trang-cam-ranh-international
+アジア太平洋	ニューデリー・インディラ・ガンディー国際空港(New Delhi Indira Gandhi Intl)	https://www.prioritypass.com/ja/lounges/india/new-delhi-indira-gandhi-intl
+アジア太平洋	パース国際空港(Perth Intl)	https://www.prioritypass.com/ja/lounges/australia/perth
+アジア太平洋	ハートヤイ国際空港(Hat Yai Intl)	https://www.prioritypass.com/ja/lounges/thailand/hat-yai-intl
+アジア太平洋	ハイデラーバード・ラジーヴ・ガンディー国際空港(Hyderabad Rajiv Gandhi Intl)	https://www.prioritypass.com/ja/lounges/india/hyderabad-rajiv-gandhi-intl
+アジア太平洋	ハイフォン・カットビ国際空港(Hai Phong Cat Bi International)	https://www.prioritypass.com/ja/lounges/vietnam/hai-phong-cat-bi-international
+アジア太平洋	バグドグラ(Bagdogra)	https://www.prioritypass.com/ja/lounges/india/bagdogra
+アジア太平洋	バタム・ハン・ナディム国際空港(Batam Hang Nadim International)	https://www.prioritypass.com/ja/lounges/indonesia/batam-hang-nadim-international
+アジア太平洋	ハノイ・ノイバイ国際空港(Hanoi Noi Bai Intl)	https://www.prioritypass.com/ja/lounges/vietnam/hanoi-noibai-international
+アジア太平洋	バラナシ・ラール・バハードゥル・シャーストリー国際空港(Varanasi Lal Bahadur Shastri Intl)	https://www.prioritypass.com/ja/lounges/india/varanasi-lal-bahadur-shastri-intl
+アジア太平洋	バリ・ングラ・ライ国際空港(Bali Ngurah Rai Intl)	https://www.prioritypass.com/ja/lounges/indonesia/bali-ngurah-rai-intl
+アジア太平洋	バリクパパン・セピンガン国際空港(Balikpapan Sepinggan)	https://www.prioritypass.com/ja/lounges/indonesia/balikpapan-sepinggan
+アジア太平洋	ハルビン太平国際空港(Harbin Taiping International)	https://www.prioritypass.com/ja/lounges/china/harbin-taiping-international
+アジア太平洋	パレンバン・スルタン・ムハンマド・バダルディン2世国際空港(Palembang S.M.Badaruddin II)	https://www.prioritypass.com/ja/lounges/indonesia/palembang-smbadaruddin-ii
+アジア太平洋	バンガロール・ケンペゴウダ国際空港	https://www.prioritypass.com/ja/lounges/india/bangalore-international
+アジア太平洋	バンコク・スワンナプーム国際空港(Bangkok Suvarnabhumi Intl)	https://www.prioritypass.com/ja/lounges/thailand/bangkok-suvarnabhumi-intl
+アジア太平洋	バンコク・ドンムアン国際空港(Bangkok Don Mueang Intl)	https://www.prioritypass.com/ja/lounges/thailand/bangkok-don-mueang-intl
+アジア太平洋	バンジャルマシン・シャムスディン・ノール国際空港 (Banjarmasin Syamsudin Noor Intl)	https://www.prioritypass.com/ja/lounges/indonesia/banjarmasin-syamsudin-noor
+アジア太平洋	バンダルスリブガワン・ブルネイ国際空港 (Bandar Seri Begawan Brunei International)	https://www.prioritypass.com/ja/lounges/brunei/bandar-seri-begawan-brunei-international
+アジア太平洋	バンメトート(Buon Ma Thuot)	https://www.prioritypass.com/ja/lounges/vietnam/buon-ma-thuot
+アジア太平洋	ビシュケク・マナス国際空港(Bishkek Manas International)	https://www.prioritypass.com/ja/lounges/kyrgyzstan/bishkek-manas-international
+アジア太平洋	ファイサラバード国際空港(Faisalabad International)	https://www.prioritypass.com/ja/lounges/pakistan/faisalabad-international
+アジア太平洋	プーケット国際空港(Phuket International)	https://www.prioritypass.com/ja/lounges/thailand/phuket-international
+アジア太平洋	フーコック国際空港(Phu Quoc Island International)	https://www.prioritypass.com/ja/lounges/vietnam/phu-quoc-island-international
+アジア太平洋	フエ・フバイ国際空港(Hue Phu Bai International)	https://www.prioritypass.com/ja/lounges/vietnam/hue-phu-bai-international
+アジア太平洋	プエルト・プリンセサ国際空港(Puerto Princesa International)	https://www.prioritypass.com/ja/lounges/philippines/puerto-princesa-international
+アジア太平洋	プカンバル・スルタン・シャリフ・カシム2世国際空港(Pekanbaru Sultan Syarif Kasim II)	https://www.prioritypass.com/ja/lounges/indonesia/pekanbaru-sultan-syarif-kasim
+アジア太平洋	プネー国際空港(Pune International)	https://www.prioritypass.com/ja/lounges/india/pune-international
+アジア太平洋	プノンペン テチョ国際空港(Phnom Penh Techo International)	https://www.prioritypass.com/ja/lounges/cambodia/phnom-penh-techo-international
+アジア太平洋	プノンペン国際空港(Phnom Penh Intl)	https://www.prioritypass.com/ja/lounges/cambodia/phnom-penh-intl
+アジア太平洋	ブバネーシュワル・ビージュー・パトナーイク国際空港(Bhubaneswar Biju Patnaik Intl)	https://www.prioritypass.com/ja/lounges/india/bhubaneswar-biju-patnaik-intl
+アジア太平洋	フフホト白塔国際空港(Hohhot Baita International)	https://www.prioritypass.com/ja/lounges/china/hohhot-baita-international
+アジア太平洋	プラヤーガラージ(Prayagraj)	https://www.prioritypass.com/ja/lounges/india/prayagraj
+アジア太平洋	ブリスベン国際空港(Brisbane Intl)	https://www.prioritypass.com/ja/lounges/australia/brisbane-intl
+アジア太平洋	フルンボイル・ハイラル空港(Hulunbuir Hailar)	https://www.prioritypass.com/ja/lounges/china/hulunbuir-hailar-airport
+アジア太平洋	プレイク(Pleiku)	https://www.prioritypass.com/ja/lounges/vietnam/pleiku
+アジア太平洋	ペシャワール・バシャ・カーン国際空港(Peshawar Bacha Khan International)	https://www.prioritypass.com/ja/lounges/pakistan/peshawar-bacha-khan-international
+アジア太平洋	ペナン国際空港(Penang International)	https://www.prioritypass.com/ja/lounges/malaysia/penang-international
+アジア太平洋	ホーチミン・タンソンニャット国際空港(Ho Chi Minh TSN International)	https://www.prioritypass.com/ja/lounges/vietnam/ho-chi-minh-tsn-international
+アジア太平洋	ポートビラ(Port Vila)	https://www.prioritypass.com/ja/lounges/vanuatu/port-vila-bauerfield-intl
+アジア太平洋	ボーパール・ラジャ・ボジ(Bhopal Raja Bhoj)	https://www.prioritypass.com/ja/lounges/india/bhopal-raja-bhoj
+アジア太平洋	ポンティアナック・スパディオ空港(Pontianak Supadio)	https://www.prioritypass.com/ja/lounges/indonesia/pontianak-supadio
+アジア太平洋	マカオ国際空港(Macau Intl)	https://www.prioritypass.com/ja/lounges/china/macau-intl
+アジア太平洋	マカッサル・スルタン・ハサヌディン国際空港(Makassar Sultan Hasanuddin)	https://www.prioritypass.com/ja/lounges/indonesia/makassar-sultan-hasanuddin
+アジア太平洋	マクタン・セブ国際空港(Cebu Mactan Intl)	https://www.prioritypass.com/ja/lounges/philippines/cebu-mactan-cebu-intl
+アジア太平洋	マドゥライ国際空港(Madurai International)	https://www.prioritypass.com/ja/lounges/india/madurai-international
+アジア太平洋	マナド・サム・ラトゥランギ国際空港(Manado Sam Ratulangi)	https://www.prioritypass.com/ja/lounges/indonesia/manado-sam-ratulangi
+アジア太平洋	マニラ・ニノイ・アキノ国際空港(Manila Ninoy Aquino Intl)	https://www.prioritypass.com/ja/lounges/philippines/manila-ninoy-aquino-intl
+アジア太平洋	マヘ島セーシェル国際空港(Mahe Island Seychelles International)	https://www.prioritypass.com/ja/lounges/seychelles/mahe-seychelles-international
+アジア太平洋	マレ国際空港(Male International)	https://www.prioritypass.com/ja/lounges/maldives/male-international
+アジア太平洋	マンダレー国際空港(Mandalay International)	https://www.prioritypass.com/ja/lounges/myanmar/mandalay-international
+アジア太平洋	ムルタン国際空港(Multan International)	https://www.prioritypass.com/ja/lounges/pakistan/multan-international
+アジア太平洋	ムンバイ・チャトラパティ・シヴァージー国際空港(Mumbai Chhatrapati Shivaji Intl)	https://www.prioritypass.com/ja/lounges/india/mumbai-chattrapathi-shivaji
+アジア太平洋	メダン・クアラナム国際空港(Medan Kuala Namu Intl)	https://www.prioritypass.com/ja/lounges/indonesia/medan-kuala-namu-intl
+アジア太平洋	メルボルン(Melbourne)	https://www.prioritypass.com/ja/lounges/australia/melbourne-international
+アジア太平洋	ヤンゴン国際空港(Yangon International)	https://www.prioritypass.com/ja/lounges/myanmar/rgn
+アジア太平洋	ライプル・スワーミー・ビビカナンダ国際空港(Raipur Swami Vivekananda)	https://www.prioritypass.com/ja/lounges/india/raipur-swami-vivekananda
+アジア太平洋	ラクナウ・チャウダリー・チャラン・シン国際空港(Lucknow Chaudhary Charan Singh Intl)	https://www.prioritypass.com/ja/lounges/india/lucknow-chaudhary-charan-singh-intl
+アジア太平洋	ラホール・アッラーマ・イクバール国際空港(Lahore Allama Iqbal Intl)	https://www.prioritypass.com/ja/lounges/pakistan/lahore-allama-iqbal-intl
+アジア太平洋	ランカウイ国際空港(Langkawi International)	https://www.prioritypass.com/ja/lounges/malaysia/langkawi-international
+アジア太平洋	ロンボク国際空港(Lombok International)	https://www.prioritypass.com/ja/lounges/indonesia/lombok-international
+アジア太平洋	ロンボク国際空港(Lombok International)	https://www.prioritypass.com/ja/lounges/indonesia/lombok-selaparang-mataram
+アジア太平洋	ワドダラ(Vadodara)	https://www.prioritypass.com/ja/lounges/india/vadodara-civil-aerodrome-harni
+アジア太平洋	旭川(Asahikawa)	https://www.prioritypass.com/ja/lounges/japan/asahikawa
+アジア太平洋	鞍山騰鰲空港(Anshan Teng'ao)	https://www.prioritypass.com/ja/lounges/china/anshan-tengao
+アジア太平洋	威海大水泊空港(Weihai Dashuibo)	https://www.prioritypass.com/ja/lounges/china/weihai-dashuibo-airport
+アジア太平洋	烏海(Wuhai)	https://www.prioritypass.com/ja/lounges/china/wuhai-airport
+アジア太平洋	運城関公空港(Yuncheng Guangong)	https://www.prioritypass.com/ja/lounges/china/yuncheng-guangong
+アジア太平洋	雲南省・シーサンパンナ・ガサ国際空港(Jinghong Xishuangbanna Gasa Intl)	https://www.prioritypass.com/ja/lounges/china/xishuangbanna-gasa-intl
+アジア太平洋	煙台蓬莱国際空港(Yantai Penglai International)	https://www.prioritypass.com/ja/lounges/china/yantai-penglai-international
+アジア太平洋	塩城南洋(Yancheng Nanyang)	https://www.prioritypass.com/ja/lounges/china/yancheng-nanyang
+アジア太平洋	黄山屯渓国際空港(Huangshan Tunxi International)	https://www.prioritypass.com/ja/lounges/china/huangshan-tunxi-international
+アジア太平洋	岡山(Okayama)	https://www.prioritypass.com/ja/lounges/japan/okayama
+アジア太平洋	温州龍湾国際空港(Wenzhou Longwan Intl)	https://www.prioritypass.com/ja/lounges/china/wenzhou-longwan-intl
+アジア太平洋	嘉峪関空港(Jiayuguan)	https://www.prioritypass.com/ja/lounges/china/jiayuguan-airport
+アジア太平洋	懐化芷江(Huaihua Zhijiang)	https://www.prioritypass.com/ja/lounges/china/huaihua-zhijiang
+アジア太平洋	海口美蘭国際空港(Haikou Meilan Intl)	https://www.prioritypass.com/ja/lounges/china/haikou-hainan-meilan-intl
+アジア太平洋	釜山・金海国際空港(Busan Gimhae International)	https://www.prioritypass.com/ja/lounges/south-korea/busan-gimhae-international
+アジア太平洋	貴陽龍洞堡国際空港(Guiyang Longdongbao International)	https://www.prioritypass.com/ja/lounges/china/guiyang-longdongbao-international
+アジア太平洋	宜昌三峡空港(Yichang Sanxia)	https://www.prioritypass.com/ja/lounges/china/yichang-sanxia
+アジア太平洋	宜賓五粮液(Yibin Wuliangye)	https://www.prioritypass.com/ja/lounges/china/yibin-wuliangye
+アジア太平洋	義烏(Yiwu)	https://www.prioritypass.com/ja/lounges/china/yiwu
+アジア太平洋	吉安井岡山空港(Ji'an Jinggangshan)	https://www.prioritypass.com/ja/lounges/china/jian-jinggangshan
+アジア太平洋	興義万峰林空港(Xingyi Wanfenglin)	https://www.prioritypass.com/ja/lounges/china/xingyi-airport
+アジア太平洋	銀川河東国際空港(Yinchuan Hedong Intl)	https://www.prioritypass.com/ja/lounges/china/yinchuan-hedong
+アジア太平洋	熊本(Kumamoto)	https://www.prioritypass.com/ja/lounges/japan/kumamoto
+アジア太平洋	桂林両江国際空港(Guilin Liangjiang Intl)	https://www.prioritypass.com/ja/lounges/china/guilin-liangjiang-intl
+アジア太平洋	広州白雲国際空港(Guangzhou Baiyun International)	https://www.prioritypass.com/ja/lounges/china/guangzhou-baiyun-international
+アジア太平洋	広島(Hiroshima)	https://www.prioritypass.com/ja/lounges/japan/hiroshima
+アジア太平洋	杭州蕭山国際空港(Hangzhou Xiaoshan Intl)	https://www.prioritypass.com/ja/lounges/china/hangzhou-xiaoshan-intl
+アジア太平洋	香港・チェクラップコク国際空港(Hong Kong Chek Lap Kok Intl)	https://www.prioritypass.com/ja/lounges/china/hong-kong-chek-lap-kok-intl
+アジア太平洋	高松(Takamatsu)	https://www.prioritypass.com/ja/lounges/japan/takamatsu
+アジア太平洋	高雄国際空港(Kaohsiung International)	https://www.prioritypass.com/ja/lounges/taiwan/kaohsiung-international
+アジア太平洋	合肥新橋国際空港(Hefei Xinqiao Intl)	https://www.prioritypass.com/ja/lounges/china/hefei-xinqiao-intl
+アジア太平洋	昆明長水国際空港(Kunming Changshui Intl)	https://www.prioritypass.com/ja/lounges/china/kunming-international
+アジア太平洋	済州国際空港(Jeju International)	https://www.prioritypass.com/ja/lounges/south-korea/jeju-international
+アジア太平洋	済南遥墻国際空港(Jinan Yaoqiang International)	https://www.prioritypass.com/ja/lounges/china/jinan-yaoqiang-intl
+アジア太平洋	三亜鳳凰国際空港(Sanya Phoenix International)	https://www.prioritypass.com/ja/lounges/china/sanya-phoenix-international
+アジア太平洋	山口宇部(Ube Yamaguchi-Ube)	https://www.prioritypass.com/ja/lounges/japan/ube-yamaguchi-ube
+アジア太平洋	鹿児島(Kagoshima)	https://www.prioritypass.com/ja/lounges/japan/kagoshima
+アジア太平洋	珠海金湾(Zhuhai Jinwan)	https://www.prioritypass.com/ja/lounges/china/zhuhai-airport
+アジア太平洋	秋田(Akita)	https://www.prioritypass.com/ja/lounges/japan/akita
+アジア太平洋	舟山普陀山(Zhoushan Putuoshan)	https://www.prioritypass.com/ja/lounges/china/zhoushan-putuoshan
+アジア太平洋	出雲(Izumo)	https://www.prioritypass.com/ja/lounges/japan/izumo
+アジア太平洋	遵義新舟(Zunyi Xinzhou)	https://www.prioritypass.com/ja/lounges/china/zunyi-xinzhou
+アジア太平洋	徐州観音空港(Xuzhou Guanyin)	https://www.prioritypass.com/ja/lounges/china/xuzhou-guanyin-airport
+アジア太平洋	小松(Komatsu)	https://www.prioritypass.com/ja/lounges/japan/komatsu
+アジア太平洋	松山(Matsuyama)	https://www.prioritypass.com/ja/lounges/japan/matsuyama
+アジア太平洋	上海浦東国際空港(Shanghai Pudong International)	https://www.prioritypass.com/ja/lounges/china/shanghai-pudong-international
+アジア太平洋	上海虹橋国際空港(Shanghai Hongqiao Intl)	https://www.prioritypass.com/ja/lounges/china/shanghai-hongqiao
+アジア太平洋	常州奔牛国際空港(Changzhou Benniu Intl)	https://www.prioritypass.com/ja/lounges/china/changzhou-benniu-intl
+アジア太平洋	新潟(Niigata)	https://www.prioritypass.com/ja/lounges/japan/niigata
+アジア太平洋	新千歳(Sapporo New Chitose)	https://www.prioritypass.com/ja/lounges/japan/sapporo-new-chitose
+アジア太平洋	深圳宝安国際空港(Shenzhen Baoan International)	https://www.prioritypass.com/ja/lounges/china/shenzhen-baoan-international
+アジア太平洋	成都双流国際空港(Chengdu Shuangliu Intl)	https://www.prioritypass.com/ja/lounges/china/chengdu-shuangliu-intl
+アジア太平洋	成都天府国際空港(Chengdu Tianfu International)	https://www.prioritypass.com/ja/lounges/china/chengdu-tianfu-international
+アジア太平洋	西安咸陽国際空港(Xian Xianyang International)	https://www.prioritypass.com/ja/lounges/china/xian-xianyang-international
+アジア太平洋	青森(Aomori)	https://www.prioritypass.com/ja/lounges/japan/aomori
+アジア太平洋	青島膠東国際空港(Qingdao Jiaodong International)	https://www.prioritypass.com/ja/lounges/china/qingdao-jiaodong-international
+アジア太平洋	青島膠東国際空港(Qingdao Jiaodong International)	https://www.prioritypass.com/ja/lounges/china/qingdao-jiaodong-international
+アジア太平洋	石家荘正定国際空港(Shijiazhuang Zhengding Intl)	https://www.prioritypass.com/ja/lounges/china/shijiazhuang-zhengding-intl
+アジア太平洋	仙台(Sendai)	https://www.prioritypass.com/ja/lounges/japan/sendai
+アジア太平洋	泉州晋江国際空港(Quanzhou Jinjiang International)	https://www.prioritypass.com/ja/lounges/china/quanzhou-jinjiang-international
+アジア太平洋	蘇南碩放国際空港(Wuxi Sunan Shuofang Intl)	https://www.prioritypass.com/ja/lounges/china/wuxi-shuofang
+アジア太平洋	太原武宿国際空港(Taiyuan Wusu International)	https://www.prioritypass.com/ja/lounges/china/tyn
+アジア太平洋	台州路橋(Taizhou Luqiao)	https://www.prioritypass.com/ja/lounges/china/taizhou-luqiao
+アジア太平洋	台中国際空港(Taichung Ching Chuang Kang)	https://www.prioritypass.com/ja/lounges/taiwan/taichung-ching-chuang-kang
+アジア太平洋	台北松山空港(Taipei Songshan)	https://www.prioritypass.com/ja/lounges/taiwan/taipei-songshan
+アジア太平洋	台湾桃園国際空港(Taipei Taiwan Taoyuan International)	https://www.prioritypass.com/ja/lounges/taiwan/taipei-taoyuan-international
+アジア太平洋	大阪(伊丹)国際空港(Osaka Itami Intl)	https://www.prioritypass.com/ja/lounges/japan/osaka-itami-i-intl
+アジア太平洋	大阪・関西国際空港(Osaka Kansai International)	https://www.prioritypass.com/ja/lounges/japan/osaka-kansai-international
+アジア太平洋	大阪神戸(Osaka Kobe)	https://www.prioritypass.com/ja/lounges/japan/osaka-kobe
+アジア太平洋	大同雲崗空港(Datong Yungang)	https://www.prioritypass.com/ja/lounges/china/datong-yungang
+アジア太平洋	大分(Oita)	https://www.prioritypass.com/ja/lounges/japan/oita
+アジア太平洋	大理空港(Dali)	https://www.prioritypass.com/ja/lounges/china/dali-airport
+アジア太平洋	大連周水子国際空港(Dalian Zhoushuizi Intl)	https://www.prioritypass.com/ja/lounges/china/dalian-zhoushuizi-intl
+アジア太平洋	池州九華山(Chizhou Jiuhuashan)	https://www.prioritypass.com/ja/lounges/china/chizhou-jiuhuashan
+アジア太平洋	張家界荷花空港(Zhangjiajie Hehua)	https://www.prioritypass.com/ja/lounges/china/zhangjiajie-hehua
+アジア太平洋	長沙黄花国際空港(Changsha Huanghua)	https://www.prioritypass.com/ja/lounges/china/changsha-huanghua
+アジア太平洋	長崎(Nagasaki)	https://www.prioritypass.com/ja/lounges/japan/nagasaki
+アジア太平洋	長春龍嘉国際空港(Changchun Longjia Intl)	https://www.prioritypass.com/ja/lounges/china/changchun-longjia-intl
+アジア太平洋	鄭州新鄭国際空港(Zhengzhou Xingzheng Intl)	https://www.prioritypass.com/ja/lounges/china/zhengzhou-xingzheng-intl
+アジア太平洋	天津浜海国際空港(Tianjin Binhai International)	https://www.prioritypass.com/ja/lounges/china/tianjin-binhai-intl
+アジア太平洋	東京・成田国際空港(Tokyo Narita International)	https://www.prioritypass.com/ja/lounges/japan/tokyo-narita-international
+アジア太平洋	東京国際空港（羽田） (Tokyo Haneda Intl)	https://www.prioritypass.com/ja/lounges/japan/tokyo-haneda-intl
+アジア太平洋	騰衝駝峰空港(Tengchong Tuofeng)	https://www.prioritypass.com/ja/lounges/china/tengchong-tuofeng
+アジア太平洋	徳宏芒市空港(Dehong Mangshi)	https://www.prioritypass.com/ja/lounges/china/mangshi-dehong
+アジア太平洋	徳島(Tokushima)	https://www.prioritypass.com/ja/lounges/japan/tokushima
+アジア太平洋	敦煌空港(Dunhuang)	https://www.prioritypass.com/ja/lounges/china/dunhuang-airport
+アジア太平洋	那覇(Naha)	https://www.prioritypass.com/ja/lounges/japan/naha
+アジア太平洋	南京禄口国際空港(Nanjing Lukou Intl)	https://www.prioritypass.com/ja/lounges/china/nanjing-lukou-intl
+アジア太平洋	南昌昌北国際空港(Nanchang Changbei Intl)	https://www.prioritypass.com/ja/lounges/china/nanchang-changbei-intl
+アジア太平洋	南通興東空港(Nantong Xingdong)	https://www.prioritypass.com/ja/lounges/china/nantong-xingdong
+アジア太平洋	南寧呉キョ国際空港(Nanning Wuxu International)	https://www.prioritypass.com/ja/lounges/china/nanning-wuxu-international
+アジア太平洋	南陽姜営空港(Nanyang Jiangying)	https://www.prioritypass.com/ja/lounges/china/nanyang-jiangying
+アジア太平洋	日照山字河空港(Rizhao Shanzihe)	https://www.prioritypass.com/ja/lounges/china/rizhao-shanzihe
+アジア太平洋	寧波櫟社国際空港(Ningbo Lishe International)	https://www.prioritypass.com/ja/lounges/china/ningbo-lishe-international
+アジア太平洋	函館(Hakodate)	https://www.prioritypass.com/ja/lounges/japan/hakodate
+アジア太平洋	美保米子(Miho Yonago)	https://www.prioritypass.com/ja/lounges/japan/miho-yonago
+アジア太平洋	富山(Toyama)	https://www.prioritypass.com/ja/lounges/japan/toyama
+アジア太平洋	富士山静岡(Shizuoka Mount Fuji)	https://www.prioritypass.com/ja/lounges/japan/shizuoka-mount-fuji
+アジア太平洋	武夷山(Wuyishan)	https://www.prioritypass.com/ja/lounges/china/wuyishan-airport
+アジア太平洋	武漢天河国際空港(Wuhan Tianhe International)	https://www.prioritypass.com/ja/lounges/china/wuhan-tianhe-intl
+アジア太平洋	福岡国際空港(Fukuoka Intl)	https://www.prioritypass.com/ja/lounges/japan/fukuoka-international
+アジア太平洋	福州長楽国際空港(Fuzhou Changle International)	https://www.prioritypass.com/ja/lounges/china/fuzhou-changle-international
+アジア太平洋	仏山沙堤空港(Foshan Shadi)	https://www.prioritypass.com/ja/lounges/china/foshan-shadi
+アジア太平洋	包頭空港(Baotou Erliban)	https://www.prioritypass.com/ja/lounges/china/baotou-erliban
+アジア太平洋	北京駅(Beijing Railway Station)	https://www.prioritypass.com/ja/lounges/china/beijing-railway-station
+アジア太平洋	北京首都国際空港(Beijing Capital International)	https://www.prioritypass.com/ja/lounges/china/beijing-capital-international
+アジア太平洋	北京大興国際空港(Beijing Daxing International)	https://www.prioritypass.com/ja/lounges/china/beijing-daxing-international
+アジア太平洋	北九州(Kitakyushu)	https://www.prioritypass.com/ja/lounges/japan/kitakyushu
+アジア太平洋	名古屋・中部国際空港(Nagoya Chubu Centrair Intl)	https://www.prioritypass.com/ja/lounges/japan/nagoya-central-japan-intl
+アジア太平洋	綿陽南郊(Mianyang Nanjiao)	https://www.prioritypass.com/ja/lounges/china/mianyang-nanjiao-airport
+アジア太平洋	柳州白蓮(Liuzhou Bailian)	https://www.prioritypass.com/ja/lounges/china/liuzhou-bailian
+アジア太平洋	揚州泰州空港(Yangzhou Taizhou)	https://www.prioritypass.com/ja/lounges/china/yangzhou-taizhou-airport
+アジア太平洋	蘭州中川(Lanzhou Zhongchuan)	https://www.prioritypass.com/ja/lounges/china/lanzhou-zhongchuan
+アジア太平洋	麗江三義(Lijiang Sanyi)	https://www.prioritypass.com/ja/lounges/china/lijiang-sanyi
+アジア太平洋	廈門高崎国際空港(Xiamen Gaoqi Intl)	https://www.prioritypass.com/ja/lounges/china/xiamen-airport
+アジア太平洋	汕頭・掲陽潮汕国際空港(Shantou Jieyang Chaoshan International)	https://www.prioritypass.com/ja/lounges/china/shantou-jieyang-chaoshan-international
+アジア太平洋	淮安漣水(Huai'an Lianshui)	https://www.prioritypass.com/ja/lounges/china/huaian-lianshui
+アジア太平洋	瀋陽桃仙国際空港(Shenyang Taoxian International)	https://www.prioritypass.com/ja/lounges/china/shenyang-taoxian-international
+アジア太平洋	襄陽劉集空港(Xiangyang Liuji)	https://www.prioritypass.com/ja/lounges/china/xiangyang-liuji
+アジア太平洋	榆林榆陽空港(Yulin Yuyang)	https://www.prioritypass.com/ja/lounges/china/yulin-yuyang
+ヨーロッパ大陸	Diyarbakir	https://www.prioritypass.com/ja/lounges/turkey/diyarbakir
+ヨーロッパ大陸	ア・コルーニャ(A Coruna)	https://www.prioritypass.com/ja/lounges/spain/a-coruna-airport
+ヨーロッパ大陸	アストゥリアス(Asturias)	https://www.prioritypass.com/ja/lounges/spain/asturias
+ヨーロッパ大陸	アテネ国際空港(Athens International)	https://www.prioritypass.com/ja/lounges/greece/athens-international
+ヨーロッパ大陸	アムステルダム・スキポール空港(Amsterdam Schiphol)	https://www.prioritypass.com/ja/lounges/netherlands/amsterdam-schiphol
+ヨーロッパ大陸	アリカンテ空港(Alicante)	https://www.prioritypass.com/ja/lounges/spain/alicante-airport
+ヨーロッパ大陸	アンカラ・エセンボーア空港(Ankara Esenboga)	https://www.prioritypass.com/ja/lounges/turkey/ankara-esenboga
+ヨーロッパ大陸	アンタルヤ国際空港(Antalya International)	https://www.prioritypass.com/ja/lounges/turkey/antalya-international
+ヨーロッパ大陸	イスタンブール(Istanbul)	https://www.prioritypass.com/ja/lounges/turkey/istanbul-airport
+ヨーロッパ大陸	イスタンブール・サビハ・ギョクチェン国際空港(Istanbul Sabiha Gokcen Intl)	https://www.prioritypass.com/ja/lounges/turkey/istanbul-sabiha-gokcen-intl
+ヨーロッパ大陸	イズミル・アドナン・メンデレス空港(Izmir Adnan Menderes)	https://www.prioritypass.com/ja/lounges/turkey/izmir-adnan-menderes
+ヨーロッパ大陸	イビサ空港(Ibiza)	https://www.prioritypass.com/ja/lounges/spain/ibiza-airport
+ヨーロッパ大陸	イラクリオン・カザンザキス国際空港(Heraklion Kazantzakis Intl)	https://www.prioritypass.com/ja/lounges/greece/heraklion-kazantzakis-intl
+ヨーロッパ大陸	インスブルック (Innsbruck)	https://www.prioritypass.com/ja/lounges/austria/innsbruck-airport
+ヨーロッパ大陸	ヴァルナ空港(Varna)	https://www.prioritypass.com/ja/lounges/bulgaria/varna-airport
+ヨーロッパ大陸	ウィーン・シュヴェヒャート(Vienna Schwechat)	https://www.prioritypass.com/ja/lounges/austria/vienna-schwechat
+ヨーロッパ大陸	ヴィリニュス国際空港(Vilnius International)	https://www.prioritypass.com/ja/lounges/lithuania/vilnius-intl
+ヨーロッパ大陸	ヴェネツィア・マルコ・ポーロ国際空港(Venice Marco Polo)	https://www.prioritypass.com/ja/lounges/italy/venice-marco-polo
+ヨーロッパ大陸	エレバン・ズヴァルトノッツ国際空港(Yerevan Zvartnots Intl)	https://www.prioritypass.com/ja/lounges/armenia/yerevan-zvartnots-intl
+ヨーロッパ大陸	オールボー(Aalborg)	https://www.prioritypass.com/ja/lounges/denmark/aalborg-airport
+ヨーロッパ大陸	オストラヴァ・レオシュ・ヤナーチェク空港(Ostrava Leos Janacek)	https://www.prioritypass.com/ja/lounges/czech-republic/ostrava-leos-janacek
+ヨーロッパ大陸	オスロ・ガーデモエン空港(Oslo Gardermoen)	https://www.prioritypass.com/ja/lounges/norway/oslo-gardermoen
+ヨーロッパ大陸	オフリド・セント・ポール・ザ・アポストール空港(Ohrid St. Paul the Apostle)	https://www.prioritypass.com/ja/lounges/macedonia/ohrid-st-paul-the-apostle
+ヨーロッパ大陸	カターニア・フォンターナロッサ空港(Catania Fontanarossa)	https://www.prioritypass.com/ja/lounges/italy/catania-fontanarossa
+ヨーロッパ大陸	カトヴィツェ国際空港(Katowice Pyrzowice Intl)	https://www.prioritypass.com/ja/lounges/poland/katowice-pyrzowice-intl
+ヨーロッパ大陸	カリアリ・エルマス(Cagliari Elmas)	https://www.prioritypass.com/ja/lounges/italy/cagliari-elmas
+ヨーロッパ大陸	キシナウ国際空港(Chisinau International)	https://www.prioritypass.com/ja/lounges/moldova/chisinau-international
+ヨーロッパ大陸	グダニスク・レフ・ワレサ空港(Gdansk Lech Walesa)	https://www.prioritypass.com/ja/lounges/poland/gdansk-lech-walesa
+ヨーロッパ大陸	グラーツ空港(Graz)	https://www.prioritypass.com/ja/lounges/austria/graz-airport
+ヨーロッパ大陸	グランカナリア(ラスパルマス)空港(Gran Canaria Las Palmas)	https://www.prioritypass.com/ja/lounges/spain/gran-canaria-las-palmas
+ヨーロッパ大陸	クルジュ＝ナポカ国際空港(Cluj-Napoca International)	https://www.prioritypass.com/ja/lounges/romania/cluj-napoca-international
+ヨーロッパ大陸	ケルン・ボン国際空港(Cologne/Bonn International)	https://www.prioritypass.com/ja/lounges/germany/colognebonn-international
+ヨーロッパ大陸	コシツェ国際空港(Kosice International)	https://www.prioritypass.com/ja/lounges/slovak-republic/kosice-international
+ヨーロッパ大陸	コペンハーゲン・カストラップ空港(Copenhagen Kastrup)	https://www.prioritypass.com/ja/lounges/denmark/copenhagen-airport
+ヨーロッパ大陸	コルフ・イオアニス・カポディストリアス国際空港(Corfu Ioannis Kapodistrias Intl)	https://www.prioritypass.com/ja/lounges/greece/corfu-ioannis-kapodistrias-intl
+ヨーロッパ大陸	ザールブリュッケン(Saarbruecken)	https://www.prioritypass.com/ja/lounges/germany/saarbruecken-airport
+ヨーロッパ大陸	ザグレブ国際空港(Zagreb Franjo Tudman)	https://www.prioritypass.com/ja/lounges/croatia/zagreb
+ヨーロッパ大陸	ザダル空港(Zadar)	https://www.prioritypass.com/ja/lounges/croatia/zadar-airport
+ヨーロッパ大陸	サラエボ国際空港(Sarajevo International)	https://www.prioritypass.com/ja/lounges/bosnia-herzegovina/sarajevo-international
+ヨーロッパ大陸	ザルツブルク空港(Salzburg)	https://www.prioritypass.com/ja/lounges/austria/salzburg-airport
+ヨーロッパ大陸	サンティアゴ・デ・コンポステーラ(Santiago de Compostela)	https://www.prioritypass.com/ja/lounges/spain/santiago-de-compostela-airport
+ヨーロッパ大陸	ジェシュフ (Rzeszow) - Jasionka	https://www.prioritypass.com/ja/lounges/poland/rzeszow-jasionka
+ヨーロッパ大陸	ジブラルタル国際空港(Gibraltar International)	https://www.prioritypass.com/ja/lounges/gibraltar/gibraltar-international
+ヨーロッパ大陸	ジャージー空港(Jersey)	https://www.prioritypass.com/ja/lounges/bailiwick-of-jersey/jersey-airport
+ヨーロッパ大陸	ジュネーブ国際空港(Geneva International)	https://www.prioritypass.com/ja/lounges/switzerland/geneva-cointrin
+ヨーロッパ大陸	スコピエ国際線ラウンジ	https://www.prioritypass.com/ja/lounges/macedonia/skopje-alexander-the-great
+ヨーロッパ大陸	スタバンゲル空港(Stavanger Sola)	https://www.prioritypass.com/ja/lounges/norway/stavanger-sola
+ヨーロッパ大陸	ストックホルム・アーランダ(Stockholm Arlanda)	https://www.prioritypass.com/ja/lounges/sweden/stockholm-arlanda
+ヨーロッパ大陸	セビリア国際空港(Sevilla International)	https://www.prioritypass.com/ja/lounges/spain/seville-san-pablo
+ヨーロッパ大陸	ソフィア空港(Sofia)	https://www.prioritypass.com/ja/lounges/bulgaria/sofia-airport
+ヨーロッパ大陸	ダラマン空港(Dalaman)	https://www.prioritypass.com/ja/lounges/turkey/dalaman-airport
+ヨーロッパ大陸	タリン・レナルトメリ空港(Tallinn Lennart Meri)	https://www.prioritypass.com/ja/lounges/estonia/tallinn-airport
+ヨーロッパ大陸	チューリッヒ空港(Zurich)	https://www.prioritypass.com/ja/lounges/switzerland/zurich-airport
+ヨーロッパ大陸	ティヴァト空港(Tivat)	https://www.prioritypass.com/ja/lounges/montenegro/tiv
+ヨーロッパ大陸	ティミショアラ国際空港(Timisoara Intl)	https://www.prioritypass.com/ja/lounges/romania/timisoara-intl
+ヨーロッパ大陸	ディヤルバクル(Diyarbakir)	https://www.prioritypass.com/ja/lounges/turkey/diyabakir
+ヨーロッパ大陸	ティラナ・マザー・テレサ国際空港(Tirana Nene Tereza Intl)	https://www.prioritypass.com/ja/lounges/albania/tirana-nene-tereza-intl
+ヨーロッパ大陸	テッサロニキ・マケドニア国際空港(Thessaloniki Makedonia)	https://www.prioritypass.com/ja/lounges/greece/thessaloniki
+ヨーロッパ大陸	テネリフェ・スール・レイナ・ソフィア国際空港(Tenerife South Reina Sofia)	https://www.prioritypass.com/ja/lounges/spain/tenerife-south-reina-sofia
+ヨーロッパ大陸	テネリフェ・ノルテ・ロス・ロデオス空港(Tenerife North Los Rodeos)	https://www.prioritypass.com/ja/lounges/spain/tenerife-north-los-rodeos
+ヨーロッパ大陸	デュッセルドルフ国際空港(Duesseldorf International)	https://www.prioritypass.com/ja/lounges/germany/dusseldorf--international
+ヨーロッパ大陸	トゥールーズ・ブラニャック(Toulouse Blagnac)	https://www.prioritypass.com/ja/lounges/france/toulouse-blagnac
+ヨーロッパ大陸	ドゥブロヴニク・ルジェル・ボシュコヴィッチ空港(Dubrovnik Ruder Boskovic)	https://www.prioritypass.com/ja/lounges/croatia/dubrovnik-cilipi-konavle
+ヨーロッパ大陸	トビリシ国際空港(Tbilisi International)	https://www.prioritypass.com/ja/lounges/georgia-republic-of/tbilisi-international
+ヨーロッパ大陸	トリエステ・フリウリ＝ヴェネツィア・ジュリア空港(Trieste Friuli Venezia Giulia)	https://www.prioritypass.com/ja/lounges/italy/trieste-friuli-venezia-giulia
+ヨーロッパ大陸	トリノ・サンドロ・ペルティーニ国際空港(Turin Sandro Pertini)	https://www.prioritypass.com/ja/lounges/italy/turin-sandro-pertini
+ヨーロッパ大陸	ドレスデン(Dresden)	https://www.prioritypass.com/ja/lounges/germany/dresden
+ヨーロッパ大陸	ナポリ・カポディキーノ国際空港(Naples Capodichino)	https://www.prioritypass.com/ja/lounges/italy/naples-capodichino
+ヨーロッパ大陸	ナント・アトランティック空港(Nantes Atlantique)	https://www.prioritypass.com/ja/lounges/france/nantes-atlantique
+ヨーロッパ大陸	ニース・コート・ダジュール空港(Nice Cote d Azur)	https://www.prioritypass.com/ja/lounges/france/nice-cote-d-azur
+ヨーロッパ大陸	ニコシア・エルジャン国際空港(Nicosia Ercan International)	https://www.prioritypass.com/ja/lounges/cyprus/nicosia-ercan-international
+ヨーロッパ大陸	ニュルンベルグ空港(Nuremberg)	https://www.prioritypass.com/ja/lounges/germany/nuremberg-airport
+ヨーロッパ大陸	バーリ・パレーゼ空港(Bari Palese)	https://www.prioritypass.com/ja/lounges/italy/bari-palese
+ヨーロッパ大陸	バクー・ヘイダル・アリエフ国際空港(Baku Heydar Aliyev Intl)	https://www.prioritypass.com/ja/lounges/azerbaijan/baku-heydar-aliyev-intl
+ヨーロッパ大陸	バトゥーミ国際空港(Batumi International)	https://www.prioritypass.com/ja/lounges/georgia-republic-of/batumi-international
+ヨーロッパ大陸	ハノーバー空港(Hannover)	https://www.prioritypass.com/ja/lounges/germany/hannover-airport
+ヨーロッパ大陸	パフォス国際空港(Paphos International)	https://www.prioritypass.com/ja/lounges/cyprus/paphos-international
+ヨーロッパ大陸	パリ＝シャルル・ド・ゴール空港(Paris Charles de Gaulle)	https://www.prioritypass.com/ja/lounges/france/paris-cdg
+ヨーロッパ大陸	パリ・オルリー空港	https://www.prioritypass.com/ja/lounges/france/paris-orly
+ヨーロッパ大陸	バルセロナ・エル・プラット国際空港(Barcelona El Prat)	https://www.prioritypass.com/ja/lounges/spain/barcelona-el-prat
+ヨーロッパ大陸	パルマ・デ・マヨルカ(Palma de Mallorca)	https://www.prioritypass.com/ja/lounges/spain/palma-de-mallorca-airport
+ヨーロッパ大陸	パレルモ・ファルコーネ ボルセリーノ空港(Palermo Falcone Borsellino)	https://www.prioritypass.com/ja/lounges/italy/palermo-falcone-borsellino
+ヨーロッパ大陸	バレンシア空港(Valencia)	https://www.prioritypass.com/ja/lounges/spain/valencia-airport
+ヨーロッパ大陸	ハンブルク空港(Hamburg Fuhlsbuettel)	https://www.prioritypass.com/ja/lounges/germany/hamburg-fuhlsbuttel
+ヨーロッパ大陸	ビーゴ(Vigo)	https://www.prioritypass.com/ja/lounges/spain/vigo-airport
+ヨーロッパ大陸	ピサ・ガリレオ・ガリレイ国際空港(Pisa Galileo Galilei Intl)	https://www.prioritypass.com/ja/lounges/italy/pisa-galileo-galilei-intl
+ヨーロッパ大陸	ビルバオ空港(Bilbao)	https://www.prioritypass.com/ja/lounges/spain/bilbao-airport
+ヨーロッパ大陸	ビルン空港(Billund)	https://www.prioritypass.com/ja/lounges/denmark/billund-airport
+ヨーロッパ大陸	ファロ国際空港(Faro International)	https://www.prioritypass.com/ja/lounges/portugal/faro-international
+ヨーロッパ大陸	ブィドゴシュチュ・イグナツィ・ヤン・パデレフスキ空港 (Bydgoszcz Ignacy Jan Paderewski)	https://www.prioritypass.com/ja/lounges/poland/bydgoszcz
+ヨーロッパ大陸	フィレンツェ・アメリゴ・ベスプッチ空港(Florence Amerigo Vespucci)	https://www.prioritypass.com/ja/lounges/italy/florence-amerigo-vespucci
+ヨーロッパ大陸	フェデリコ・ガルシア・ロルカ・グラナダ・ハエン空港(Granada Federico Garcia Lorca)	https://www.prioritypass.com/ja/lounges/spain/granada-federico-garcia-lorca
+ヨーロッパ大陸	フエルテベントゥラ島(Fuerteventura)	https://www.prioritypass.com/ja/lounges/spain/fuerteventura-airport
+ヨーロッパ大陸	ブカレスト・アンリ・コアンダ国際空港(Bucharest Henri Coanda Intl)	https://www.prioritypass.com/ja/lounges/romania/bucharest-henri-coanda-intl
+ヨーロッパ大陸	ブダペスト・リスト・フェレンツ国際空港(Budapest Liszt Ferenc Intl)	https://www.prioritypass.com/ja/lounges/hungary/budapest-liszt-ferenc-intl
+ヨーロッパ大陸	ブラチスラバ・ミラン・ラスチスラウ・シュテファーニク(Bratislava M.R. Stefanik)	https://www.prioritypass.com/ja/lounges/slovak-republic/bratislava-letisko-mr-stefanik
+ヨーロッパ大陸	プラハ・ヴァーツラフ・ハヴェル国際空港(Prague Vaclav Havel)	https://www.prioritypass.com/ja/lounges/czech-republic/prague-vaclav-havel
+ヨーロッパ大陸	フランクフルト・アム・マイン(Frankfurt Main)	https://www.prioritypass.com/ja/lounges/germany/frankfurt-main
+ヨーロッパ大陸	ブルガス空港(Burgas)	https://www.prioritypass.com/ja/lounges/bulgaria/burgas-airport
+ヨーロッパ大陸	ブルノ・トゥジャニ空港(Brno Turany)	https://www.prioritypass.com/ja/lounges/czech-republic/brno-turany
+ヨーロッパ大陸	ブレーメン空港(Bremen)	https://www.prioritypass.com/ja/lounges/germany/bremen-airport
+ヨーロッパ大陸	ブロツラフ・コペルニクス国際空港(Wroclaw Nicolaus Copernicus)	https://www.prioritypass.com/ja/lounges/poland/wroclaw-nicolaus-copernicus
+ヨーロッパ大陸	ベオグラード・ニコラ・テスラ空港(Belgrade Nikola Tesla)	https://www.prioritypass.com/ja/lounges/serbia/belgrade-nikola-tesla
+ヨーロッパ大陸	ベルゲン空港(Bergen Flesland)	https://www.prioritypass.com/ja/lounges/norway/bergen-flesland
+ヨーロッパ大陸	ヘルシンキ・ヴァンター(Helsinki Vantaa)	https://www.prioritypass.com/ja/lounges/finland/helsinki-vantaa
+ヨーロッパ大陸	ベルリン・ブランデンブルク国際空港(Berlin Brandenburg International)	https://www.prioritypass.com/ja/lounges/germany/berlin-brandenburg-international
+ヨーロッパ大陸	ポズナン・ワヴィツァ空港(Poznan Lawica)	https://www.prioritypass.com/ja/lounges/poland/poznan-lawica
+ヨーロッパ大陸	ポルト・フランシスコ・サ・カルネイロ国際空港(Porto Francisco S.Carneiro Int)	https://www.prioritypass.com/ja/lounges/portugal/porto-francisco-scarneiro-int
+ヨーロッパ大陸	ボルドー・メリニャック空港(Bordeaux Merignac)	https://www.prioritypass.com/ja/lounges/france/bordeaux-merignac
+ヨーロッパ大陸	ボローニャ・マルコーニ空港(Bologna G. Marconi)	https://www.prioritypass.com/ja/lounges/italy/bologna-g-marconi
+ヨーロッパ大陸	マドリード・アドルフォ・スアレス・バラハス空港(Madrid Adolfo Suarez-Barajas)	https://www.prioritypass.com/ja/lounges/spain/madrid-barajas
+ヨーロッパ大陸	マラガ空港(Malaga)	https://www.prioritypass.com/ja/lounges/spain/malaga-airport
+ヨーロッパ大陸	マルセイユ・プロヴァンス空港(Marseille Provence)	https://www.prioritypass.com/ja/lounges/france/marseille-provence
+ヨーロッパ大陸	マルタ国際空港(Malta International)	https://www.prioritypass.com/ja/lounges/malta/malta-international
+ヨーロッパ大陸	ミコノス島空港(Mykonos)	https://www.prioritypass.com/ja/lounges/greece/mykonos
+ヨーロッパ大陸	ミュンスター・オスナブリュック国際空港(Muenster-Osnabrueck Intl)	https://www.prioritypass.com/ja/lounges/germany/muenster-osnabrueck-intl
+ヨーロッパ大陸	ミュンヘン・フランツ・ヨーゼフ・シュトラウス(Munich Franz-Josef Strauss)	https://www.prioritypass.com/ja/lounges/germany/munich-franz-josef-strauss
+ヨーロッパ大陸	ミラスボドルム国際空港(Bodrum Milas Intl)	https://www.prioritypass.com/ja/lounges/turkey/bodrum-milas-intl
+ヨーロッパ大陸	ミラノ・ベルガモ・オーリオ・アル・セーリオ(Milan Bergamo Orio Al Serio)	https://www.prioritypass.com/ja/lounges/italy/milan-bergamo-orio-al-serio
+ヨーロッパ大陸	ミラノ・マルペンサ空港(Milan Malpensa)	https://www.prioritypass.com/ja/lounges/italy/milan-malpensa
+ヨーロッパ大陸	ミラノ・リナーテ空港(Milan Linate)	https://www.prioritypass.com/ja/lounges/italy/milan-linate
+ヨーロッパ大陸	ミンスク国際空港(Minsk International)	https://www.prioritypass.com/ja/lounges/belarus/minsk-international
+ヨーロッパ大陸	メノルカ島(Menorca)	https://www.prioritypass.com/ja/lounges/spain/menorca-airport
+ヨーロッパ大陸	メルスィン・チュクロヴァ国際空港(Mersin Cukurova International)	https://www.prioritypass.com/ja/lounges/turkey/mersin-cukurova-international
+ヨーロッパ大陸	モンペリエ・メディテラネ国際空港(Montpellier Mediterranee)	https://www.prioritypass.com/ja/lounges/france/montpellier-mediterranee
+ヨーロッパ大陸	ユーロエアポート・バーゼル＝ミュールーズ空港(Basel-Mulhouse-Freiburg EuroAirport)	https://www.prioritypass.com/ja/lounges/switzerland/basel-mulhouse-euroairport
+ヨーロッパ大陸	ヨーテボリ・ランドヴェッテル(Gothenburg Landvetter)	https://www.prioritypass.com/ja/lounges/sweden/gothenburg-landvetter
+ヨーロッパ大陸	ヨハネパウロ2世・クラクフ・バリツェ国際空港(Krakow John Paul II) - バリツェ(Balice)	https://www.prioritypass.com/ja/lounges/poland/krakow-john-paul-ii-balice
+ヨーロッパ大陸	ライプチヒ・ハレ空港(Leipzig/Halle)	https://www.prioritypass.com/ja/lounges/germany/leipzig-halle
+ヨーロッパ大陸	ラルナカ国際空港(Larnaca International)	https://www.prioritypass.com/ja/lounges/cyprus/larnaca-international
+ヨーロッパ大陸	ランサローテ空港(Lanzarote)	https://www.prioritypass.com/ja/lounges/spain/lanzarote-airport
+ヨーロッパ大陸	リガ国際空港(Riga International)	https://www.prioritypass.com/ja/lounges/latvia/riga-intl
+ヨーロッパ大陸	リスボン国際空港(Lisbon International)	https://www.prioritypass.com/ja/lounges/portugal/lisbon-international
+ヨーロッパ大陸	リュブリャナ空港(Ljubljana)	https://www.prioritypass.com/ja/lounges/slovenia/ljubljana
+ヨーロッパ大陸	リヨン・サン＝テグジュペリ国際空港(Lyon St Exupéry)	https://www.prioritypass.com/ja/lounges/france/lyon-st-exupery
+ヨーロッパ大陸	リンシェーピング シティ	https://www.prioritypass.com/ja/lounges/sweden/linkoping-city
+ヨーロッパ大陸	リンツ(Linz)	https://www.prioritypass.com/ja/lounges/austria/linz-blue-danube
+ヨーロッパ大陸	ルクセンブルク・フィンデル国際空港(Luxembourg Findel Intl)	https://www.prioritypass.com/ja/lounges/luxembourg/luxembourg-findel-intl
+ヨーロッパ大陸	ルブリン・シフィドニク(Lubin Swidnik)	https://www.prioritypass.com/ja/lounges/poland/lublin-swidnik-airport
+ヨーロッパ大陸	レイキャビク・ケプラヴィーク国際空港(Reykjavik Keflavik International)	https://www.prioritypass.com/ja/lounges/iceland/reykjavik-keflavik-international
+ヨーロッパ大陸	ローマ・フィウミチーノ(Rome Fiumicino)	https://www.prioritypass.com/ja/lounges/italy/rome-fiumicino
+ヨーロッパ大陸	ロッテルダム(Rotterdam)	https://www.prioritypass.com/ja/lounges/netherlands/rotterdam
+ヨーロッパ大陸	ロドス・ディアゴラス国際空港(Rhodes Diagoras International)	https://www.prioritypass.com/ja/lounges/greece/rhodes-diagoras-international
+ヨーロッパ大陸	ワルシャワ・フレデリック・ショパン空港(Warsaw Frederic Chopin)	https://www.prioritypass.com/ja/lounges/poland/warsaw-frederic-chopin
+ヨーロッパ大陸	ワルシャワ・モドリン空港(Warsaw Modlin)	https://www.prioritypass.com/ja/lounges/poland/warsaw---modlin
+中近東	アカバ・キング・フセイン国際空港(Aqaba King Hussein Intl)	https://www.prioritypass.com/ja/lounges/jordan/aqaba-king-hussein-intl
+中近東	アブダビ国際空港(Abu Dhabi Intl)	https://www.prioritypass.com/ja/lounges/united-arab-emirates/abu-dhabi-international
+中近東	アブハー地方空港(Abha Regional)	https://www.prioritypass.com/ja/lounges/saudi-arabia/abha-regional
+中近東	アラル(Arar)	https://www.prioritypass.com/ja/lounges/saudi-arabia/arar
+中近東	アル・ジャウフ(Al Jouf)	https://www.prioritypass.com/ja/lounges/saudi-arabia/al-jouf-domestic-airport
+中近東	アルウラ国際空港(Al-Ula International)	https://www.prioritypass.com/ja/lounges/saudi-arabia/al-ula-international
+中近東	アルバハ・アル・アキーク空港(Al Baha Al-Aqiq)	https://www.prioritypass.com/ja/lounges/saudi-arabia/al-baha-al-aqiq
+中近東	アンマン・クィーンアリア国際空港(Amman Queen Alia International)	https://www.prioritypass.com/ja/lounges/jordan/amman-queen-alia-international
+中近東	カシム・リージョナル空港(Gassim Regional)	https://www.prioritypass.com/ja/lounges/saudi-arabia/gassim-regional
+中近東	クウェート国際空港(Kuwait International)	https://www.prioritypass.com/ja/lounges/kuwait/kuwait-international
+中近東	グラヤット(Gurayat)	https://www.prioritypass.com/ja/lounges/saudi-arabia/gurayat
+中近東	サラーラ空港(Salalah)	https://www.prioritypass.com/ja/lounges/oman/salalah-airport
+中近東	ジェッダ・キング・アブドゥルアズィーズ国際空港(Jeddah King A Aziz Intl)	https://www.prioritypass.com/ja/lounges/saudi-arabia/jeddah-king-a-aziz-intl
+中近東	ジザン空港(Jizan Regional)	https://www.prioritypass.com/ja/lounges/saudi-arabia/jizan-regional
+中近東	シャールジャ国際空港(Sharjah Intl)	https://www.prioritypass.com/ja/lounges/united-arab-emirates/sharjah-intl
+中近東	ターイフ地域空港(Taif Regional)	https://www.prioritypass.com/ja/lounges/saudi-arabia/taif-regional
+中近東	タブーク地域空港(Tabuk Regional)	https://www.prioritypass.com/ja/lounges/saudi-arabia/tabuk-regional
+中近東	ダワディミ(Dawadmi)	https://www.prioritypass.com/ja/lounges/saudi-arabia/dawadmi-domestic-airport
+中近東	ダンマーム・キング・ファハド国際空港(Dammam King Fahd Intl)	https://www.prioritypass.com/ja/lounges/saudi-arabia/dammam-king-fahad-intl
+中近東	ドゥクム(Duqm)	https://www.prioritypass.com/ja/lounges/oman/duqm-international
+中近東	トゥライフ(Turaif)	https://www.prioritypass.com/ja/lounges/saudi-arabia/turaif
+中近東	ドーハ・ハマド国際空港(Doha Hamad International)	https://www.prioritypass.com/ja/lounges/qatar/doha-international
+中近東	ドバイ・アール・マクトゥーム国際空港(Dubai Al Maktoum Intl)	https://www.prioritypass.com/ja/lounges/united-arab-emirates/al-maktoum-international
+中近東	ドバイ国際空港(Dubai Intl)	https://www.prioritypass.com/ja/lounges/united-arab-emirates/dubai-international
+中近東	ナジュラーン(Nejran)	https://www.prioritypass.com/ja/lounges/saudi-arabia/nejran-airport
+中近東	ハーイル空港(Ha'il Regional)	https://www.prioritypass.com/ja/lounges/saudi-arabia/hail-regional
+中近東	バーレーン国際空港(Bahrain International)	https://www.prioritypass.com/ja/lounges/bahrain/bahrain-international
+中近東	バグダッド国際空港(Baghdad International)	https://www.prioritypass.com/ja/lounges/iraq/baghdad-international
+中近東	ビーシャ(Bisha)	https://www.prioritypass.com/ja/lounges/saudi-arabia/bisha
+中近東	ベイルート・ラフィク・ハリリ国際空港(Beirut Rafic Hariri Intl)	https://www.prioritypass.com/ja/lounges/lebanon/beirut-rafic-hariri-intl
+中近東	マスカット国際空港(Muscat International)	https://www.prioritypass.com/ja/lounges/oman/muscat-international
+中近東	マディーナ・モハンマド・ビン・アブドゥルアズィーズ国際空港(Madinah Mohammad Bin Abdulaziz)	https://www.prioritypass.com/ja/lounges/saudi-arabia/madinah-mohammad-bin-abdulaziz
+中近東	ヤンブー空港(Yanbu Regional)	https://www.prioritypass.com/ja/lounges/saudi-arabia/yanbu-regional
+中近東	ラアス・アル＝ハイマ国際空港(Ras Al-Khaimah International)	https://www.prioritypass.com/ja/lounges/united-arab-emirates/ras-al-khaimah-international
+中近東	リヤド・キング・ハーリド国際空港(Riyadh King Khalid Intl)	https://www.prioritypass.com/ja/lounges/saudi-arabia/riyadh-intl
+中近東	ワディ・アル・ダワシル(Wadi al Dawasir)	https://www.prioritypass.com/ja/lounges/saudi-arabia/wadi-al-dawasir
+英国・アイルランド	アイルランド・ウェスト・ノック空港(Ireland West Airport Knock)	https://www.prioritypass.com/ja/lounges/ireland/ireland-west-airport-knock
+英国・アイルランド	アバディーン国際空港(Aberdeen International)	https://www.prioritypass.com/ja/lounges/united-kingdom/aberdeen-international
+英国・アイルランド	イースト・ミッドランズ空港(East Midlands)	https://www.prioritypass.com/ja/lounges/united-kingdom/east-midlands-airport
+英国・アイルランド	インバネス・ダルクロス(Inverness Dalcross)	https://www.prioritypass.com/ja/lounges/united-kingdom/inverness-dalcross
+英国・アイルランド	エクセター空港(Exeter)	https://www.prioritypass.com/ja/lounges/united-kingdom/exeter-airport
+英国・アイルランド	エディンバラ国際空港(Edinburgh International)	https://www.prioritypass.com/ja/lounges/united-kingdom/edinburgh-international
+英国・アイルランド	カーディフ(Cardiff)	https://www.prioritypass.com/ja/lounges/united-kingdom/cardiff-airport
+英国・アイルランド	グラスゴー国際空港(Glasgow International)	https://www.prioritypass.com/ja/lounges/united-kingdom/glasgow-international
+英国・アイルランド	コーク空港(Cork)	https://www.prioritypass.com/ja/lounges/ireland/cork-airport
+英国・アイルランド	サウサンプトン国際空港(Southampton International)	https://www.prioritypass.com/ja/lounges/united-kingdom/southampton-international
+英国・アイルランド	シティオブデリー空港(City of Derry Airport)	https://www.prioritypass.com/ja/lounges/united-kingdom/city-of-derry-airport
+英国・アイルランド	シャノン国際空港(Shannon International)	https://www.prioritypass.com/ja/lounges/ireland/shannon-intl
+英国・アイルランド	ジョージ・ベスト・ベルファスト・シティ(Belfast George Best City)	https://www.prioritypass.com/ja/lounges/united-kingdom/belfast-city
+英国・アイルランド	ダブリン国際空港(Dublin International)	https://www.prioritypass.com/ja/lounges/ireland/dublin-international
+英国・アイルランド	ティーズサイド国際空港(Teesside International)	https://www.prioritypass.com/ja/lounges/united-kingdom/teesside-international
+英国・アイルランド	ニューカッスル国際空港(Newcastle International)	https://www.prioritypass.com/ja/lounges/united-kingdom/newcastle-international
+英国・アイルランド	ニューキー・コーンウォール空港(Newquay Cornwall)	https://www.prioritypass.com/ja/lounges/united-kingdom/newquay-cornwall
+英国・アイルランド	ノリッジ国際空港(Norwich International)	https://www.prioritypass.com/ja/lounges/united-kingdom/norwich-international
+英国・アイルランド	バーミンガム空港(Birmingham)	https://www.prioritypass.com/ja/lounges/united-kingdom/birmingham-airport
+英国・アイルランド	ハンバーサイド国際空港(Humberside Intl)	https://www.prioritypass.com/ja/lounges/united-kingdom/humberside-international
+英国・アイルランド	ブリストル国際空港(Bristol International)	https://www.prioritypass.com/ja/lounges/united-kingdom/bristol-international
+英国・アイルランド	ベルファスト国際空港(Belfast International)	https://www.prioritypass.com/ja/lounges/united-kingdom/belfast-international
+英国・アイルランド	マンチェスター国際空港(Manchester International)	https://www.prioritypass.com/ja/lounges/united-kingdom/manchester-international
+英国・アイルランド	マン島・ロナルズウェイ(Isle of Man Ronaldsway)	https://www.prioritypass.com/ja/lounges/united-kingdom/isle-of-man-ronaldsway
+英国・アイルランド	リーズ・ブラッドフォード国際空港(Leeds Bradford International)	https://www.prioritypass.com/ja/lounges/united-kingdom/leeds-bradford-international
+英国・アイルランド	リバプール・ジョン・レノン(Liverpool John Lennon)	https://www.prioritypass.com/ja/lounges/united-kingdom/liverpool-john-lennon
+英国・アイルランド	ロンドン・ガトウィック(London Gatwick)	https://www.prioritypass.com/ja/lounges/united-kingdom/london-gatwick
+英国・アイルランド	ロンドン・サウスエンド空港(London Southend)	https://www.prioritypass.com/ja/lounges/united-kingdom/london-southend
+英国・アイルランド	ロンドン・シティ空港(London City)	https://www.prioritypass.com/ja/lounges/united-kingdom/london-city
+英国・アイルランド	ロンドン・スタンステッド(London Stansted)	https://www.prioritypass.com/ja/lounges/united-kingdom/london-stansted
+英国・アイルランド	ロンドン・ヒースロー(London Heathrow)	https://www.prioritypass.com/ja/lounges/united-kingdom/london-heathrow
+英国・アイルランド	ロンドン・ルートン空港(London Luton)	https://www.prioritypass.com/ja/lounges/united-kingdom/london-luton

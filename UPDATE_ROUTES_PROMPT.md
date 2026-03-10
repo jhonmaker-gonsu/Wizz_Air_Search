@@ -190,6 +190,34 @@ print("rawFlightData 更新完了")
 
 さらに `airportGoogleMap` と `airportFullNames` にも追加する。
 
+### 3-3. loungeData の更新
+
+新規空港ごとに **Priority Pass** でラウンジが利用できるか確認し、ある場合は `loungeData` に追加する。
+
+- 確認URL: https://www.prioritypass.com/ja/lounges
+- 空港名またはIATAコードで検索する
+- ラウンジがある場合、日本語ページのURLを `loungeData` に追加：
+
+```javascript
+'都市名': 'https://www.prioritypass.com/ja/lounges/国名/空港スラッグ', // 空港名（英語）
+```
+
+- URLの形式は既存エントリに合わせて `/ja/lounges/...` とする（`/ja-JP/` ではない）
+- ラウンジが**ない**場合は追加しない
+- 同一物理空港で複数の都市名エントリがある場合（例: `Basel` と `Basel-Mulhouse`）は**同じURL**を両方に設定する
+
+#### 2026-03時点のラウンジ有無（参考）
+
+| 空港 | IATA | ラウンジ |
+|------|------|---------|
+| Alexandria | HBE | ✅ あり |
+| Basel-Mulhouse | MLH | ✅ あり（`Basel` と同一URL） |
+| Bucharest Baneasa | BBU | ❌ なし |
+| Paris Orly | ORY | ✅ あり |
+| Stockholm Arlanda | ARN | ✅ あり（`Stockholm` と同一URL） |
+| Venice Treviso | TSF | ❌ なし |
+| Warsaw Modlin | WMI | ✅ あり |
+
 ---
 
 ## ステップ4：Airport.txt を更新

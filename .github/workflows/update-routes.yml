@@ -1,0 +1,38 @@
+name: Update Wizz Air availability
+
+on:
+  schedule:
+    # Availability is published daily. GitHub Actions cron uses UTC.
+    - cron: '30 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-routes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install PDF text extractor
+        run: sudo apt-get update && sudo apt-get install --yes poppler-utils
+
+      - name: Download latest availability PDF
+        run: curl --fail --location --retry 3 --output /tmp/aycf-availability.pdf https://multipass.wizzair.com/aycf-availability.pdf
+
+      - name: Update route data
+        run: node scripts/update-routes-from-pdf.js /tmp/aycf-availability.pdf
+
+      - name: Commit and push changes
+        run: |
+          if git diff --quiet -- data.js index.html README.md; then
+            echo 'No route-data changes found.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data.js index.html README.md
+          git commit -m 'chore: update Wizz Air availability'
+          git push

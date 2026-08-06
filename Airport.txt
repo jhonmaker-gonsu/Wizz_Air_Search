@@ -179,6 +179,7 @@ const FULL_AIRPORT_DATA = [
     { code: 'WAW', city: 'ワルシャワ', airport: 'ワルシャワ・ショパン空港', country: 'ポーランド', schengen: true },
     { code: 'WMI', city: 'ワルシャワ', airport: 'ワルシャワ・モドリン空港', country: 'ポーランド', schengen: true },
     { code: 'WRO', city: 'ヴロツワフ', airport: 'ヴロツワフ空港', country: 'ポーランド', schengen: true },
+    { code: 'ZAD', city: 'ザダル', airport: 'ザダル空港', country: 'クロアチア', schengen: true },
     { code: 'ZAZ', city: 'サラゴサ', airport: 'サラゴサ空港', country: 'スペイン', schengen: true },
     { code: 'ZTH', city: 'ザキントス', airport: 'ザキントス空港', country: 'ギリシャ', schengen: true },
 ];

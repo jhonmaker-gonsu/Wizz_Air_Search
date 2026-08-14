@@ -38,8 +38,10 @@ const aliases = {
     'Malmo': 'Malmö',
     'Nis': 'Niš',
     'Palma De Mallorca': 'Mallorca',
+    'Poprad/Tatry': 'Poprad-Tatry',
     'Rzeszow': 'Rzeszów',
     'Sharm el-Sheikh': 'Sharm El Sheikh',
+    'Szczytno': 'Olsztyn-Mazury',
     'Targu-Mures': 'Târgu-Mures',
     'Tromso': 'Tromsø',
     'Zakinthos Island': 'Zakynthos'

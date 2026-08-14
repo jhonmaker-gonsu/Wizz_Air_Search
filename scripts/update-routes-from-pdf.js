@@ -63,6 +63,45 @@ function parsePdfRoutes(text) {
     return pairs;
 }
 
+// Normalizes a name for fuzzy comparison: lowercase, fold known diacritics that
+// NFKD won't decompose, strip combining marks, then strip everything but [a-z0-9].
+function normalizeAirportName(name) {
+    if (!name) return '';
+    const diacriticMap = { 'ø': 'o', 'æ': 'ae', 'ß': 'ss', 'ł': 'l', 'đ': 'd' };
+    let text = name.toLowerCase();
+    text = [...text].map((ch) => diacriticMap[ch] || ch).join('');
+    text = text.normalize('NFKD');
+    text = text.replace(/[̀-ͯ]/g, '');
+    text = text.replace(/[^a-z0-9]/g, '');
+    return text;
+}
+
+// Every normalized form a name could plausibly be written as: the whole string,
+// the string with parenthetical groups removed, the contents of each parenthetical
+// group, and (for any of those) each "/"-separated segment.
+function nameVariants(name) {
+    if (!name) return new Set();
+    const rawVariants = new Set([name]);
+    rawVariants.add(name.replace(/\([^)]*\)/g, ''));
+    for (const match of name.matchAll(/\(([^)]*)\)/g)) {
+        rawVariants.add(match[1]);
+    }
+
+    const expanded = new Set(rawVariants);
+    for (const v of rawVariants) {
+        if (v.includes('/')) {
+            for (const part of v.split('/')) expanded.add(part);
+        }
+    }
+
+    const variants = new Set();
+    for (const v of expanded) {
+        const norm = normalizeAirportName(v);
+        if (norm) variants.add(norm);
+    }
+    return variants;
+}
+
 let dataSource = fs.readFileSync(dataPath, 'utf8');
 const dataBlock = dataSource.match(/    const rawFlightData = `[^`]*`/s);
 if (!dataBlock) throw new Error('Could not find rawFlightData in data.js.');
@@ -85,11 +124,54 @@ for (const pair of parsePdfRoutes(pdfText)) {
 
 const uniqueRoutes = [...new Set(routes)].sort((a, b) => a.localeCompare(b));
 const unknownAirports = [...new Set(uniqueRoutes.flatMap((route) => route.split(' - ')).filter((city) => !airportNames.has(city)))];
-if (unknownAirports.length) {
-    throw new Error(`New airport metadata is required before updating: ${unknownAirports.join(', ')}`);
+
+// Tier 3: normalized-variant fallback for names that survived tiers 1 (aliases)
+// and 2 (exact airportNames match) unresolved. Build the variant -> registry-name
+// index once, then resolve each unknown name only if it maps to exactly one
+// distinct registry name (2+ matches, e.g. "Crete" vs. Chania/Heraklion, or
+// "London" vs. LGW/LTN, must NOT be guessed).
+const variantIndex = new Map();
+for (const registryName of airportNames) {
+    for (const variant of nameVariants(registryName)) {
+        if (!variantIndex.has(variant)) variantIndex.set(variant, new Set());
+        variantIndex.get(variant).add(registryName);
+    }
 }
 
-dataSource = dataSource.replace(dataBlock[0], `    const rawFlightData = \`${uniqueRoutes.join('\n')}\``);
+const resolvedNames = new Map();
+const unresolvedNames = [];
+for (const city of unknownAirports) {
+    const matched = new Set();
+    for (const variant of nameVariants(city)) {
+        const hit = variantIndex.get(variant);
+        if (hit) {
+            for (const registryName of hit) matched.add(registryName);
+        }
+    }
+    if (matched.size === 1) {
+        resolvedNames.set(city, [...matched][0]);
+    } else {
+        unresolvedNames.push(city);
+    }
+}
+
+let finalRoutes = uniqueRoutes;
+if (resolvedNames.size) {
+    finalRoutes = finalRoutes.map((route) => route.split(' - ').map((city) => resolvedNames.get(city) || city).join(' - '));
+    finalRoutes = [...new Set(finalRoutes)].sort((a, b) => a.localeCompare(b));
+}
+
+// Tier 4: still unresolved -> drop only the routes touching this city (keep
+// everything else) and flag it instead of hard-failing the whole job.
+if (unresolvedNames.length) {
+    finalRoutes = finalRoutes.filter((route) => !route.split(' - ').some((city) => unresolvedNames.includes(city)));
+    console.log(`::warning::Unrecognized airport(s) skipped: ${unresolvedNames.join(', ')}`);
+    if (process.env.GITHUB_STEP_SUMMARY) {
+        fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `\n⚠️ Unrecognized airport(s), routes skipped: ${unresolvedNames.join(', ')}\n`);
+    }
+}
+
+dataSource = dataSource.replace(dataBlock[0], `    const rawFlightData = \`${finalRoutes.join('\n')}\``);
 fs.writeFileSync(dataPath, dataSource);
 
 const lastRun = pdfText.match(/Last run:\s*\n\s*(\d{4})-(\d{2})-(\d{2})/);
@@ -107,4 +189,4 @@ if (lastRun) {
     ));
 }
 
-console.log(`Updated ${uniqueRoutes.length} routes from ${pdfPath}.`);
+console.log(`Updated ${finalRoutes.length} routes from ${pdfPath}.`);

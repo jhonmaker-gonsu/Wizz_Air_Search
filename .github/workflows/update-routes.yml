@@ -2,8 +2,13 @@ name: Update Wizz Air availability
 
 on:
   schedule:
-    # Availability is published daily. GitHub Actions cron uses UTC.
-    - cron: '30 9 * * *'
+    # PDF is regenerated daily at 07:00 CET (05:00 UTC / 14:00 JST).
+    # 07:00 UTC = 16:00 JST — matches the local launchd job
+    # com.wizzflightcheck.pdfcheck on the maintainer's Mac.
+    # NOTE: GitHub-hosted cron is best-effort and runs late under load;
+    # observed drift on this repo is 31-71 min. Harmless — the PDF has
+    # been static since 05:00 UTC.
+    - cron: '0 7 * * *'
   workflow_dispatch:
 
 permissions:

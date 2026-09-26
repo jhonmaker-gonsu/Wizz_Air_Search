@@ -9,8 +9,9 @@ const S = require('./airport-sources');
 const { AiClient } = require('./airport-ai');
 const { buildCountryTable, COUNTRY_EN } = require('./country-table');
 const V = require('./validate');
-
-const TOTAL_BUDGET_MS = 8 * 60 * 1000;
+const B = require('./budget');
+const { SECTIONS } = require('./datajs-insert');
+const NAME_KEYED_SECTIONS = SECTIONS.filter((s) => s !== 'airportFullNames');
 
 /**
  * @param {object} p
@@ -18,30 +19,47 @@ const TOTAL_BUDGET_MS = 8 * 60 * 1000;
  * @param {string[]} p.routes          routes ("A - B") that mention them
  * @param {object}   p.data            evaluated AIRPORT_DATA of the current data.js
  * @param {object}   p.env             process env (AUTO_ADD_AIRPORTS, GEMINI_API_KEY, ...)
- * @returns {Promise<{entries:object[], failures:{name:string,reason:string}[], notes:string[], skipped?:string}>}
+ * @returns {Promise<{entries:object[], failures:{name:string,reason:string}[], notes:string[], warnings:string[], budgetExhausted:boolean, skipped?:string}>}
  */
 async function autoAddAirports({ names, routes, data, env }) {
     const notes = [];
+    const warnings = []; // ::warning:: lines main() prints (station list problems etc.)
     const failures = [];
     const entries = [];
-    const failAll = (reason) => ({ entries: [], failures: names.map((name) => ({ name, reason })), notes, skipped: reason });
+    const failAll = (reason, extra = {}) => ({ entries: [], failures: names.map((name) => ({ name, reason })), notes, warnings, budgetExhausted: false, skipped: reason, ...extra });
+    const BUDGET_REASON = 'auto-add time budget exhausted';
 
     if (String(env.AUTO_ADD_AIRPORTS || '').trim().toLowerCase() === 'false') return { ...failAll('auto-add disabled (AUTO_ADD_AIRPORTS=false)'), disabled: true };
-    if (!names.length) return { entries, failures, notes };
+    if (!names.length) return { entries, failures, notes, warnings, budgetExhausted: false };
     if (names.length > V.MAX_NEW_AIRPORTS) {
         return failAll(`${names.length} unrecognized airports (> ${V.MAX_NEW_AIRPORTS}); PDF parsing likely broke, adding none`);
     }
 
-    const started = Date.now();
+    // One wall-clock budget for all auto-add work (main() may already have started it for the source probe).
+    const ownBudget = !B.active();
+    if (ownBudget) B.start(B.budgetFromEnv(env));
+    try {
+        return await resolveAll({ names, routes, data, env, notes, warnings, failAll, BUDGET_REASON });
+    } finally {
+        if (ownBudget) B.clear();
+    }
+}
+
+async function resolveAll({ names, routes, data, env, notes, warnings, failAll, BUDGET_REASON }) {
+    const failures = [];
+    const entries = [];
     const ai = new AiClient(env.GEMINI_API_KEY);
     if (!ai.available) notes.push(ai.skipReason);
 
     const OA = await S.loadOurAirports(env);
     notes.push(OA.statusLine);
-    if (OA.error) return { ...failAll('OurAirports data unavailable'), notes };
+    if (OA.budget || B.expired()) return failAll(BUDGET_REASON, { budgetExhausted: true });
+    if (OA.error) return failAll('OurAirports data unavailable');
     const wizz = await S.loadWizzStations(env);
     notes.push(wizz.statusLine);
+    if (wizz.budget || B.expired()) return failAll(BUDGET_REASON, { budgetExhausted: true });
     const wizzOk = !wizz.error;
+    if (!wizzOk) warnings.push(S.wizzUnavailableWarning(wizz));
 
     const codeToIso = (code) => {
         const w = wizzOk && wizz.byIata[code];
@@ -52,27 +70,36 @@ async function autoAddAirports({ names, routes, data, env }) {
     const { table: countryTable, conflicts } = buildCountryTable(data, codeToIso);
     if (conflicts.length) notes.push(`country table conflicts (majority used): ${conflicts.join('; ')}`);
 
+    // Used keys = union over ALL registry sections (data.js also holds orphan keys, e.g. map URLs for
+    // 'Keflavik' / 'Tenerife South', that are not in airportCodes); used codes also include airportFullNames.
     const usedCodes = new Set(Object.values(data.airportCodes));
     for (const c of Object.keys(data.airportFullNames)) usedCodes.add(c);
-    const usedKeys = new Set(Object.keys(data.airportCodes));
+    const usedKeys = new Set();
+    for (const sec of NAME_KEYED_SECTIONS) for (const k of Object.keys(data[sec] || {})) usedKeys.add(k);
     const nameByCode = Object.fromEntries(Object.entries(data.airportCodes).map(([n, c]) => [c, n]));
 
+    let budgetExhausted = false;
     for (const name of names) {
-        if (Date.now() - started > TOTAL_BUDGET_MS) { failures.push({ name, reason: 'time budget for auto-add exhausted' }); continue; }
+        if (budgetExhausted || B.expired()) { budgetExhausted = true; failures.push({ name, reason: BUDGET_REASON }); continue; }
         try {
             const r = await buildEntry({ name, routes, data, OA, wizz: wizzOk ? wizz : null, ai, countryTable, usedCodes, usedKeys, nameByCode });
             if (r.entry) { entries.push(r.entry); usedCodes.add(r.entry.code); usedKeys.add(r.entry.name); }
             else failures.push({ name, reason: r.reason });
         } catch (e) {
-            failures.push({ name, reason: `unexpected error: ${e && e.message ? e.message : e}` });
+            if (e instanceof B.BudgetError) { budgetExhausted = true; failures.push({ name, reason: BUDGET_REASON }); }
+            else failures.push({ name, reason: `unexpected error: ${e && e.message ? e.message : e}` });
         }
     }
     if (ai.calls) notes.push(`AI calls made: ${ai.calls}${ai.rateLimited ? ' (rate limited, stopped)' : ''}`);
-    return { entries, failures, notes };
+    if (budgetExhausted) notes.push(`auto-add time budget (${Math.round(B.total() / 1000)} s) exhausted after ${Math.round(B.elapsedMs() / 1000)} s`);
+    return { entries, failures, notes, warnings, budgetExhausted };
 }
 
 async function buildEntry({ name, routes, data, OA, wizz, ai, countryTable, usedCodes, usedKeys, nameByCode }) {
     if (!V.validRegistryKey(name)) return { reason: 'registry key fails validation' };
+    // Checked before any network call: data.js may hold this key in some section (orphan map URL etc.),
+    // and insertion would refuse to overwrite it.
+    if (usedKeys.has(name)) return { reason: 'validation failed: registry key already exists (in some data.js section)' };
     const src = { code: null, cityJa: null, fullJa: null };
     const srcErrors = [];
     let aiUsed = false;
@@ -125,12 +152,12 @@ async function buildEntry({ name, routes, data, OA, wizz, ai, countryTable, used
     // ---- city (JA)
     const base = name.split('/')[0].replace(/\s*\([^)]*\)/g, '').trim();
     let cityJa = null;
-    try { cityJa = await S.wikipediaCityJa(base, iso); } catch (e) { srcErrors.push(`wikipedia: ${e.status ? 'HTTP ' + e.status : e.message}`); }
+    try { cityJa = await S.wikipediaCityJa(base, iso); } catch (e) { if (e instanceof B.BudgetError) throw e; srcErrors.push(`wikipedia: ${e.status ? 'HTTP ' + e.status : e.message}`); }
     if (cityJa && V.validCityJa(cityJa)) src.cityJa = 'wikipedia'; else cityJa = null;
 
     // ---- airport name (JA)
     let fullJa = null;
-    try { fullJa = await S.wikidataAirportJa(code, oa); } catch (e) { srcErrors.push(`wikidata: ${e.status ? 'HTTP ' + e.status : e.message}`); }
+    try { fullJa = await S.wikidataAirportJa(code, oa); } catch (e) { if (e instanceof B.BudgetError) throw e; srcErrors.push(`wikidata: ${e.status ? 'HTTP ' + e.status : e.message}`); }
     if (fullJa && V.validAirportJa(fullJa)) src.fullJa = 'wikidata'; else fullJa = null;
 
     // ---- AI only for what is still missing

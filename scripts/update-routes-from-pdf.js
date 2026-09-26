@@ -9,14 +9,17 @@
  *   --dry-run     compute everything and print a summary, but write no files
  *
  * Environment: GEMINI_API_KEY (optional, AI fallback for new airports),
- *              AUTO_ADD_AIRPORTS=false (kill switch for automatic airport registration).
+ *              AUTO_ADD_AIRPORTS=false (kill switch for automatic airport registration),
+ *              AUTOADD_BUDGET_MS (global wall-clock budget for all auto-add network work, default 360000),
+ *              AUTOADD_PROBE=true (report reachability of the auto-add data sources).
  */
 const { execFileSync } = require('node:child_process');
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const { autoAddAirports } = require('./lib/autoadd');
-const { addAirport, loadData, selfCheck } = require('./lib/datajs-insert');
+const B = require('./lib/budget');
+const { addAirport: defaultAddAirport, loadData, selfCheck } = require('./lib/datajs-insert');
 
 const aliases = {
     'Aalesund': 'Alesund',
@@ -153,7 +156,8 @@ async function main(argv, env = process.env, deps = {}) {
     const readmePath = path.join(root, 'README.md');
     const addedLogPath = path.join(root, 'auto-added-airports.json');
     const summary = (text) => { if (env.GITHUB_STEP_SUMMARY) fs.appendFileSync(env.GITHUB_STEP_SUMMARY, text); };
-    const pdfText = execFileSync('pdftotext', ['-layout', pdfPath, '-'], { encoding: 'utf8' });
+    const pdfText = typeof deps.pdfText === 'string' ? deps.pdfText : execFileSync('pdftotext', ['-layout', pdfPath, '-'], { encoding: 'utf8' });
+    const addAirport = deps.addAirport || defaultAddAirport;
 
     const originalSource = fs.readFileSync(dataPath, 'utf8');
     const dataBlock = originalSource.match(RAW_BLOCK_RE);
@@ -214,35 +218,57 @@ async function main(argv, env = process.env, deps = {}) {
         finalRoutes = [...new Set(finalRoutes)].sort((a, b) => a.localeCompare(b));
     }
 
-    // Optional source probe (workflow_dispatch input): reports whether the auto-add data
-    // sources are reachable from this machine, even when nothing needs to be added.
-    if (String(env.AUTOADD_PROBE || '').toLowerCase() === 'true') {
-        const lines = await probeSources(env);
-        for (const l of lines) console.log(`[probe] ${l}`);
-        summary(`\n### Auto-add source probe\n${lines.map((l) => `- ${l}`).join('\n')}\n`);
-    }
+    // One wall-clock budget for ALL auto-add network work (probe + auto-add), so the job can never run
+    // into the workflow's timeout-minutes. Started only if there is network work to do.
+    const probe = String(env.AUTOADD_PROBE || '').toLowerCase() === 'true';
+    if (probe || unresolvedNames.length) B.start(B.budgetFromEnv(env));
 
-    // Tier 3.5: try to register brand-new airports automatically (never throws; any
-    // name that cannot be fully and validly resolved falls through to tier 4).
     let additions = [];
     let autoNotes = [];
+    const autoWarnings = [];
     const autoFailures = new Map();
     let autoAttempted = false;
-    if (unresolvedNames.length) {
-        autoAttempted = true;
-        try {
-            const result = await autoAddAirports({ names: unresolvedNames, routes: finalRoutes, data: loadData(originalSource), env });
-            additions = result.entries;
-            if (result.disabled) {
-                autoAttempted = false; // kill switch: behave exactly like the old script (tier 4 only)
-                console.log('::notice::Automatic airport registration is disabled (AUTO_ADD_AIRPORTS=false).');
-            }
-            autoNotes = result.notes;
-            for (const f of result.failures) autoFailures.set(f.name, f.reason);
-        } catch (error) {
-            autoNotes.push(`auto-add crashed: ${oneLine(error && error.message)}`);
-            for (const name of unresolvedNames) autoFailures.set(name, 'auto-add crashed');
+    let budgetExhausted = false;
+    try {
+        // Optional source probe (workflow_dispatch input): reports whether the honest auto-add data
+        // sources are reachable from this machine, even when nothing needs to be added.
+        if (probe) {
+            const lines = await probeSources(env);
+            for (const l of lines) console.log(`[probe] ${l}`);
+            summary(`\n### Auto-add source probe\n${lines.map((l) => `- ${l}`).join('\n')}\n`);
         }
+
+        // Tier 3.5: try to register brand-new airports automatically (never throws; any
+        // name that cannot be fully and validly resolved falls through to tier 4).
+        if (unresolvedNames.length) {
+            autoAttempted = true;
+            try {
+                const result = await autoAddAirports({ names: unresolvedNames, routes: finalRoutes, data: loadData(originalSource), env });
+                additions = result.entries;
+                if (result.disabled) {
+                    autoAttempted = false; // kill switch: behave exactly like the old script (tier 4 only)
+                    console.log('::notice::Automatic airport registration is disabled (AUTO_ADD_AIRPORTS=false).');
+                }
+                autoNotes = result.notes;
+                autoWarnings.push(...(result.warnings || []));
+                budgetExhausted = !!result.budgetExhausted;
+                for (const f of result.failures) autoFailures.set(f.name, f.reason);
+            } catch (error) {
+                autoNotes.push(`auto-add crashed: ${oneLine(error && error.message)}`);
+                for (const name of unresolvedNames) autoFailures.set(name, 'auto-add crashed');
+            }
+        }
+    } finally {
+        B.clear();
+    }
+    for (const w of autoWarnings) {
+        console.log(`::warning::${oneLine(w)}`);
+        summary(`\n⚠️ ${oneLine(w)}\n`);
+    }
+    if (budgetExhausted) {
+        const w = `Auto-add stopped: auto-add time budget exhausted (limit ${Math.round(B.total() / 1000)} s); the remaining unresolved airports were given up and only their routes are skipped`;
+        console.log(`::warning::${w}`);
+        summary(`\n⚠️ ${w}\n`);
     }
 
     const dropRoutesFor = (routeList, names) => routeList.filter((route) => !route.split(' - ').some((city) => names.includes(city)));
@@ -256,8 +282,14 @@ async function main(argv, env = process.env, deps = {}) {
     let routesAfter = dropRoutesFor(finalRoutes, unresolvedAfter);
     let newSource;
     if (additions.length) {
-        newSource = render(routesAfter, additions);
-        const problems = selfCheck(originalSource, newSource, additions, routesAfter.length);
+        let problems;
+        try {
+            newSource = render(routesAfter, additions);
+            problems = selfCheck(originalSource, newSource, additions, routesAfter.length);
+        } catch (error) {
+            // e.g. insertEntry refusing to overwrite an existing key: never lose the day's route update.
+            problems = [`inserting the new airports failed: ${oneLine(error && error.message)}`];
+        }
         if (deps.forceSelfCheckFail) problems.push('forced failure (test hook)');
         if (problems.length) {
             console.log(`::warning::Auto-added airports discarded, data.js self-check failed: ${oneLine(problems.slice(0, 5).join('; '))}`);
@@ -345,12 +377,14 @@ async function main(argv, env = process.env, deps = {}) {
     return { routes: finalRoutes.length, added: additions.map((a) => a.name), skipped: unresolvedAfter };
 }
 
+/** Probes ONLY the honest data sources (Wizz station list API, OurAirports CSV, Wikipedia, Wikidata), all with the repo User-Agent. */
 async function probeSources(env) {
     const S = require('./lib/airport-sources');
     S.resetHttpLog();
-    const lines = [];
-    const w = await S.loadWizzStations({});
+    const lines = [`User-Agent: ${S.USER_AGENT}`];
+    const w = await S.loadWizzStations({ WIZZ_API_URL: env.WIZZ_API_URL });
     lines.push(w.statusLine);
+    if (w.error) lines.push(S.wizzUnavailableWarning(w));
     const oa = await S.loadOurAirports({});
     lines.push(oa.statusLine);
     try { const c = await S.wikipediaCityJa('Sibiu', 'RO'); lines.push(`Wikipedia langlinks (Sibiu -> ${c}): HTTP ok`); } catch (e) { lines.push(`Wikipedia: ${e.status ? 'HTTP ' + e.status : e.message}`); }

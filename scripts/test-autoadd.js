@@ -13,15 +13,17 @@
  *
  *   node scripts/test-autoadd.js --scenarios --pdf /tmp/aycf.pdf [--old-script <path>]
  *       Offline scenario tests with stubbed Wikimedia/Gemini (bad AI output, prompt injection, missing key,
- *       forced self-check failure, kill switch, > 5 new airports). Needs AUTOADD_OA_CSV and AUTOADD_WIZZ_JSON
- *       pointing at local copies of the OurAirports CSV / Wizz station JSON.
+ *       forced self-check failure, kill switch, > 5 new airports, only the repo User-Agent is ever sent,
+ *       WAF-style 405 from the station list, orphan map-URL keys, global time budget with hanging fetches).
+ *       Needs AUTOADD_OA_CSV and AUTOADD_WIZZ_JSON pointing at local copies of the OurAirports CSV / Wizz
+ *       station JSON.
  */
 const { spawnSync } = require('node:child_process');
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { loadData, stripAirports, addAirport, SECTIONS } = require('./lib/datajs-insert');
+const { loadData, stripAirports, addAirport, insertEntry, q, SECTIONS } = require('./lib/datajs-insert');
 
 const REPO = path.resolve(__dirname, '..');
 const FIELDS = ['code', 'cityName', 'country', 'region', 'schengen', 'fullName', 'googleMap'];
@@ -115,17 +117,29 @@ async function scenarios() {
     let failures = 0;
     const check = (label, cond, extra = '') => { if (!cond) failures++; console.log(`  ${cond ? 'PASS' : 'FAIL'}  ${label}${extra ? ' :: ' + extra : ''}`); };
 
-    // fetch stub: Wikimedia -> mode-dependent, Gemini -> scripted, anything else must not happen
+    // fetch stub: Wikimedia -> mode-dependent, Gemini -> scripted, be.wizzair.com -> mode-dependent, anything else must not happen.
+    // opts.hang: true (every request never answers, ignoring the abort signal) or 'gemini' (only Gemini hangs).
     function makeFetch(opts) {
         const calls = [];
-        const json = (obj, status = 200) => ({ status, headers: { get: () => 'application/json; charset=utf-8' }, text: async () => JSON.stringify(obj) });
+        const mk = (status, ctype, text, extra = {}) => ({ status, headers: { get: (n) => (/^content-type$/i.test(n) ? ctype : (extra[n.toLowerCase()] || null)) }, text: async () => text });
+        const json = (obj, status = 200) => mk(status, 'application/json; charset=utf-8', JSON.stringify(obj));
         const f = async (url, init) => {
             calls.push({ url: String(url), init });
             const host = new URL(url).hostname;
+            if (opts.hang === true || (opts.hang === 'gemini' && host === 'generativelanguage.googleapis.com')) return new Promise(() => {});
+            const city = opts.city || { title: 'Sibiu, Romania', ja: 'シビウ', airport: 'シビウ国際空港' };
             if (/wikipedia\.org$/.test(host)) return json(opts.wikipedia === 'good'
-                ? { query: { pages: { 1: { pageid: 1, title: 'Sibiu, Romania', langlinks: [{ lang: 'ja', '*': 'シビウ' }] } } } }
+                ? { query: { pages: { 1: { pageid: 1, title: city.title, langlinks: [{ lang: 'ja', '*': city.ja }] } } } }
                 : { query: { pages: { '-1': { title: 'x', missing: '' } } } });
-            if (/wikidata\.org$/.test(host)) return json({ results: { bindings: opts.wikidata === 'good' ? [{ ja: { value: 'シビウ国際空港' } }] : [] } });
+            if (/wikidata\.org$/.test(host)) return json({ results: { bindings: opts.wikidata === 'good' ? [{ ja: { value: city.airport } }] : [] } });
+            if (host === 'davidmegginson.github.io') return mk(200, 'text/csv', fs.readFileSync(process.env.AUTOADD_OA_CSV, 'utf8'));
+            if (host === 'be.wizzair.com') {
+                const w = opts.wizz || 'ok';
+                if (w === 'ok') return mk(200, 'application/json; charset=utf-8', fs.readFileSync(process.env.AUTOADD_WIZZ_JSON, 'utf8'));
+                if (w === 'waf405') return mk(405, 'text/html; charset=UTF-8', '<html><title>Human Verification</title></html>', { 'x-amzn-waf-action': 'captcha' });
+                if (w === '404') return mk(404, 'application/json', '{"message":"not found"}');
+                if (w === 'html200') return mk(200, 'text/html', '<html>login</html>');
+            }
             if (host === 'generativelanguage.googleapis.com') {
                 if (opts.gemini429) return json({ error: { status: 'RESOURCE_EXHAUSTED' } }, 429);
                 const body = JSON.parse(init.body);
@@ -138,19 +152,26 @@ async function scenarios() {
     }
     const gem = (text) => ({ candidates: [{ content: { parts: [{ text }] } }] });
 
-    async function run(label, remove, { env = {}, fetchOpts = {}, deps = {} } = {}) {
+    async function run(label, remove, { env = {}, fetchOpts = {}, deps = {}, orphanMapKeys = [], pdfTransform = null } = {}) {
         const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'autoadd-scn-'));
         copyRepo(tmp);
         const dp = path.join(tmp, 'data.js');
-        fs.writeFileSync(dp, stripAirports(baseOrig, remove, remove.map((n) => O.airportCodes[n])));
+        let stripped = stripAirports(baseOrig, remove, remove.map((n) => O.airportCodes[n]));
+        // data.js really contains map-URL keys that are not registry names (e.g. 'Keflavik'); simulate one for a brand-new airport
+        for (const k of orphanMapKeys) stripped = insertEntry(stripped, 'airportGoogleMap', k, q(O.airportGoogleMap[k]));
+        fs.writeFileSync(dp, stripped);
         const summaryPath = path.join(tmp, 'summary.md');
         const fetchStub = makeFetch(fetchOpts);
         S.setFetch(fetchStub);
         const lines = [];
         const realLog = console.log; console.log = (...a) => lines.push(a.join(' '));
         let error = null;
-        try { await main([pdf, '--root', tmp], { GITHUB_STEP_SUMMARY: summaryPath, AUTOADD_OA_CSV: process.env.AUTOADD_OA_CSV, AUTOADD_WIZZ_JSON: process.env.AUTOADD_WIZZ_JSON, ...env }, deps); }
+        const t0 = Date.now();
+        const allDeps = { ...deps };
+        if (pdfTransform) allDeps.pdfText = pdfTransform(require('node:child_process').execFileSync('pdftotext', ['-layout', pdf, '-'], { encoding: 'utf8' }));
+        try { await main([pdf, '--root', tmp], { GITHUB_STEP_SUMMARY: summaryPath, AUTOADD_OA_CSV: process.env.AUTOADD_OA_CSV, AUTOADD_WIZZ_JSON: process.env.AUTOADD_WIZZ_JSON, ...env }, allDeps); }
         catch (e) { error = e; } finally { console.log = realLog; S.setFetch(null); }
+        const elapsedMs = Date.now() - t0;
         const summary = fs.existsSync(summaryPath) ? fs.readFileSync(summaryPath, 'utf8') : '';
         const out = lines.join('\n');
         const N = loadData(fs.readFileSync(dp, 'utf8'));
@@ -158,7 +179,9 @@ async function scenarios() {
         console.log(`\n== ${label}`);
         check('exit code 0 (main() resolved without throwing)', !error, error && error.message);
         check('API key never appears in stdout/summary/added-log', ![out, summary, JSON.stringify(addedLog)].some((t) => t.includes(FAKE_KEY)));
-        return { tmp, out, summary, N, addedLog, fetchStub, dataSrc: fs.readFileSync(dp, 'utf8') };
+        check('every request carried exactly the repo User-Agent (no browser UA, no other header UA)', fetchStub.calls.every((c) => c.init && c.init.headers && c.init.headers['User-Agent'] === S.USER_AGENT && !/mozilla|chrome|safari/i.test(JSON.stringify(c.init.headers))), [...new Set(fetchStub.calls.map((c) => c.init && c.init.headers && c.init.headers['User-Agent']))].join(' | '));
+        check('no request to the wizzair.com home page (bot-protected)', fetchStub.calls.every((c) => new URL(c.url).hostname !== 'www.wizzair.com'));
+        return { tmp, out, summary, N, addedLog, fetchStub, elapsedMs, dataSrc: fs.readFileSync(dp, 'utf8') };
     }
     const warned = (r, re) => new RegExp(re).test(r.out);
     const aiBody = (r) => r.fetchStub.calls.filter((c) => /generativelanguage/.test(c.url));
@@ -258,6 +281,87 @@ async function scenarios() {
         check('no network calls', r.fetchStub.calls.length === 0);
         check('warning mentions PDF parsing', warned(r, 'Auto-add failed for .*PDF parsing likely broke'));
         check('tier-4 warning lists all six', six.every((n) => r.out.split('\n').find((l) => l.startsWith('::warning::Unrecognized'))?.includes(n)));
+    }
+    // S9: station list fetched over the (stubbed) network: honest UA only, exactly one request, no home page
+    {
+        const good = (b) => b.tools ? gem('Sibiu SBZ Romania.') : gem(JSON.stringify({ found: true, iata: 'SBZ', countryIso2: 'RO', cityJa: 'シビウ', airportJa: 'シビウ国際空港', airportEnOfficial: 'Sibiu International Airport' }));
+        const r = await run('S9 station list requested over the network (no local JSON): only the repo UA is sent', ['Sibiu'], { env: { AUTOADD_WIZZ_JSON: undefined }, fetchOpts: { wizz: 'ok', wikipedia: 'good', wikidata: 'good', gemini: good } });
+        const wz = r.fetchStub.calls.filter((c) => new URL(c.url).hostname === 'be.wizzair.com');
+        check('exactly one station-list request, to the pinned WIZZ_API_URL', wz.length === 1 && wz[0].url === `${S.WIZZ_API_URL}/asset/map?languageCode=en-gb`, wz.map((c) => c.url).join(','));
+        check('Sibiu added from the network station list', r.N.airportCodes.Sibiu === 'SBZ');
+        check('no Wizz warning when the list is reachable', !warned(r, 'Wizz station list unavailable'));
+    }
+    // S10: station list refuses the bot (WAF CAPTCHA 405 / stale version 404 / non-JSON 200): warn + fall back, no retries, no evasion
+    for (const mode of ['waf405', '404', 'html200']) {
+        const status = { waf405: 405, 404: 404, html200: 200 }[mode];
+        const good = (b) => b.tools ? gem('Sibiu International Airport, code SBZ, Romania.') : gem(JSON.stringify({ found: true, iata: 'SBZ', countryIso2: 'RO', cityJa: 'シビウ', airportJa: 'シビウ国際空港', airportEnOfficial: 'Sibiu International Airport' }));
+        const r = await run(`S10 station list answers ${mode} (HTTP ${status}), no AI key`, ['Sibiu'], { env: { AUTOADD_WIZZ_JSON: undefined }, fetchOpts: { wizz: mode, wikipedia: 'good', wikidata: 'good', gemini: () => { throw new Error('unused'); } } });
+        const wz = r.fetchStub.calls.filter((c) => new URL(c.url).hostname === 'be.wizzair.com');
+        check(`exactly 1 request to be.wizzair.com (no retry storm, no second attempt)`, wz.length === 1, `calls=${wz.length}`);
+        check('warning: Wizz station list unavailable (HTTP <status>) ... bump WIZZ_API_URL by hand', warned(r, `::warning::Wizz station list unavailable \\(HTTP ${status}\\); the API version in scripts/lib/airport-sources.js may be stale — bump WIZZ_API_URL by hand`));
+        check('step summary carries the same line', /Wizz station list unavailable \(HTTP/.test(r.summary));
+        check('fallback: OurAirports-only match is never trusted without AI -> Sibiu dropped with tier-4 warning', !('Sibiu' in r.N.airportCodes) && warned(r, '::warning::Unrecognized airport\\(s\\) skipped: Sibiu'));
+        check('no request to any host other than be.wizzair.com / wikipedia / wikidata', r.fetchStub.calls.every((c) => /(^|\.)(wizzair\.com|wikipedia\.org|wikidata\.org)$/.test(new URL(c.url).hostname)));
+        if (mode === 'waf405') {
+            const r2 = await run('S10b WAF 405 + AI key: OurAirports municipality match, confirmed by AI (existing fallback path)', ['Sibiu'], { env: { AUTOADD_WIZZ_JSON: undefined, GEMINI_API_KEY: FAKE_KEY }, fetchOpts: { wizz: 'waf405', wikipedia: 'empty', wikidata: 'empty', gemini: good } });
+            check('Sibiu added via oaMunicipality+ai-confirmed', r2.N.airportCodes.Sibiu === 'SBZ' && r2.addedLog[0] && /ai-confirmed/.test(r2.addedLog[0].sources.code));
+            check('warning still emitted', warned(r2, '::warning::Wizz station list unavailable \\(HTTP 405\\)'));
+            check('still exactly 1 request to be.wizzair.com', r2.fetchStub.calls.filter((c) => new URL(c.url).hostname === 'be.wizzair.com').length === 1);
+        }
+    }
+    // S11: a new airport whose registry key equals an orphan map-URL key of data.js (e.g. 'Keflavik', 'Tenerife South')
+    {
+        const ref = await run('S11 reference: Verona removed entirely, auto-add disabled', ['Verona'], { env: { AUTO_ADD_AIRPORTS: 'false' }, orphanMapKeys: ['Verona'], fetchOpts: { gemini: () => { throw new Error('unused'); } } });
+        const r = await run('S11 orphan map-URL key "Verona" (a stand-in for Keflavik/Tenerife South): must be refused early, not crash', ['Verona'], { env: {}, orphanMapKeys: ['Verona'], fetchOpts: { wikipedia: 'good', wikidata: 'good', city: { title: 'Verona, Italy', ja: 'ヴェローナ', airport: 'ヴェローナ国際空港' }, gemini: () => { throw new Error('unused'); } } });
+        check('Verona was NOT added (refused early)', !('Verona' in r.N.airportCodes) && !/VRN/.test(JSON.stringify(r.N.airportFullNames)));
+        check('warning names Verona and why (registry key already exists)', warned(r, 'Auto-add failed for Verona: validation failed: registry key already exists'));
+        console.log('  reason line: ' + (r.out.split('\n').find((l) => /Auto-add failed for Verona/.test(l)) || '(none)'));
+        check('refused before any Wikipedia/Wikidata/Gemini request', r.fetchStub.calls.length === 0, `calls=${r.fetchStub.calls.length}`);
+        check('tier-4 warning: routes skipped', warned(r, '::warning::Unrecognized airport\\(s\\) skipped: Verona'));
+        check('data.js identical to the auto-add-disabled reference run (rawFlightData otherwise correct)', r.dataSrc === ref.dataSrc);
+        check('no route mentions Verona; other routes kept', !/Verona/.test(r.N.rawFlightData) && r.N.rawFlightData.split('\n').length > 700, `routes=${r.N.rawFlightData.split('\n').length}`);
+        check('auto-added-airports.json unchanged', r.addedLog.length === 0);
+    }
+    // S12: insertion itself throws (belt and braces for (b)): caught, falls into the self-check-failed path, exit 0
+    {
+        const ref = await run('S12 reference: Sibiu removed, auto-add disabled', ['Sibiu'], { env: { AUTO_ADD_AIRPORTS: 'false' }, fetchOpts: { gemini: () => { throw new Error('unused'); } } });
+        const r = await run('S12 addAirport throws "refuse overwrite" outside the early check', ['Sibiu'], { env: {}, fetchOpts: { wikipedia: 'good', wikidata: 'good', gemini: () => { throw new Error('unused'); } }, deps: { addAirport: () => { throw new Error('refuse overwrite airportGoogleMap[Sibiu]'); } } });
+        check('warning: additions discarded, cause quoted', warned(r, '::warning::Auto-added airports discarded, data.js self-check failed: inserting the new airports failed: refuse overwrite airportGoogleMap\\[Sibiu\\]'));
+        check('tier-4 warning emitted', warned(r, '::warning::Unrecognized airport\\(s\\) skipped: Sibiu'));
+        check('data.js written WITHOUT additions, routes updated (identical to reference)', r.dataSrc === ref.dataSrc && !('Sibiu' in r.N.airportCodes));
+        check('auto-added-airports.json unchanged', r.addedLog.length === 0);
+    }
+    // S13: global time budget (3 s) with fetches that never answer (and ignore the abort signal)
+    {
+        const two = ['Sibiu', 'Debrecen'];
+        const ref = await run('S13 reference: two airports removed, auto-add disabled', two, { env: { AUTO_ADD_AIRPORTS: 'false' }, fetchOpts: { gemini: () => { throw new Error('unused'); } } });
+        const r = await run('S13a all network requests hang, AUTOADD_BUDGET_MS=3000, two new airports', two, { env: { AUTOADD_BUDGET_MS: '3000', GEMINI_API_KEY: FAKE_KEY }, fetchOpts: { hang: true, gemini: () => { throw new Error('unused'); } } });
+        console.log(`  elapsed ${r.elapsedMs} ms`);
+        check('finished within budget + 1.5 s slack (would take >= 20 s per request without the budget)', r.elapsedMs < 4500, `${r.elapsedMs} ms`);
+        check('budget was really used (>= 2.5 s)', r.elapsedMs >= 2500, `${r.elapsedMs} ms`);
+        check('both airports given up: "auto-add time budget exhausted" per name', two.every((n) => warned(r, `Auto-add failed for ${n}: auto-add time budget exhausted`)));
+        check('general budget warning emitted', warned(r, '::warning::Auto-add stopped: auto-add time budget exhausted'));
+        check('tier-4 warning lists both', warned(r, '::warning::Unrecognized airport\\(s\\) skipped: (Sibiu, Debrecen|Debrecen, Sibiu)'));
+        check('route update still written normally (identical to reference)', r.dataSrc === ref.dataSrc);
+        check('no request was started after the budget ran out (<= 1 request)', r.fetchStub.calls.length <= 1, `calls=${r.fetchStub.calls.length}`);
+        const r2 = await run('S13b only Gemini hangs (Wikimedia empty), AUTOADD_BUDGET_MS=3000, key present', ['Sibiu'], { env: { AUTOADD_BUDGET_MS: '3000', GEMINI_API_KEY: FAKE_KEY }, fetchOpts: { hang: 'gemini', wikipedia: 'empty', wikidata: 'empty', gemini: () => { throw new Error('unused'); } } });
+        console.log(`  elapsed ${r2.elapsedMs} ms`);
+        check('finished within budget + 1.5 s slack (Gemini timeout alone is 60 s x 2 tries x 3 calls)', r2.elapsedMs < 4500, `${r2.elapsedMs} ms`);
+        check('Gemini call was aborted by the budget, Sibiu given up with the budget reason', aiBody(r2).length === 1 && warned(r2, 'Auto-add failed for Sibiu: auto-add time budget exhausted'), `aiCalls=${aiBody(r2).length}`);
+        check('exactly one Gemini call (no retry / no second model after the budget ran out)', aiBody(r2).length === 1);
+        const r3 = await run('S13c budget env absent: default is 6 minutes', ['Sibiu'], { env: {}, fetchOpts: { wikipedia: 'good', wikidata: 'good', gemini: () => { throw new Error('unused'); } } });
+        check('default budget = 360000 ms', require('./lib/budget').DEFAULT_BUDGET_MS === 360000 && require('./lib/budget').budgetFromEnv({}) === 360000 && require('./lib/budget').budgetFromEnv({ AUTOADD_BUDGET_MS: 'abc' }) === 360000);
+        check('normal run unaffected: Sibiu added', r3.N.airportCodes.Sibiu === 'SBZ');
+    }
+    // S14: probe_sources touches ONLY the honest endpoints, all with the repo UA
+    {
+        const r = await run('S14 AUTOADD_PROBE=true (workflow input probe_sources)', [], { env: { AUTOADD_PROBE: 'true', AUTOADD_WIZZ_JSON: undefined }, fetchOpts: { wizz: 'ok', wikipedia: 'good', wikidata: 'good', gemini: () => { throw new Error('unused'); } } });
+        const hosts = [...new Set(r.fetchStub.calls.map((c) => new URL(c.url).hostname))].sort();
+        check('probed exactly: be.wizzair.com, davidmegginson.github.io (OurAirports), en.wikipedia.org, query.wikidata.org', JSON.stringify(hosts) === JSON.stringify(['be.wizzair.com', 'davidmegginson.github.io', 'en.wikipedia.org', 'query.wikidata.org']), hosts.join(','));
+        check('station list probed at the pinned WIZZ_API_URL', r.fetchStub.calls.some((c) => c.url === `${S.WIZZ_API_URL}/asset/map?languageCode=en-gb`));
+        check('probe report printed and mentions the honest UA', /\[probe\] User-Agent: WizzAYCF-registry-bot/.test(r.out) && /\[probe\] Wizz station list reachable/.test(r.out));
+        const r2 = await run('S14b probe with station list answering WAF 405', [], { env: { AUTOADD_PROBE: 'true', AUTOADD_WIZZ_JSON: undefined }, fetchOpts: { wizz: 'waf405', wikipedia: 'good', wikidata: 'good', gemini: () => { throw new Error('unused'); } } });
+        check('probe reports it, no retries (1 request to be.wizzair.com)', /\[probe\] Wizz station list UNAVAILABLE: HTTP 405/.test(r2.out) && r2.fetchStub.calls.filter((c) => new URL(c.url).hostname === 'be.wizzair.com').length === 1);
     }
     console.log(`\n${failures ? 'FAILED: ' + failures + ' check(s)' : 'ALL SCENARIO CHECKS PASSED'}`);
     process.exit(failures ? 1 : 0);

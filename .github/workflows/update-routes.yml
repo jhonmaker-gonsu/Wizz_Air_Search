@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       probe_sources:
-        description: 'Also probe the auto-add data sources (Wizz station list, OurAirports, Wikimedia) and report reachability in the step summary'
+        description: 'Also probe the auto-add data sources (Wizz station list API, OurAirports, Wikipedia, Wikidata; honest repo User-Agent only) and report reachability in the step summary'
         type: boolean
         default: false
 

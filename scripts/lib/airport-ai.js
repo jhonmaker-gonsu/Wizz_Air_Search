@@ -9,6 +9,7 @@
  * Everything the model returns is untrusted: callers MUST run validateAiOutput().
  */
 const { httpRequest } = require('./airport-sources');
+const { BudgetError } = require('./budget');
 
 const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models';
 const RESEARCH_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
@@ -52,6 +53,7 @@ class AiClient {
             const j = r.json();
             return j && j.candidates && j.candidates[0] && j.candidates[0].content ? j : null;
         } catch (e) {
+            if (e instanceof BudgetError) throw e; // global auto-add budget spent: stop everything, no more AI calls
             if (e.status === 429) this.rateLimited = true;
             // never include response bodies or headers in messages
             this.lastError = `${model}: ${e.status ? 'HTTP ' + e.status : (e.name || 'error')}`;

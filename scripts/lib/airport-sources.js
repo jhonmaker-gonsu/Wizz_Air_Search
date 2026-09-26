@@ -2,20 +2,23 @@
 /**
  * Data sources for auto-adding airports: Wizz Air station list, OurAirports CSV,
  * Wikidata (JA airport name) and English Wikipedia (JA city name).
- * All network access goes through httpRequest(): repo User-Agent, 20 s timeout,
- * up to 3 retries, >= 1.5 s spacing for Wikimedia hosts, JSON only parsed after
- * checking status and content-type.
+ * All network access goes through httpRequest(): the single honest repo User-Agent (never a
+ * browser-style one; bot protection such as AWS WAF CAPTCHA pages is NOT worked around),
+ * 20 s timeout, up to 3 retries, >= 1.5 s spacing for Wikimedia hosts, JSON only parsed after
+ * checking status and content-type, and every wait / fetch is bounded by the global budget
+ * (see budget.js).
  */
 const fs = require('node:fs');
 const { COUNTRY_EN } = require('./country-table');
+const B = require('./budget');
 
 const REPO_URL = 'https://github.com/jhonmaker-gonsu/Wizz_Air_Search';
 const USER_AGENT = `WizzAYCF-registry-bot/1.0 (+${REPO_URL})`;
-// wizzair.com's home page answers 405 to non-browser User-Agents (verified: "node", Mozilla/5.0, and
-// this bot's UA all get 405), so that single request uses a browser-like UA. The be.wizzair.com API
-// accepts the bot UA.
-const BROWSER_UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
-const KNOWN_WIZZ_API = 'https://be.wizzair.com/29.18.0/Api';
+// Base URL of the Wizz Air station-list API. Hard-coded on purpose: the only way to learn the current
+// version from wizzair.com is its home page, which sits behind AWS WAF bot protection (CAPTCHA) and is
+// not fetched. When the version goes stale the request fails, the job warns and falls back to
+// OurAirports (see loadWizzStations); a maintainer then bumps this constant (or sets env WIZZ_API_URL).
+const WIZZ_API_URL = 'https://be.wizzair.com/29.18.0/Api';
 const OA_URL = 'https://davidmegginson.github.io/ourairports-data/airports.csv';
 
 let fetchImpl = (...args) => globalThis.fetch(...args);
@@ -37,24 +40,44 @@ class HttpError extends Error {
 /** Redacts anything key-like before it can reach a log line. */
 function safeUrl(url) { return String(url).replace(/([?&](?:key|api_key)=)[^&]*/gi, '$1REDACTED').slice(0, 120); }
 
+/** fetch + read body, aborted (and rejected) after `ms` even if the fetch implementation ignores the signal. */
+async function fetchText(url, init, ms, budgetBound) {
+    const ctrl = new AbortController();
+    let timer;
+    const timeout = new Promise((_, reject) => {
+        timer = setTimeout(() => {
+            ctrl.abort();
+            reject(budgetBound ? new B.BudgetError() : Object.assign(new Error('request timed out'), { name: 'TimeoutError' }));
+        }, ms);
+    });
+    const work = (async () => {
+        const res = await fetchImpl(url, { ...init, signal: ctrl.signal });
+        return { res, text: await res.text() };
+    })();
+    work.catch(() => { /* late rejection after abort/timeout */ });
+    try { return await Promise.race([work, timeout]); } finally { clearTimeout(timer); }
+}
+
 async function httpRequest(url, opts = {}) {
     const { headers = {}, expect = 'text', retries = 3, timeoutMs = 20000, method = 'GET', body, retryOn429 = true } = opts;
     const host = new URL(url).hostname;
     const wikimedia = /(^|\.)(wikipedia|wikidata|wikimedia)\.org$/.test(host);
     let lastErr;
     for (let attempt = 1; attempt <= retries; attempt++) {
+        if (B.expired()) throw new B.BudgetError();
         if (wikimedia) {
             const wait = lastCall.wikimedia + wikimediaGapMs - Date.now();
-            if (wait > 0) await sleepImpl(wait);
+            if (wait > 0) {
+                if (wait >= B.remaining()) throw new B.BudgetError();
+                await sleepImpl(wait);
+            }
             lastCall.wikimedia = Date.now();
+            if (B.expired()) throw new B.BudgetError();
         }
+        const left = B.remaining(); // Infinity while no budget is active
+        const budgetBound = left < timeoutMs;
         try {
-            const res = await fetchImpl(url, {
-                method, body,
-                headers: { 'User-Agent': USER_AGENT, ...headers },
-                signal: AbortSignal.timeout(timeoutMs)
-            });
-            const text = await res.text();
+            const { res, text } = await fetchText(url, { method, body, headers: { ...headers, 'User-Agent': USER_AGENT } }, Math.min(timeoutMs, left), budgetBound);
             const ctype = (res.headers && res.headers.get && res.headers.get('content-type')) || '';
             httpLog.push(`${method} ${safeUrl(url)} -> HTTP ${res.status}`);
             if (res.status >= 200 && res.status < 300) {
@@ -70,7 +93,11 @@ async function httpRequest(url, opts = {}) {
             if (!(e instanceof HttpError)) httpLog.push(`${method} ${safeUrl(url)} -> ${e.name}`);
             lastErr = e;
         }
-        if (attempt < retries) await sleepImpl(1000 * attempt);
+        if (attempt < retries) {
+            const wait = 1000 * attempt;
+            if (wait >= B.remaining()) throw new B.BudgetError();
+            await sleepImpl(wait);
+        }
     }
     throw lastErr || new Error('request failed');
 }
@@ -114,31 +141,34 @@ function parseWizzMap(json) {
     return { stations, byIata: Object.fromEntries(stations.map((s) => [s.iata, s])) };
 }
 
-/** Returns {stations, byIata, statusLine} or {error, statusLine}. Never throws. */
+const WIZZ_API_RE = /^https:\/\/[a-z0-9.-]+\.wizzair\.com\/[0-9.]+\/Api$/i;
+
+/**
+ * Returns {stations, byIata, statusLine} or {error, status, statusLine}. Never throws.
+ * Exactly one request (bot User-Agent, no retry) to `${WIZZ_API_URL}/asset/map`. Any failure (non-200,
+ * non-JSON, WAF/CAPTCHA challenge, stale API version) is reported, never worked around.
+ */
 async function loadWizzStations(env = {}) {
     if (env.AUTOADD_WIZZ_JSON) {
         try { return { ...parseWizzMap(JSON.parse(fs.readFileSync(env.AUTOADD_WIZZ_JSON, 'utf8'))), statusLine: `Wizz station list: local file ${env.AUTOADD_WIZZ_JSON}` }; }
         catch (e) { return { error: e.message, statusLine: `Wizz station list: cannot read ${env.AUTOADD_WIZZ_JSON}` }; }
     }
-    const status = [];
-    const apiUrls = [];
+    const base = env.WIZZ_API_URL && WIZZ_API_RE.test(env.WIZZ_API_URL) ? env.WIZZ_API_URL : WIZZ_API_URL;
     try {
-        const home = await httpRequest('https://www.wizzair.com/en-gb', { headers: { 'User-Agent': BROWSER_UA, Accept: 'text/html' } });
-        status.push(`home HTTP ${home.status}`);
-        const m = home.text.match(/apiUrl\s*:\s*"(https:\/\/[a-z0-9.-]+\.wizzair\.com\/[0-9.]+\/Api)"/i);
-        if (m) apiUrls.push(m[1]); else status.push('apiUrl not found in home page');
-    } catch (e) { status.push(`home ${e.status ? 'HTTP ' + e.status : e.message}`); }
-    if (!apiUrls.includes(KNOWN_WIZZ_API)) apiUrls.push(KNOWN_WIZZ_API);
-    for (const api of apiUrls) {
-        try {
-            const r = await httpRequest(`${api}/asset/map?languageCode=en-gb`, { expect: 'json', retries: 2 });
-            const parsed = parseWizzMap(r.json());
-            if (!parsed.stations.length) throw new Error('empty station list');
-            status.push(`asset/map HTTP ${r.status} (${parsed.stations.length} stations)`);
-            return { ...parsed, statusLine: `Wizz station list reachable: ${status.join('; ')}` };
-        } catch (e) { status.push(`asset/map(${api.split('/')[3]}) ${e.status ? 'HTTP ' + e.status : e.message}`); }
+        const r = await httpRequest(`${base}/asset/map?languageCode=en-gb`, { expect: 'json', retries: 1 });
+        const parsed = parseWizzMap(r.json());
+        if (!parsed.stations.length) throw new Error('empty station list');
+        return { ...parsed, statusLine: `Wizz station list reachable: asset/map HTTP ${r.status} (${parsed.stations.length} stations)` };
+    } catch (e) {
+        const budget = e instanceof B.BudgetError;
+        const what = budget ? 'time budget exhausted' : (e.status ? `HTTP ${e.status}` : e.message);
+        return { error: what, status: budget ? null : (e.status || null), budget, statusLine: `Wizz station list UNAVAILABLE: ${what}` };
     }
-    return { error: 'unreachable', statusLine: `Wizz station list UNREACHABLE: ${status.join('; ')}` };
+}
+
+/** The warning text for a failed station-list load (same wording for auto-add and the probe). */
+function wizzUnavailableWarning(w) {
+    return `Wizz station list unavailable (${w.status ? 'HTTP ' + w.status : w.error}); the API version in scripts/lib/airport-sources.js may be stale — bump WIZZ_API_URL by hand`;
 }
 
 /** Candidate Wizz stations for a PDF name. tier: exact | prefix | fuzzy | none */
@@ -193,7 +223,7 @@ async function loadOurAirports(env = {}) {
         for (const r of recs) if (r.iata_code) (byIata[r.iata_code] = byIata[r.iata_code] || []).push(r);
         return { recs, byIata, statusLine };
     } catch (e) {
-        return { error: e.message, statusLine: `OurAirports UNAVAILABLE: ${e.status ? 'HTTP ' + e.status : e.message}` };
+        return { error: e.message, budget: e instanceof B.BudgetError, statusLine: `OurAirports UNAVAILABLE: ${e.status ? 'HTTP ' + e.status : e.message}` };
     }
 }
 const isAirportType = (r) => /_airport$/.test(r.type);
@@ -285,7 +315,7 @@ async function wikipediaCityJa(base, iso) {
 }
 
 module.exports = {
-    REPO_URL, USER_AGENT, httpRequest, HttpError, setFetch, setWikimediaGap, setSleep, getHttpLog, resetHttpLog,
-    norm, variants, lev, foldAscii, parseWizzMap, loadWizzStations, wizzCandidates,
+    REPO_URL, USER_AGENT, WIZZ_API_URL, httpRequest, HttpError, setFetch, setWikimediaGap, setSleep, getHttpLog, resetHttpLog,
+    norm, variants, lev, foldAscii, parseWizzMap, loadWizzStations, wizzUnavailableWarning, wizzCandidates,
     parseCSV, loadOurAirports, oaByCode, oaByName, resolveCode, googleMapUrl, wikidataAirportJa, wikipediaCityJa
 };

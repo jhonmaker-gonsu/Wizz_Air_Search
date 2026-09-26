@@ -123,9 +123,10 @@ function norm(name) {
     t = [...t].map((c) => dm[c] || c).join('');
     return t.normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]/g, '');
 }
+// Parenthetical CONTENTS are deliberately not a variant (see nameVariants in update-routes-from-pdf.js):
+// "Portimao (Algarve)" must not become a Faro (FAO) candidate through "(Algarve)" alone.
 function variants(name) {
     const raw = new Set([name, name.replace(/\([^)]*\)/g, '')]);
-    for (const m of name.matchAll(/\(([^)]*)\)/g)) raw.add(m[1]);
     const ex = new Set(raw);
     for (const v of raw) for (const p of v.split(/\/|\s[–-]\s/)) ex.add(p);
     for (const v of [...ex]) ex.add(v.replace(/\bisland\b/i, ''));

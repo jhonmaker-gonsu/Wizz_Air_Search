@@ -410,6 +410,33 @@ async function scenarios() {
         origin.close(); target.close();
         check('real fetch: cross-origin 307 refused, redirect target never received the key', threw && seen.length === 0, `threw=${threw} seen=${seen.length}`);
     }
+    // S15: a bracketed qualifier alone ("(Algarve)", "(Madeira)", "(Crete)") must never resolve a PDF name (tier 3)
+    {
+        const addLines = (lines) => (t) => t + '\n' + lines.map(([a, b]) => `${a}          ${b}`).join('\n') + '\n';
+        const ref = await run('S15 reference: unchanged PDF, auto-add disabled', [], { env: { AUTO_ADD_AIRPORTS: 'false' }, fetchOpts: { gemini: () => { throw new Error('unused'); } } });
+        for (const [label, pdfName, wrong] of [['S15a', 'Portimao (Algarve)', 'Faro (Algarve)'], ['S15b', 'Porto Santo (Madeira)', 'Funchal (Madeira)']]) {
+            const r = await run(`${label} new PDF name "${pdfName}" (kill switch): not merged into ${wrong}`, [], { env: { AUTO_ADD_AIRPORTS: 'false' }, pdfTransform: addLines([['Tirana', pdfName]]), fetchOpts: { gemini: () => { throw new Error('unused'); } } });
+            check(`no "Tirana - ${wrong}" route invented`, !r.N.rawFlightData.split('\n').includes(`Tirana - ${wrong}`));
+            check('tier-4 warning names it', warned(r, `::warning::Unrecognized airport\\(s\\) skipped: ${pdfName.replace(/[()]/g, '\\$&')}`));
+            check('data.js identical to the unchanged-PDF reference', r.dataSrc === ref.dataSrc);
+            const r2 = await run(`${label}b same with auto-add on (stubbed sources, no AI key)`, [], { env: {}, pdfTransform: addLines([['Tirana', pdfName]]), fetchOpts: { wikipedia: 'good', wikidata: 'good', gemini: () => { throw new Error('unused'); } } });
+            check(`not merged into ${wrong} and not added under ${wrong}'s IATA code`, !r2.N.rawFlightData.split('\n').includes(`Tirana - ${wrong}`) && r2.addedLog.every((a) => a.code !== O.airportCodes[wrong]));
+            check('reported (auto-add failure or tier-4 warning), never silent', warned(r2, `Auto-add failed for ${pdfName.replace(/[()]/g, '\\$&')}`) || r2.addedLog.some((a) => a.name === pdfName));
+            console.log('  reason line: ' + (r2.out.split('\n').find((l) => /Auto-add failed for/.test(l)) || '(none)'));
+        }
+        const r = await run('S15c "Heraklion (Crete)" removed from data.js (kill switch): must NOT fold into Chania (Crete)', ['Heraklion (Crete)'], { env: { AUTO_ADD_AIRPORTS: 'false' }, fetchOpts: { gemini: () => { throw new Error('unused'); } } });
+        check('Chania (Crete) route count unchanged vs reference', r.N.rawFlightData.split('\n').filter((l) => l.includes('Chania (Crete)')).length === ref.N.rawFlightData.split('\n').filter((l) => l.includes('Chania (Crete)')).length);
+        check('tier-4 warning names Heraklion (Crete)', warned(r, '::warning::Unrecognized airport\\(s\\) skipped: Heraklion \\(Crete\\)'));
+        check('no route mentions Heraklion', !/Heraklion/.test(r.N.rawFlightData));
+        const r3 = await run('S15d "London" is still handled by the London special case before tier 3', [], { env: { AUTO_ADD_AIRPORTS: 'false' }, pdfTransform: addLines([['Tirana', 'London']]), fetchOpts: { gemini: () => { throw new Error('unused'); } } });
+        const londonOf = (N) => N.rawFlightData.split('\n').filter((l) => /London/.test(l) && !/^Tirana - /.test(l));
+        check('all existing London routes identical to reference', JSON.stringify(londonOf(r3.N)) === JSON.stringify(londonOf(ref.N)) && londonOf(ref.N).length > 0, `n=${londonOf(ref.N).length}`);
+        check('new bare "London" pair -> default "London (LTN)", no warning', r3.N.rawFlightData.split('\n').includes('Tirana - London (LTN)') && !warned(r3, 'Unrecognized airport'));
+        const r4 = await run('S15e bare "Crete" is still ambiguous (2 airports) -> unresolved, not guessed', [], { env: { AUTO_ADD_AIRPORTS: 'false' }, pdfTransform: addLines([['Tirana', 'Crete']]), fetchOpts: { gemini: () => { throw new Error('unused'); } } });
+        check('no Tirana route to either Cretan airport', !/^Tirana - (Chania|Heraklion) \(Crete\)$/m.test(r4.N.rawFlightData) && warned(r4, '::warning::Unrecognized airport\\(s\\) skipped: Crete'));
+        const r5 = await run('S15f base-name match still works: "Faro" written as "Faro (Portugal)"', [], { env: { AUTO_ADD_AIRPORTS: 'false' }, pdfTransform: addLines([['Tirana', 'Faro (Portugal)']]), fetchOpts: { gemini: () => { throw new Error('unused'); } } });
+        check('resolved to Faro (Algarve) via its base name', r5.N.rawFlightData.split('\n').includes('Tirana - Faro (Algarve)') && !warned(r5, 'Unrecognized airport'));
+    }
     console.log(`\n${failures ? 'FAILED: ' + failures + ' check(s)' : 'ALL SCENARIO CHECKS PASSED'}`);
     process.exit(failures ? 1 : 0);
 }

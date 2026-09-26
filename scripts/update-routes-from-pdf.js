@@ -79,15 +79,14 @@ function normalizeAirportName(name) {
 }
 
 // Every normalized form a name could plausibly be written as: the whole string,
-// the string with parenthetical groups removed, the contents of each parenthetical
-// group, and (for any of those) each "/"-separated segment.
+// the string with parenthetical groups removed, and (for either) each "/"-separated
+// segment. The CONTENTS of a parenthetical group are deliberately NOT a variant: a
+// qualifier such as "(Algarve)" or "(Crete)" is shared by different airports, so
+// "Portimao (Algarve)" must never resolve to "Faro (Algarve)" through it alone.
 function nameVariants(name) {
     if (!name) return new Set();
     const rawVariants = new Set([name]);
     rawVariants.add(name.replace(/\([^)]*\)/g, ''));
-    for (const match of name.matchAll(/\(([^)]*)\)/g)) {
-        rawVariants.add(match[1]);
-    }
 
     const expanded = new Set(rawVariants);
     for (const v of rawVariants) {

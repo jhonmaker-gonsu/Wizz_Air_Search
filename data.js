@@ -839,7 +839,7 @@
         'Malaga': true,             // スペイン
         'Mallorca': true,           // スペイン
         'Malmö': true,              // スウェーデン
-        'Malta': false,             // マルタ（EU加盟だがシェンゲン非加盟）
+        'Malta': true,              // マルタ
         'Marrakech': false,         // モロッコ
         'Marsa Alam': false,        // エジプト
         'Medina': false,            // サウジアラビア

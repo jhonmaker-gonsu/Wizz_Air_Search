@@ -7,8 +7,8 @@
  * few countries that are not in data.js yet.
  */
 
-// Countries not yet present in data.js. Malta's existing `false` value in data.js
-// is deliberately NOT touched here (it is derived, not overridden).
+// Countries not yet present in data.js. Existing countries (e.g. Malta) are derived
+// from data.js, never overridden here.
 const EXTRA_COUNTRIES = {
     LV: { ja: 'ラトビア', region: '北欧', schengen: true },
     LU: { ja: 'ルクセンブルク', region: '西欧', schengen: true },

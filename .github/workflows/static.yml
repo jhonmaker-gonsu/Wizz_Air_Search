@@ -9,6 +9,13 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+  # Redeploy after the daily data update. Commits pushed by that workflow use
+  # GITHUB_TOKEN, and GITHUB_TOKEN pushes never fire the `push` trigger above.
+  workflow_run:
+    workflows: ["Update Wizz Air availability"]
+    types: [completed]
+    branches: ["main"]
+
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
@@ -24,6 +31,8 @@ concurrency:
 jobs:
   # Single deploy job since we're just deploying
   deploy:
+    # Skip when the data update failed or was cancelled; push/manual runs always deploy.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

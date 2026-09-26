@@ -5,7 +5,8 @@
  *   1. grounded research call (google_search tool, free-text answer)  - models: 2.5-flash, then 2.5-flash-lite
  *   2. extraction call (responseSchema, NO tools)                      - model: 2.5-flash-lite
  * (Grounding and JSON-schema output in a single call fails with HTTP 400.)
- * The API key is only ever sent as the x-goog-api-key header and is never logged.
+ * The API key is only ever sent as the x-goog-api-key header and is never logged; redirects are
+ * refused (redirect: 'error'), so the header can never be forwarded to another host.
  * Everything the model returns is untrusted: callers MUST run validateAiOutput().
  */
 const { httpRequest } = require('./airport-sources');
@@ -47,7 +48,7 @@ class AiClient {
         this.calls++;
         try {
             const r = await httpRequest(`${ENDPOINT}/${model}:generateContent`, {
-                method: 'POST', body: JSON.stringify(body), expect: 'json', retries: 2, timeoutMs: TIMEOUT_MS, retryOn429: false,
+                method: 'POST', body: JSON.stringify(body), expect: 'json', retries: 2, timeoutMs: TIMEOUT_MS, retryOn429: false, redirect: 'error',
                 headers: { 'content-type': 'application/json', 'x-goog-api-key': this.apiKey }
             });
             const j = r.json();

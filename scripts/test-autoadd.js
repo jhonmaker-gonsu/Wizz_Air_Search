@@ -363,6 +363,53 @@ async function scenarios() {
         const r2 = await run('S14b probe with station list answering WAF 405', [], { env: { AUTOADD_PROBE: 'true', AUTOADD_WIZZ_JSON: undefined }, fetchOpts: { wizz: 'waf405', wikipedia: 'good', wikidata: 'good', gemini: () => { throw new Error('unused'); } } });
         check('probe reports it, no retries (1 request to be.wizzair.com)', /\[probe\] Wizz station list UNAVAILABLE: HTTP 405/.test(r2.out) && r2.fetchStub.calls.filter((c) => new URL(c.url).hostname === 'be.wizzair.com').length === 1);
     }
+    // S14c: probe failures are also printed as ::warning:: annotations (successes are not)
+    {
+        const r = await run('S14c probe with WAF 405: failure annotated', [], { env: { AUTOADD_PROBE: 'true', AUTOADD_WIZZ_JSON: undefined }, fetchOpts: { wizz: 'waf405', wikipedia: 'good', wikidata: 'good', gemini: () => { throw new Error('unused'); } } });
+        check('::warning::Source probe: Wizz station list UNAVAILABLE: HTTP 405', warned(r, '::warning::Source probe: Wizz station list UNAVAILABLE: HTTP 405'));
+        check('reachable sources are not annotated', !warned(r, '::warning::Source probe: (OurAirports CSV reachable|Wikipedia langlinks|Wikidata SPARQL)'));
+    }
+    // S17: a Wikimedia 429 honours Retry-After (capped at 60 s, still bounded by the global budget)
+    {
+        const B = require('./lib/budget');
+        const slept = [];
+        S.setSleep((ms) => { slept.push(ms); return Promise.resolve(); });
+        let n = 0;
+        S.setFetch(async () => (++n === 1
+            ? { status: 429, headers: { get: (h) => (/retry-after/i.test(h) ? '7' : 'application/json') }, text: async () => '{}' }
+            : { status: 200, headers: { get: () => 'application/json' }, text: async () => '{"ok":1}' }));
+        B.start(60000);
+        let ok = false;
+        try { ok = (await S.httpRequest('https://en.wikipedia.org/w/api.php?x=1', { expect: 'json' })).json().ok === 1; } catch { /* checked below */ }
+        B.clear();
+        const slept2 = []; S.setSleep((ms) => { slept2.push(ms); return Promise.resolve(); }); n = 0;
+        B.start(3000);
+        let budgetErr = false;
+        try { await S.httpRequest('https://en.wikipedia.org/w/api.php?x=2', { expect: 'json' }); } catch (e) { budgetErr = e instanceof B.BudgetError; }
+        B.clear(); S.setFetch(null); S.setSleep(() => Promise.resolve());
+        console.log('\n== S17 Retry-After on Wikimedia 429');
+        check('waited 7000 ms (Retry-After: 7) before the retry, then succeeded', ok && slept.includes(7000), JSON.stringify(slept));
+        check('Retry-After longer than the remaining budget -> BudgetError, no sleep', budgetErr && !slept2.includes(7000), JSON.stringify(slept2));
+        check('parser: seconds, HTTP-date, cap 60 s, junk -> 0', typeof S.retryAfterMs === 'function' && S.retryAfterMs('3') === 3000 && S.retryAfterMs(new Date(Date.now() + 10000).toUTCString()) > 8000 && S.retryAfterMs('999') === 60000 && S.retryAfterMs('soon') === 0 && S.retryAfterMs(null) === 0);
+    }
+    // S16: Gemini requests refuse HTTP redirects (the x-goog-api-key header must never follow one)
+    {
+        const good = (b) => b.tools ? gem('Sibiu SBZ Romania.') : gem(JSON.stringify({ found: true, iata: 'SBZ', countryIso2: 'RO', cityJa: 'シビウ', airportJa: 'シビウ国際空港', airportEnOfficial: 'Sibiu International Airport' }));
+        const r = await run('S16 Gemini calls carry redirect: "error"; other hosts keep the default', ['Sibiu'], { env: { GEMINI_API_KEY: FAKE_KEY }, fetchOpts: { wikipedia: 'empty', wikidata: 'empty', gemini: good } });
+        const g = aiBody(r);
+        check('every Gemini request has init.redirect === "error"', g.length >= 2 && g.every((c) => c.init.redirect === 'error'), `calls=${g.length}`);
+        check('no non-Gemini request sets redirect', r.fetchStub.calls.filter((c) => !/generativelanguage/.test(c.url)).every((c) => !('redirect' in c.init)));
+        // real fetch against two local origins: a 307 to another origin must not deliver the header
+        const http = require('node:http');
+        const seen = [];
+        const listen = (h) => new Promise((ok) => { const s = http.createServer(h).listen(0, '127.0.0.1', () => ok(s)); });
+        const target = await listen((q, s) => { seen.push(q.headers['x-goog-api-key'] || null); s.setHeader('content-type', 'application/json'); s.end('{}'); });
+        const origin = await listen((q, s) => { s.writeHead(307, { location: `http://127.0.0.1:${target.address().port}/x` }); s.end(); });
+        let threw = false;
+        try { await S.httpRequest(`http://127.0.0.1:${origin.address().port}/v1`, { method: 'POST', body: '{}', expect: 'json', retries: 1, retryOn429: false, redirect: 'error', headers: { 'x-goog-api-key': FAKE_KEY } }); } catch { threw = true; }
+        origin.close(); target.close();
+        check('real fetch: cross-origin 307 refused, redirect target never received the key', threw && seen.length === 0, `threw=${threw} seen=${seen.length}`);
+    }
     console.log(`\n${failures ? 'FAILED: ' + failures + ' check(s)' : 'ALL SCENARIO CHECKS PASSED'}`);
     process.exit(failures ? 1 : 0);
 }

@@ -37,6 +37,14 @@ class HttpError extends Error {
     constructor(message, status, fatal = false) { super(message); this.status = status; this.fatal = fatal; }
 }
 
+/** Retry-After (delta-seconds or HTTP-date) in ms, capped at 60 s; 0 if absent/invalid. */
+function retryAfterMs(value, now = Date.now()) {
+    if (!value) return 0;
+    const v = String(value).trim();
+    const ms = /^\d+$/.test(v) ? Number(v) * 1000 : Date.parse(v) - now;
+    return Number.isFinite(ms) && ms > 0 ? Math.min(ms, 60000) : 0;
+}
+
 /** Redacts anything key-like before it can reach a log line. */
 function safeUrl(url) { return String(url).replace(/([?&](?:key|api_key)=)[^&]*/gi, '$1REDACTED').slice(0, 120); }
 
@@ -59,10 +67,11 @@ async function fetchText(url, init, ms, budgetBound) {
 }
 
 async function httpRequest(url, opts = {}) {
-    const { headers = {}, expect = 'text', retries = 3, timeoutMs = 20000, method = 'GET', body, retryOn429 = true } = opts;
+    const { headers = {}, expect = 'text', retries = 3, timeoutMs = 20000, method = 'GET', body, retryOn429 = true, redirect } = opts;
     const host = new URL(url).hostname;
     const wikimedia = /(^|\.)(wikipedia|wikidata|wikimedia)\.org$/.test(host);
     let lastErr;
+    let serverWait = 0; // honoured Retry-After of the last 429 (bounded by the budget like every wait)
     for (let attempt = 1; attempt <= retries; attempt++) {
         if (B.expired()) throw new B.BudgetError();
         if (wikimedia) {
@@ -77,7 +86,9 @@ async function httpRequest(url, opts = {}) {
         const left = B.remaining(); // Infinity while no budget is active
         const budgetBound = left < timeoutMs;
         try {
-            const { res, text } = await fetchText(url, { method, body, headers: { ...headers, 'User-Agent': USER_AGENT } }, Math.min(timeoutMs, left), budgetBound);
+            const init = { method, body, headers: { ...headers, 'User-Agent': USER_AGENT } };
+            if (redirect) init.redirect = redirect; // 'error' for requests carrying a secret header (Gemini)
+            const { res, text } = await fetchText(url, init, Math.min(timeoutMs, left), budgetBound);
             const ctype = (res.headers && res.headers.get && res.headers.get('content-type')) || '';
             httpLog.push(`${method} ${safeUrl(url)} -> HTTP ${res.status}`);
             if (res.status >= 200 && res.status < 300) {
@@ -85,6 +96,7 @@ async function httpRequest(url, opts = {}) {
                 return { status: res.status, text, contentType: ctype, json: () => JSON.parse(text) };
             }
             const retriable = (res.status === 429 && retryOn429) || res.status >= 500;
+            serverWait = res.status === 429 && res.headers && res.headers.get ? retryAfterMs(res.headers.get('retry-after')) : 0;
             const err = new HttpError(`HTTP ${res.status}`, res.status, !retriable);
             if (err.fatal) throw err;
             lastErr = err;
@@ -94,7 +106,8 @@ async function httpRequest(url, opts = {}) {
             lastErr = e;
         }
         if (attempt < retries) {
-            const wait = 1000 * attempt;
+            const wait = Math.max(1000 * attempt, serverWait);
+            serverWait = 0;
             if (wait >= B.remaining()) throw new B.BudgetError();
             await sleepImpl(wait);
         }
@@ -316,6 +329,6 @@ async function wikipediaCityJa(base, iso) {
 
 module.exports = {
     REPO_URL, USER_AGENT, WIZZ_API_URL, httpRequest, HttpError, setFetch, setWikimediaGap, setSleep, getHttpLog, resetHttpLog,
-    norm, variants, lev, foldAscii, parseWizzMap, loadWizzStations, wizzUnavailableWarning, wizzCandidates,
+    retryAfterMs, norm, variants, lev, foldAscii, parseWizzMap, loadWizzStations, wizzUnavailableWarning, wizzCandidates,
     parseCSV, loadOurAirports, oaByCode, oaByName, resolveCode, googleMapUrl, wikidataAirportJa, wikipediaCityJa
 };

@@ -235,6 +235,8 @@ async function main(argv, env = process.env, deps = {}) {
         if (probe) {
             const lines = await probeSources(env);
             for (const l of lines) console.log(`[probe] ${l}`);
+            // failures also as annotations, so they show up on the run page without opening the log
+            for (const l of lines.filter((x) => /UNAVAILABLE|^Wiki(pedia|data): /.test(x))) console.log(`::warning::Source probe: ${oneLine(l)}`);
             summary(`\n### Auto-add source probe\n${lines.map((l) => `- ${l}`).join('\n')}\n`);
         }
 

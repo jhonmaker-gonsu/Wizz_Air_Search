@@ -15,6 +15,10 @@ on:
         description: 'Also probe the auto-add data sources (Wizz station list API, OurAirports, Wikipedia, Wikidata; honest repo User-Agent only) and report reachability in the step summary'
         type: boolean
         default: false
+      probe_ai:
+        description: 'Run the REAL Gemini resolver on 2 known airports (Sibiu, Niš) and compare with data.js. At most 4 Gemini requests, no retries; forces a dry run (no data change, nothing to commit)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -47,6 +51,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           AUTO_ADD_AIRPORTS: ${{ vars.AUTO_ADD_AIRPORTS }}
           AUTOADD_PROBE: ${{ inputs.probe_sources }}
+          AUTOADD_PROBE_AI: ${{ inputs.probe_ai }}
         run: node scripts/update-routes-from-pdf.js /tmp/aycf-availability.pdf
 
       - name: Commit and push changes

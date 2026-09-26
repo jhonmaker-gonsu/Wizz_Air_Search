@@ -11,7 +11,9 @@
  * Environment: GEMINI_API_KEY (optional, AI fallback for new airports),
  *              AUTO_ADD_AIRPORTS=false (kill switch for automatic airport registration),
  *              AUTOADD_BUDGET_MS (global wall-clock budget for all auto-add network work, default 360000),
- *              AUTOADD_PROBE=true (report reachability of the auto-add data sources).
+ *              AUTOADD_PROBE=true (report reachability of the auto-add data sources),
+ *              AUTOADD_PROBE_AI=true (run the real Gemini resolver on known airports; forces --dry-run,
+ *              max 4 Gemini requests, and auto-add makes no AI calls in that run).
  */
 const { execFileSync } = require('node:child_process');
 const crypto = require('node:crypto');
@@ -145,6 +147,12 @@ function checkMetadata(dataSourceText, routesList) {
 
 async function main(argv, env = process.env, deps = {}) {
     const args = parseArgs(argv);
+    // The AI probe must never change data: force a dry run before anything else happens.
+    const probeAiOn = String(env.AUTOADD_PROBE_AI || '').toLowerCase() === 'true';
+    if (probeAiOn && !args.dryRun) {
+        args.dryRun = true;
+        console.log('[probe-ai] AUTOADD_PROBE_AI=true: dry run forced, no files will be written');
+    }
     if (!args.pdf) {
         throw new Error('Usage: node scripts/update-routes-from-pdf.js <availability.pdf> [--root <dir>] [--dry-run]');
     }
@@ -220,7 +228,7 @@ async function main(argv, env = process.env, deps = {}) {
     // One wall-clock budget for ALL auto-add network work (probe + auto-add), so the job can never run
     // into the workflow's timeout-minutes. Started only if there is network work to do.
     const probe = String(env.AUTOADD_PROBE || '').toLowerCase() === 'true';
-    if (probe || unresolvedNames.length) B.start(B.budgetFromEnv(env));
+    if (probe || probeAiOn || unresolvedNames.length) B.start(B.budgetFromEnv(env));
 
     let additions = [];
     let autoNotes = [];
@@ -238,13 +246,26 @@ async function main(argv, env = process.env, deps = {}) {
             for (const l of lines.filter((x) => /UNAVAILABLE|^Wiki(pedia|data): /.test(x))) console.log(`::warning::Source probe: ${oneLine(l)}`);
             summary(`\n### Auto-add source probe\n${lines.map((l) => `- ${l}`).join('\n')}\n`);
         }
+        if (probeAiOn) {
+            // Diagnostic only: whatever happens here must not fail the job.
+            try {
+                const r = await require('./lib/ai-probe').probeAi({ env, data: loadData(originalSource) });
+                for (const l of r.lines) console.log(`[probe-ai] ${oneLine(l)}`);
+                for (const w of r.warnings) console.log(`::warning::${oneLine(w)}`);
+                summary(r.summary);
+            } catch (error) {
+                console.log(`::warning::AI probe crashed (${oneLine(error && error.name)}); no data was changed`);
+            }
+        }
 
         // Tier 3.5: try to register brand-new airports automatically (never throws; any
         // name that cannot be fully and validly resolved falls through to tier 4).
         if (unresolvedNames.length) {
             autoAttempted = true;
             try {
-                const result = await autoAddAirports({ names: unresolvedNames, routes: finalRoutes, data: loadData(originalSource), env });
+                // In an AI-probe run the Gemini request cap belongs to the probe: auto-add gets no key.
+                const autoEnv = probeAiOn ? { ...env, GEMINI_API_KEY: '' } : env;
+                const result = await autoAddAirports({ names: unresolvedNames, routes: finalRoutes, data: loadData(originalSource), env: autoEnv });
                 additions = result.entries;
                 if (result.disabled) {
                     autoAttempted = false; // kill switch: behave exactly like the old script (tier 4 only)

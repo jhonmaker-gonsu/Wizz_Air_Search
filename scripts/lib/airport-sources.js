@@ -67,7 +67,7 @@ async function fetchText(url, init, ms, budgetBound) {
 }
 
 async function httpRequest(url, opts = {}) {
-    const { headers = {}, expect = 'text', retries = 3, timeoutMs = 20000, method = 'GET', body, retryOn429 = true, redirect } = opts;
+    const { headers = {}, expect = 'text', retries = 3, timeoutMs = 20000, method = 'GET', body, retryOn429 = true, redirect, keepErrorBody = false } = opts;
     const host = new URL(url).hostname;
     const wikimedia = /(^|\.)(wikipedia|wikidata|wikimedia)\.org$/.test(host);
     let lastErr;
@@ -98,6 +98,8 @@ async function httpRequest(url, opts = {}) {
             const retriable = (res.status === 429 && retryOn429) || res.status >= 500;
             serverWait = res.status === 429 && res.headers && res.headers.get ? retryAfterMs(res.headers.get('retry-after')) : 0;
             const err = new HttpError(`HTTP ${res.status}`, res.status, !retriable);
+            // in memory only, for callers that extract a short sanitized API error message (never logged raw)
+            if (keepErrorBody) err.body = String(text).slice(0, 4000);
             if (err.fatal) throw err;
             lastErr = err;
         } catch (e) {

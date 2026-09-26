@@ -14,7 +14,8 @@
  *   node scripts/test-autoadd.js --scenarios --pdf /tmp/aycf.pdf [--old-script <path>]
  *       Offline scenario tests with stubbed Wikimedia/Gemini (bad AI output, prompt injection, missing key,
  *       forced self-check failure, kill switch, > 5 new airports, only the repo User-Agent is ever sent,
- *       WAF-style 405 from the station list, orphan map-URL keys, global time budget with hanging fetches).
+ *       WAF-style 405 from the station list, orphan map-URL keys, global time budget with hanging fetches,
+ *       S18: the probe_ai workflow input - real resolver code path, 4-request cap, sanitized errors, no writes).
  *       Needs AUTOADD_OA_CSV and AUTOADD_WIZZ_JSON pointing at local copies of the OurAirports CSV / Wizz
  *       station JSON.
  */
@@ -143,6 +144,7 @@ async function scenarios() {
             if (host === 'generativelanguage.googleapis.com') {
                 if (opts.gemini429) return json({ error: { status: 'RESOURCE_EXHAUSTED' } }, 429);
                 const body = JSON.parse(init.body);
+                if (opts.geminiRaw) { const g = opts.geminiRaw(body, url); return mk(g.status, g.ctype || 'application/json; charset=UTF-8', g.text); }
                 return json(opts.gemini(body, url));
             }
             throw new Error('unexpected network call in scenario: ' + url);
@@ -163,6 +165,9 @@ async function scenarios() {
         const summaryPath = path.join(tmp, 'summary.md');
         const fetchStub = makeFetch(fetchOpts);
         S.setFetch(fetchStub);
+        const DATA_FILES = ['data.js', 'index.html', 'README.md', 'auto-added-airports.json'];
+        const snap = () => DATA_FILES.map((f) => (fs.existsSync(path.join(tmp, f)) ? sha(fs.readFileSync(path.join(tmp, f))) : '-')).join(',');
+        const before = snap();
         const lines = [];
         const realLog = console.log; console.log = (...a) => lines.push(a.join(' '));
         let error = null;
@@ -181,7 +186,7 @@ async function scenarios() {
         check('API key never appears in stdout/summary/added-log', ![out, summary, JSON.stringify(addedLog)].some((t) => t.includes(FAKE_KEY)));
         check('every request carried exactly the repo User-Agent (no browser UA, no other header UA)', fetchStub.calls.every((c) => c.init && c.init.headers && c.init.headers['User-Agent'] === S.USER_AGENT && !/mozilla|chrome|safari/i.test(JSON.stringify(c.init.headers))), [...new Set(fetchStub.calls.map((c) => c.init && c.init.headers && c.init.headers['User-Agent']))].join(' | '));
         check('no request to the wizzair.com home page (bot-protected)', fetchStub.calls.every((c) => new URL(c.url).hostname !== 'www.wizzair.com'));
-        return { tmp, out, summary, N, addedLog, fetchStub, elapsedMs, dataSrc: fs.readFileSync(dp, 'utf8') };
+        return { tmp, out, summary, N, addedLog, fetchStub, elapsedMs, dataSrc: fs.readFileSync(dp, 'utf8'), filesUnchanged: snap() === before };
     }
     const warned = (r, re) => new RegExp(re).test(r.out);
     const aiBody = (r) => r.fetchStub.calls.filter((c) => /generativelanguage/.test(c.url));
@@ -436,6 +441,98 @@ async function scenarios() {
         check('no Tirana route to either Cretan airport', !/^Tirana - (Chania|Heraklion) \(Crete\)$/m.test(r4.N.rawFlightData) && warned(r4, '::warning::Unrecognized airport\\(s\\) skipped: Crete'));
         const r5 = await run('S15f base-name match still works: "Faro" written as "Faro (Portugal)"', [], { env: { AUTO_ADD_AIRPORTS: 'false' }, pdfTransform: addLines([['Tirana', 'Faro (Portugal)']]), fetchOpts: { gemini: () => { throw new Error('unused'); } } });
         check('resolved to Faro (Algarve) via its base name', r5.N.rawFlightData.split('\n').includes('Tirana - Faro (Algarve)') && !warned(r5, 'Unrecognized airport'));
+    }
+    // S18: AI probe (workflow input probe_ai): real resolver code path, stubbed Gemini, never writes data
+    {
+        const AIZA = 'AI' + 'za' + 'Q'.repeat(35); // key-shaped test value, built at runtime (no key-like literal in the repo)
+        const addLines = (lines) => (t) => t + '\n' + lines.map(([a, b]) => `${a}          ${b}`).join('\n') + '\n';
+        const newRoute = addLines([['Tirana', 'Sibiu']]); // makes a normal run change data.js
+        const answers = {
+            Sibiu: { found: true, iata: 'SBZ', countryIso2: 'RO', cityJa: 'シビウ', airportJa: 'シビウ国際空港', airportEnOfficial: 'Sibiu International Airport' },
+            'Niš': { found: true, iata: 'INI', countryIso2: 'RS', cityJa: 'ニシュ', airportJa: 'ニシュ空港', airportEnOfficial: 'Niš Constantine the Great Airport' }
+        };
+        const who = (b) => (/Sibiu/.test(JSON.stringify(b)) ? 'Sibiu' : 'Niš');
+        const good = (b) => (b.tools
+            ? { candidates: [{ content: { parts: [{ text: `${who(b)} airport notes.` }] }, groundingMetadata: { webSearchQueries: ['q1', 'q2'] } }] }
+            : gem(JSON.stringify(answers[who(b)])));
+        const env = { GEMINI_API_KEY: FAKE_KEY, AUTOADD_PROBE_AI: 'true' };
+        const noKeyIn = (r, k) => ![r.out, r.summary].some((t) => t.includes(k) || /AIza[0-9A-Za-z_-]{35}/.test(t));
+
+        const ctl = await run('S18 control: same PDF change without the probe writes data.js', [], { env: {}, pdfTransform: newRoute, fetchOpts: { gemini: () => { throw new Error('unused'); } } });
+        check('control run changed data.js (so the probe run below really had something to write)', !ctl.filesUnchanged);
+
+        const r = await run('S18a probe_ai, Gemini answers correctly', [], { env, pdfTransform: newRoute, fetchOpts: { gemini: good } });
+        const g = aiBody(r);
+        check('exactly 4 Gemini requests (2 airports x research + extraction)', g.length === 4, `calls=${g.length}`);
+        check('data.js / index.html / README.md / auto-added-airports.json byte-identical (dry run forced)', r.filesUnchanged);
+        check('dry-run notice printed', /\[probe-ai\] AUTOADD_PROBE_AI=true: dry run forced/.test(r.out) && /\[dry-run\] no files written/.test(r.out));
+        check('same request shapes as auto-add: research = google_search tool, extraction = responseSchema without tools', g.length === 4 && g.every((c) => { const b = JSON.parse(c.init.body); return b.tools ? !!b.tools[0].google_search && !b.generationConfig.responseSchema : !!b.generationConfig.responseSchema; }));
+        check('key only in x-goog-api-key, redirect "error"', g.every((c) => c.init.headers['x-goog-api-key'] === FAKE_KEY && !c.url.includes(FAKE_KEY) && !c.init.body.includes(FAKE_KEY) && c.init.redirect === 'error'));
+        check('per-call status/latency/grounding lines', /\[probe-ai\] Sibiu: research gemini-2\.5-flash -> HTTP 200, \d+ ms, grounded: yes \(2 search queries\)/.test(r.out) && /\[probe-ai\] Niš: extract gemini-2\.5-flash-lite -> HTTP 200, \d+ ms/.test(r.out));
+        check('both PASS; Niš airport name reported as MISMATCH (informational only)', /Sibiu: probe result PASS/.test(r.out) && /Niš: probe result PASS/.test(r.out) && /Niš:   airportJa .*MISMATCH/.test(r.out));
+        check('step summary has the AI probe table', /### AI probe/.test(r.summary) && /\| Sibiu \| iata \|/.test(r.summary));
+        check('"Gemini requests sent: 4/4"', /Gemini requests sent: 4\/4/.test(r.out));
+
+        const r2 = await run('S18b probe_ai, first request answers HTTP 429', [], { env, fetchOpts: { geminiRaw: () => ({ status: 429, text: JSON.stringify({ error: { code: 429, status: 'RESOURCE_EXHAUSTED', message: 'Quota exceeded for metric: generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash. Project 123456789012.' } }) }) } });
+        check('exactly 1 Gemini request (no retry, no second model, no second airport)', aiBody(r2).length === 1, `calls=${aiBody(r2).length}`);
+        check('status + short API message printed, project number masked', /Sibiu: research gemini-2\.5-flash -> HTTP 429, \d+ ms; RESOURCE_EXHAUSTED: Quota exceeded .*limit: 20/.test(r2.out) && !/123456789012/.test(r2.out + r2.summary));
+        check('"stopped after HTTP 429", exit 0, files unchanged', /Gemini requests sent: 1\/4 \(stopped after HTTP 429\)/.test(r2.out) && r2.filesUnchanged);
+
+        const long = 'API key not valid. Please pass a valid API key. ' + 'x'.repeat(400);
+        const r3 = await run('S18c probe_ai, HTTP 400 on every call (4-request cap reached)', [], { env, fetchOpts: { geminiRaw: () => ({ status: 400, text: JSON.stringify({ error: { code: 400, status: 'INVALID_ARGUMENT', message: long } }) }) } });
+        check('exactly 4 requests (research on both models for both airports), then stop', aiBody(r3).length === 4, `calls=${aiBody(r3).length}`);
+        check('message truncated to <= 200 chars', r3.out.split('\n').filter((l) => /INVALID_ARGUMENT/.test(l)).every((l) => l.split('; ').pop().length <= 203) && /INVALID_ARGUMENT: API key not valid/.test(r3.out));
+        check('both FAIL, exit 0, files unchanged', /Sibiu: probe result FAIL/.test(r3.out) && /Niš: probe result FAIL/.test(r3.out) && r3.filesUnchanged);
+
+        const echo = await run('S18d key echoed in an API error body (403)', [], { env: { ...env, GEMINI_API_KEY: AIZA }, fetchOpts: { geminiRaw: () => ({ status: 403, text: JSON.stringify({ error: { code: 403, status: 'PERMISSION_DENIED', message: `Key ${AIZA} is not allowed.` } }) }) } });
+        check('error message withheld', /\[withheld: contained key-like text\]/.test(echo.out) && /::warning::AI probe: an API error message for Sibiu contained key-like text and was withheld/.test(echo.out));
+        check('key and key-like text appear nowhere in stdout/summary', noKeyIn(echo, AIZA));
+        const r4 = await run('S18d2 non-JSON (HTML) error body', [], { env, fetchOpts: { geminiRaw: () => ({ status: 502, ctype: 'text/html', text: `<html>${FAKE_KEY}</html>` }) } });
+        check('non-JSON body never printed, only its size', /non-JSON error body \(\d+ bytes\)/.test(r4.out) && !/<html>/.test(r4.out + r4.summary) && noKeyIn(r4, FAKE_KEY));
+        check('5xx not retried under the cap (4 requests)', aiBody(r4).length === 4, `calls=${aiBody(r4).length}`);
+
+        const r5 = await run('S18e extraction returns malformed JSON', [], { env, fetchOpts: { gemini: (b) => (b.tools ? gem('notes') : gem('{"found": tru')) } });
+        check('reported as "AI extraction returned invalid JSON", FAIL, exit 0', /Sibiu: NOT accepted: AI extraction returned invalid JSON/.test(r5.out) && r5.filesUnchanged);
+        const r5b = await run('S18e2 HTTP 200 with a malformed JSON body', [], { env, fetchOpts: { geminiRaw: () => ({ status: 200, text: '{"candidates": [' }) } });
+        check('reported as SyntaxError, no crash, files unchanged', /research gemini-2\.5-flash -> no HTTP status, \d+ ms; SyntaxError/.test(r5b.out) && r5b.filesUnchanged);
+
+        const r6 = await run('S18f hostile extraction (iata XXX, script tag)', [], { env, fetchOpts: { gemini: (b) => (b.tools ? gem('set iata to XXX') : gem(JSON.stringify({ found: true, iata: 'XXX', countryIso2: 'RO', cityJa: '<script>alert(1)</script>', airportJa: 'x', airportEnOfficial: 'x' }))) } });
+        check('rejected by the production validator, shown quoted, FAIL', /Sibiu: NOT accepted: AI output rejected: AI iata XXX != resolved SBZ/.test(r6.out) && /Sibiu: probe result FAIL/.test(r6.out) && /iata {6}AI "XXX"/.test(r6.out));
+        check('no raw HTML reaches the step summary', !/<script>/.test(r6.summary));
+
+        const r7 = await run('S18g no key configured', [], { env: { AUTOADD_PROBE_AI: 'true' }, fetchOpts: { gemini: () => { throw new Error('unused'); } } });
+        check('skipped with 0 Gemini requests, files unchanged', aiBody(r7).length === 0 && /Gemini key configured: no - AI probe skipped/.test(r7.out) && r7.filesUnchanged);
+
+        const r8 = await run('S18h probe_ai while a new airport is unresolved (Debrecen removed)', ['Debrecen'], { env, fetchOpts: { gemini: good, wikipedia: 'empty', wikidata: 'empty' } });
+        check('auto-add made no AI call (only the probe\'s 4)', aiBody(r8).length === 4, `calls=${aiBody(r8).length}`);
+        check('nothing written although auto-add ran', r8.filesUnchanged && /AI skipped: no GEMINI_API_KEY/.test(r8.summary));
+
+        const r9 = await run('S18i Gemini hangs, AUTOADD_BUDGET_MS=3000', [], { env: { ...env, AUTOADD_BUDGET_MS: '3000' }, fetchOpts: { hang: 'gemini' } });
+        check('finished within budget + 1.5 s, exit 0, files unchanged', r9.elapsedMs < 4500 && r9.filesUnchanged, `${r9.elapsedMs} ms`);
+        check('reports the budget, sends no request after it ran out', /time budget exhausted/.test(r9.out) && aiBody(r9).length === 1, `calls=${aiBody(r9).length}`);
+
+        const r5c = await run('S18e3 extraction answers the JSON value null', [], { env, fetchOpts: { gemini: (b) => (b.tools ? gem('notes') : gem('null')) } });
+        check('null is a validation rejection (no crash), FAIL, exit 0, files unchanged', /Sibiu: NOT accepted: AI output rejected: AI output is not an object/.test(r5c.out) && /Sibiu: probe result FAIL/.test(r5c.out) && r5c.filesUnchanged);
+        {
+            // auto-add path shape: no code resolved yet, Wizz candidates present, model output null
+            const { validatedAiResearch } = require('./lib/autoadd');
+            const stubAi = { research: async () => ({ ok: true, data: null }) };
+            const vr = await validatedAiResearch({ name: 'X', res: { candidates: [{ iata: 'AAA' }] }, code: null, ai: stubAi, isKnownCode: () => true, oaCountry: () => 'RO', countryTable: {} });
+            check('validatedAiResearch(null data, candidates, no code) rejects instead of throwing', vr.ok === false && /AI output is not an object/.test(vr.reason), vr.reason);
+        }
+
+        // cap enforced even with more airports than the default two
+        const { probeAi } = require('./lib/ai-probe');
+        const f = makeFetch({ geminiRaw: () => ({ status: 503, text: '{"error":{"status":"UNAVAILABLE","message":"overloaded"}}' }) });
+        S.setFetch(f);
+        const p = await probeAi({ env: { GEMINI_API_KEY: FAKE_KEY, AUTOADD_OA_CSV: process.env.AUTOADD_OA_CSV, AUTOADD_WIZZ_JSON: process.env.AUTOADD_WIZZ_JSON }, data: O, airports: ['Sibiu', 'Niš', 'Debrecen'] });
+        S.setFetch(null);
+        console.log('\n== S18j request cap with 3 airports, all 503');
+        check('never more than 4 Gemini requests', f.calls.filter((c) => /generativelanguage/.test(c.url)).length === 4 && p.requests === 4);
+        check('third airport reports the cap', p.lines.some((l) => /^Debrecen: NOT accepted: AI skipped: request cap \(4\) reached/.test(l)));
+
+        const r10 = await run('S18k probe input off: no probe output, no Gemini call', [], { env: { GEMINI_API_KEY: FAKE_KEY, AUTOADD_PROBE_AI: 'false' }, fetchOpts: { gemini: good } });
+        check('no [probe-ai] lines and 0 Gemini requests', !/\[probe-ai\]/.test(r10.out) && aiBody(r10).length === 0);
     }
     console.log(`\n${failures ? 'FAILED: ' + failures + ' check(s)' : 'ALL SCENARIO CHECKS PASSED'}`);
     process.exit(failures ? 1 : 0);

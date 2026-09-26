@@ -61,13 +61,7 @@ async function resolveAll({ names, routes, data, env, notes, warnings, failAll, 
     const wizzOk = !wizz.error;
     if (!wizzOk) warnings.push(S.wizzUnavailableWarning(wizz));
 
-    const codeToIso = (code) => {
-        const w = wizzOk && wizz.byIata[code];
-        if (w && w.countryCode) return w.countryCode;
-        const oa = S.oaByCode(OA, code) || (OA.byIata[code] || [])[0];
-        return oa ? oa.iso_country : null;
-    };
-    const { table: countryTable, conflicts } = buildCountryTable(data, codeToIso);
+    const { countryTable, conflicts } = validationContext(data, OA, wizzOk ? wizz : null);
     if (conflicts.length) notes.push(`country table conflicts (majority used): ${conflicts.join('; ')}`);
 
     // Used keys = union over ALL registry sections (data.js also holds orphan keys, e.g. map URLs for
@@ -95,6 +89,54 @@ async function resolveAll({ names, routes, data, env, notes, warnings, failAll, 
     return { entries, failures, notes, warnings, budgetExhausted };
 }
 
+/**
+ * Everything validateAiOutput() needs, built from the loaded sources exactly as auto-add does.
+ * wizz: the loaded station list, or null when it is unavailable. Shared with the AI probe (ai-probe.js).
+ */
+function validationContext(data, OA, wizz) {
+    const codeToIso = (code) => {
+        const w = wizz && wizz.byIata[code];
+        if (w && w.countryCode) return w.countryCode;
+        const oa = S.oaByCode(OA, code) || (OA.byIata[code] || [])[0];
+        return oa ? oa.iso_country : null;
+    };
+    const { table: countryTable, conflicts } = buildCountryTable(data, codeToIso);
+    return { countryTable, conflicts, ...aiValidators(OA, wizz) };
+}
+function aiValidators(OA, wizz) {
+    const isKnownCode = (c) => !!(wizz && wizz.byIata[c]) || !!S.oaByCode(OA, c);
+    const oaCountry = (c) => { const r = S.oaByCode(OA, c); return r ? r.iso_country : null; };
+    return { isKnownCode, oaCountry };
+}
+
+/** IATA codes of the other endpoints of the routes that mention `name`. */
+function counterpartCodesFor(name, routes, data) {
+    const counterpartCodes = new Set();
+    for (const rt of routes) {
+        const parts = rt.split(' - ');
+        if (!parts.includes(name)) continue;
+        for (const other of parts) if (other !== name && data.airportCodes[other]) counterpartCodes.add(data.airportCodes[other]);
+    }
+    return counterpartCodes;
+}
+
+/**
+ * One AI research for `name` (res = resolveCode() result, code = the code resolved so far or null),
+ * validated against the code/country rules. The model output is untrusted: `data` is only usable when ok.
+ * On rejection `rejected` carries the raw output for the AI probe's report (never written anywhere).
+ */
+async function validatedAiResearch({ name, res, code, ai, isKnownCode, oaCountry, countryTable }) {
+    const raw = await ai.research({ name, candidates: res.candidates || [], hintCode: res.needsAiConfirm ? code : undefined });
+    if (!raw.ok) return raw;
+    const problems = V.validateAiOutput(raw.data, { expectedCode: code || undefined, isKnownCode, oaCountry, countryTable, needCity: false, needAirport: false });
+    // raw.data may be null / a non-object (model answered `null`): validateAiOutput already rejected it above
+    const outIata = raw.data && typeof raw.data === 'object' ? raw.data.iata : undefined;
+    if (!code && res.candidates && res.candidates.length && raw.data && typeof raw.data === 'object' && !res.candidates.some((c) => c.iata === outIata)) {
+        problems.push(`iata ${outIata} not among Wizz candidates`);
+    }
+    return problems.length ? { ok: false, reason: `AI output rejected: ${problems.join('; ')}`, rejected: raw.data } : { ok: true, data: raw.data };
+}
+
 async function buildEntry({ name, routes, data, OA, wizz, ai, countryTable, usedCodes, usedKeys, nameByCode }) {
     if (!V.validRegistryKey(name)) return { reason: 'registry key fails validation' };
     // Checked before any network call: data.js may hold this key in some section (orphan map URL etc.),
@@ -104,32 +146,16 @@ async function buildEntry({ name, routes, data, OA, wizz, ai, countryTable, used
     const srcErrors = [];
     let aiUsed = false;
 
-    const counterpartCodes = new Set();
-    for (const rt of routes) {
-        const parts = rt.split(' - ');
-        if (!parts.includes(name)) continue;
-        for (const other of parts) if (other !== name && data.airportCodes[other]) counterpartCodes.add(data.airportCodes[other]);
-    }
-
-    const res = S.resolveCode(name, counterpartCodes, wizz, OA);
+    const res = S.resolveCode(name, counterpartCodesFor(name, routes, data), wizz, OA);
     let code = res.code, iso = res.iso, oa = res.oa;
     if (code) src.code = res.tier;
 
-    const isKnownCode = (c) => !!(wizz && wizz.byIata[c]) || !!S.oaByCode(OA, c);
-    const oaCountry = (c) => { const r = S.oaByCode(OA, c); return r ? r.iso_country : null; };
+    const { isKnownCode, oaCountry } = aiValidators(OA, wizz);
 
     // One research per airport; the (untrusted) answer is validated once against the code/country rules.
+    // `code` is captured at the first call, i.e. before the AI result can change it (as before).
     let checked;
-    const getAi = async () => {
-        if (checked) return checked;
-        const raw = await ai.research({ name, candidates: res.candidates || [], hintCode: res.needsAiConfirm ? code : undefined });
-        if (!raw.ok) return (checked = raw);
-        const problems = V.validateAiOutput(raw.data, { expectedCode: code || undefined, isKnownCode, oaCountry, countryTable, needCity: false, needAirport: false });
-        if (!code && res.candidates && res.candidates.length && !res.candidates.some((c) => c.iata === raw.data.iata)) {
-            problems.push(`iata ${raw.data.iata} not among Wizz candidates`);
-        }
-        return (checked = problems.length ? { ok: false, reason: `AI output rejected: ${problems.join('; ')}` } : { ok: true, data: raw.data });
-    };
+    const getAi = async () => checked || (checked = await validatedAiResearch({ name, res, code, ai, isKnownCode, oaCountry, countryTable }));
 
     // ---- code
     if (!code || res.needsAiConfirm) {
@@ -183,4 +209,4 @@ async function buildEntry({ name, routes, data, OA, wizz, ai, countryTable, used
     return { entry };
 }
 
-module.exports = { autoAddAirports, COUNTRY_EN };
+module.exports = { autoAddAirports, COUNTRY_EN, validationContext, counterpartCodesFor, validatedAiResearch };

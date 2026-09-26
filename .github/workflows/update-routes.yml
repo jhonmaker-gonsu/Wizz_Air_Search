@@ -10,6 +10,11 @@ on:
     # been static since 05:00 UTC.
     - cron: '0 7 * * *'
   workflow_dispatch:
+    inputs:
+      probe_sources:
+        description: 'Also probe the auto-add data sources (Wizz station list, OurAirports, Wikimedia) and report reachability in the step summary'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -17,6 +22,7 @@ permissions:
 jobs:
   update-routes:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -28,16 +34,20 @@ jobs:
         run: curl --fail --location --retry 3 --output /tmp/aycf-availability.pdf https://multipass.wizzair.com/aycf-availability.pdf
 
       - name: Update route data
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AUTO_ADD_AIRPORTS: ${{ vars.AUTO_ADD_AIRPORTS }}
+          AUTOADD_PROBE: ${{ inputs.probe_sources }}
         run: node scripts/update-routes-from-pdf.js /tmp/aycf-availability.pdf
 
       - name: Commit and push changes
         run: |
-          if git diff --quiet -- data.js index.html README.md; then
+          git add data.js index.html README.md auto-added-airports.json
+          if git diff --cached --quiet; then
             echo 'No route-data changes found.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data.js index.html README.md
           git commit -m 'chore: update Wizz Air availability'
           git push

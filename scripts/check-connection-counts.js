@@ -1,0 +1,98 @@
+#!/usr/bin/env node
+/**
+ * Regression gate for direction-aware connection counts (no dependencies).
+ *
+ * Loads data.js in a vm, then runs the REAL derivation code extracted from index.html
+ * (flightsData parse, uniqueCities, connectionsMap, outbound/inbound maps, connectionStats,
+ * buildDetailConnections) and asserts, for every airport:
+ *   - outbound + inbound - both == union (計)
+ *   - detail chips == union; chips per direction == stats; 'out' + 'both' == outbound, 'in' + 'both' == inbound
+ *   - route-list group for the airport (unfiltered) has exactly `outbound` destination chips
+ *   - airports with no departures never get a route-list group
+ * Usage: node scripts/check-connection-counts.js [--root <dir>] [--airport Larnaca]
+ */
+'use strict';
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
+
+const args = process.argv.slice(2);
+const root = args.includes('--root') ? args[args.indexOf('--root') + 1] : path.join(__dirname, '..');
+const showAirport = args.includes('--airport') ? args[args.indexOf('--airport') + 1] : 'Larnaca';
+
+const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const dataJs = fs.readFileSync(path.join(root, 'data.js'), 'utf8');
+
+function slice(startMarker, endMarker) {
+    const a = html.indexOf(startMarker);
+    if (a < 0) throw new Error(`marker not found in index.html: ${startMarker}`);
+    const b = html.indexOf(endMarker, a);
+    if (b < 0) throw new Error(`end marker not found in index.html: ${endMarker}`);
+    return html.slice(a, b);
+}
+
+// Pieces of the real page script, in page order.
+const code = [
+    slice('const {\n            airportCodes = {}', '// 空港コードマッピング'),
+    slice('const flightsData = rawFlightData', 'let filteredFlights'),
+    'let uniqueCities = [];',
+    slice('// ユニークな都市リスト作成', 'let storageAvailable'),
+    'this.__out = { flightsData, uniqueCities, connectionsMap, outboundMap, inboundMap, connectionStats, formatConnectionStats, buildDetailConnections };'
+].join('\n');
+
+const ctx = { window: {}, console };
+vm.createContext(ctx);
+vm.runInContext(dataJs, ctx, { filename: 'data.js' });
+vm.runInContext(code, ctx, { filename: 'index.html#extracted' });
+const P = ctx.__out;
+
+let failures = 0;
+const fail = (msg) => { failures++; if (failures <= 30) console.error('FAIL', msg); };
+
+// Data sanity (reported, not fatal unless it breaks counts)
+const lines = P.flightsData.map((f) => `${f.from} - ${f.to}`);
+const dupLines = lines.length - new Set(lines).size;
+const selfLoops = P.flightsData.filter((f) => f.from === f.to).length;
+const unknownCodes = [...new Set(P.flightsData.flatMap((f) => [f.fromCode === '???' ? f.from : null, f.toCode === '???' ? f.to : null]).filter(Boolean))];
+
+// Route-list grouping exactly as displayFlights() does it (unfiltered = home, no search).
+const groupDest = new Map();
+P.flightsData.forEach((f) => {
+    if (!groupDest.has(f.from)) groupDest.set(f.from, new Set());
+    groupDest.get(f.from).add(f.to);
+});
+
+let oneWayAirports = 0, arrivalOnly = [], departureOnly = [];
+for (const city of P.uniqueCities) {
+    const name = city.en;
+    const s = P.connectionStats(name);
+    const out = P.outboundMap.get(name) || new Set();
+    const inb = P.inboundMap.get(name) || new Set();
+    const both = [...out].filter((x) => inb.has(x)).length;
+    if (s.outbound + s.inbound - both !== s.total) fail(`${name}: ${s.outbound}+${s.inbound}-${both} != ${s.total}`);
+    const chips = P.buildDetailConnections(name);
+    if (chips.length !== s.total) fail(`${name}: detail chips ${chips.length} != total ${s.total}`);
+    const n = (d) => chips.filter((c) => c.dir === d).length;
+    if (n('out') + n('both') !== s.outbound) fail(`${name}: out+both chips != outbound`);
+    if (n('in') + n('both') !== s.inbound) fail(`${name}: in+both chips != inbound`);
+    if (n('both') !== both) fail(`${name}: both chips != intersection`);
+    if (new Set(chips.map((c) => c.en)).size !== chips.length) fail(`${name}: duplicate detail chips`);
+    const header = P.formatConnectionStats(name);
+    if (header !== `出発先 ${s.outbound} / 到着元 ${s.inbound} / 計 ${s.total}`) fail(`${name}: header text ${header}`);
+    const g = groupDest.get(name);
+    if (s.outbound === 0) {
+        if (g) fail(`${name}: arrival-only airport has a route-list group`);
+        arrivalOnly.push(name);
+    } else if (!g || g.size !== s.outbound) fail(`${name}: route-list group chips ${g ? g.size : 0} != outbound ${s.outbound}`);
+    if (s.inbound === 0) departureOnly.push(name);
+    if (n('out') + n('in') > 0) oneWayAirports++;
+}
+
+const L = P.connectionStats(showAirport);
+console.log(`routes=${P.flightsData.length} airports=${P.uniqueCities.length} duplicateLines=${dupLines} selfLoops=${selfLoops} unknownCodes=${JSON.stringify(unknownCodes)}`);
+console.log(`airports with >=1 one-way connection: ${oneWayAirports}`);
+console.log(`arrival-only (${arrivalOnly.length}): ${arrivalOnly.sort().join(', ')}`);
+console.log(`departure-only (${departureOnly.length}): ${departureOnly.sort().join(', ')}`);
+console.log(`${showAirport}: ${P.formatConnectionStats(showAirport)}; route-list group chips=${(groupDest.get(showAirport) || new Set()).size}; →のみ=${P.buildDetailConnections(showAirport).filter((c) => c.dir === 'out').map((c) => c.en).join(', ')}; ←のみ=${P.buildDetailConnections(showAirport).filter((c) => c.dir === 'in').map((c) => c.en).join(', ')}`);
+if (failures) { console.error(`${failures} invariant failure(s)`); process.exit(1); }
+console.log(`OK: all invariants hold for ${P.uniqueCities.length} airports (L.total=${L.total})`);

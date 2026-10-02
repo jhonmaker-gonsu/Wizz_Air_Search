@@ -460,6 +460,13 @@
             font-weight: 600;
         }
 
+        .airport-meta-hint {
+            font-size: 0.75rem;
+            color: var(--primary);
+            margin-top: 0.15rem;
+            font-weight: 700;
+        }
+
         .detail-airport-name {
             display: block;
             margin-top: 0.25rem;
@@ -594,6 +601,25 @@
             line-height: 1.4;
         }
 
+        /* 片道のみの接続（詳細ページ）。向きは表示中の空港から見たもの */
+        .dir-badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.05rem 0.35rem;
+            border-radius: 999px;
+            vertical-align: middle;
+            line-height: 1.4;
+            background: #ECEFF1;
+            color: #455A64;
+            border: 1px solid #CFD8DC;
+            white-space: nowrap;
+        }
+
+        .dir-legend {
+            font-size: 0.75rem;
+        }
+
         .schengen-in {
             background: #E8F5E9;
             color: #2E7D32;
@@ -668,6 +694,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
             gap: 0.6rem;
             margin-top: 0.2rem;
             margin-bottom: 0.6rem;
@@ -1044,7 +1071,7 @@
 
         <div class="results-container" id="resultsContainer">
             <div class="results-header">
-                <div class="results-count">
+                <div class="results-count" id="resultsCountLabel">
                     出発空港 <strong id="groupCount">0</strong> / 路線 <strong id="resultCount">0</strong>
                 </div>
                 <select class="sort-select" id="sortSelect">
@@ -1234,6 +1261,78 @@
             connectionsMap.get(flight.to).add(flight.from);
         });
 
+        // 方向別の接続（PDFは「出発都市 - 到着都市」の方向付き）。
+        // connectionsMap（上）は両方向の和集合で、画面の「接続数」「計」はこちら。
+        const outboundMap = new Map(); // 出発空港 -> その空港から行ける空港
+        const inboundMap = new Map();  // 到着空港 -> その空港へ来られる空港
+        flightsData.forEach(flight => {
+            if (!outboundMap.has(flight.from)) {
+                outboundMap.set(flight.from, new Set());
+            }
+            if (!inboundMap.has(flight.to)) {
+                inboundMap.set(flight.to, new Set());
+            }
+            outboundMap.get(flight.from).add(flight.to);
+            inboundMap.get(flight.to).add(flight.from);
+        });
+        const EMPTY_SET = new Set();
+
+        function connectionStats(airportEn) {
+            return {
+                outbound: (outboundMap.get(airportEn) || EMPTY_SET).size,
+                inbound: (inboundMap.get(airportEn) || EMPTY_SET).size,
+                total: (connectionsMap.get(airportEn) || EMPTY_SET).size
+            };
+        }
+
+        function formatConnectionStats(airportEn) {
+            const stats = connectionStats(airportEn);
+            return `出発先 ${stats.outbound} / 到着元 ${stats.inbound} / 計 ${stats.total}`;
+        }
+
+        // 詳細ページの接続先一覧。dir は表示中の空港から見た向き:
+        // 'both' = 往復とも / 'out' = この空港 → 相手 のみ / 'in' = 相手 → この空港 のみ
+        function buildDetailConnections(airportEn) {
+            const outbound = outboundMap.get(airportEn) || EMPTY_SET;
+            const inbound = inboundMap.get(airportEn) || EMPTY_SET;
+            return Array.from(connectionsMap.get(airportEn) || []).map(name => {
+                const city = cityInfoByEn.get(name) || { en: name, ja: name, code: '???', country: '', schengen: null };
+                const count = connectionsMap.get(city.en) ? connectionsMap.get(city.en).size : 0;
+                const dir = outbound.has(name) && inbound.has(name) ? 'both' : (outbound.has(name) ? 'out' : 'in');
+                return {
+                    en: city.en,
+                    code: city.code,
+                    ja: city.ja,
+                    country: city.country,
+                    schengen: city.schengen,
+                    count,
+                    dir
+                };
+            });
+        }
+
+        function directionBadge(dir) {
+            if (dir === 'out') return '<span class="dir-badge" title="この空港から行く便のみ（逆方向の便はデータなし）">→のみ</span>';
+            if (dir === 'in') return '<span class="dir-badge" title="この空港へ来る便のみ（逆方向の便はデータなし）">←のみ</span>';
+            return '';
+        }
+
+        // 一覧ヘッダーの件数。表示中の一覧の種類に合わせてラベルごと書き換える
+        // （以前は空港一覧でも「出発空港 N / 路線 N」のままで、路線を1件も表示していないのに 路線 N と出ていた）。
+        // kind: 'routes' = 出発空港ごとの路線一覧 / 'airports' = 空港カード一覧 / 'countries' = 行った国
+        function setResultsHeader(kind, first, second) {
+            const label = document.getElementById('resultsCountLabel');
+            if (kind === 'routes') {
+                label.innerHTML = `出発空港 <strong id="groupCount">${first}</strong> / 路線 <strong id="resultCount">${second}</strong>`;
+            } else if (kind === 'countries') {
+                label.innerHTML = `国 <strong id="groupCount">${first}</strong> / 空港 <strong id="resultCount">${second}</strong>`;
+            } else {
+                label.innerHTML = `空港 <strong id="groupCount">${first}</strong>`;
+            }
+            // 「出発地順」の並び替えは路線一覧専用（空港一覧で選ぶと検索結果が全路線一覧に置き換わっていた）
+            document.getElementById('sortSelect').classList.toggle('is-hidden', kind !== 'routes');
+        }
+
         let storageAvailable = true;
         try {
             const testKey = '__wizz_storage_test__';
@@ -1366,8 +1465,6 @@
 
         function renderVisitedCountriesTab() {
             const grid = document.getElementById('flightsGrid');
-            const resultCount = document.getElementById('resultCount');
-            const groupCount = document.getElementById('groupCount');
             const airportList = Array.from(visitedAirports)
                 .map(name => cityInfoByEn.get(name))
                 .filter(Boolean);
@@ -1376,8 +1473,7 @@
                 .sort((a, b) => a.localeCompare(b, 'ja'));
 
             if (countriesOnly.length === 0) {
-                resultCount.textContent = 0;
-                groupCount.textContent = 0;
+                setResultsHeader('countries', 0, 0);
                 grid.innerHTML = `
                     <div class="no-results">
                         <div class="no-results-icon">🌍</div>
@@ -1388,8 +1484,7 @@
                 return;
             }
 
-            groupCount.textContent = countriesOnly.length;
-            resultCount.textContent = countriesOnly.length;
+            setResultsHeader('countries', countriesOnly.length, airportList.length);
 
             grid.innerHTML = countriesOnly.map((country, index) => {
                 const airports = airportList
@@ -1476,7 +1571,7 @@
             resultsContainer.classList.toggle('is-hidden', (isHome && !isSearching) || isFavorites);
 
             if (sortSelectEl) {
-                sortSelectEl.classList.toggle('is-hidden', isVisitedAirports || isVisitedCountries);
+                sortSelectEl.classList.toggle('is-hidden', isVisitedAirports || isVisitedCountries || searchMode === 'airports');
             }
 
             if (isHome) {
@@ -1689,19 +1784,7 @@
             const info = cityInfoByEn.get(airportEn);
             if (!info) return;
 
-            const connections = Array.from(connectionsMap.get(airportEn) || []);
-            const enriched = connections.map(name => {
-                const city = cityInfoByEn.get(name) || { en: name, ja: name, code: '???', country: '', schengen: null };
-                const count = connectionsMap.get(city.en) ? connectionsMap.get(city.en).size : 0;
-                return {
-                    en: city.en,
-                    code: city.code,
-                    ja: city.ja,
-                    country: city.country,
-                    schengen: city.schengen,
-                    count
-                };
-            });
+            const enriched = buildDetailConnections(airportEn);
 
             const fullName = getAirportFullName(info.code);
             detailTitle.innerHTML = `${info.ja}（${info.code}）${schengenBadge(info.schengen)} ${getLoungeIndicator(info.en, true)}`;
@@ -1715,7 +1798,9 @@
                 : '';
 
             detailSub.innerHTML = `${info.en} / <span class="detail-country-link" data-country="${info.country}">${formatCountryLabel(info.country)}</span><br>${fullNameLabel}`;
-            detailCount.textContent = `接続数: ${enriched.length}`;
+            const hasOneWay = enriched.some(city => city.dir !== 'both');
+            detailCount.innerHTML = formatConnectionStats(airportEn)
+                + (hasOneWay ? '<br><span class="dir-legend">→のみ: この空港発の便だけ ／ ←のみ: この空港着の便だけ</span>' : '');
             detailCopyBtn.dataset.copyCode = info.code;
             detailFavBtn.classList.toggle('active', isFavorite(info.en));
             detailFavBtn.dataset.favAirport = info.en;
@@ -1747,7 +1832,7 @@
                             ${isFavorite(city.en) ? '<span class="detail-chip-fav">★</span>' : ''}
                         </div>
                         <div class="airport-chip-country">${formatCountryLabel(city.country)}</div>
-                        <div class="detail-chip-meta">接続数: ${city.count}</div>
+                        <div class="detail-chip-meta">接続数: ${city.count} ${directionBadge(city.dir)}</div>
                     </div>
                 `).join('');
                 return;
@@ -1781,7 +1866,7 @@
                             ${isFavorite(city.en) ? '<span class="detail-chip-fav">★</span>' : ''}
                         </div>
                         <div class="airport-chip-country">${formatCountryLabel(city.country)}</div>
-                        <div class="detail-chip-meta">接続数: ${city.count}</div>
+                        <div class="detail-chip-meta">接続数: ${city.count} ${directionBadge(city.dir)}</div>
                     </div>
                 `).join('');
                 return;
@@ -1816,20 +1901,7 @@
                 toggleFavorite(airport);
                 detailFavBtn.classList.toggle('active', isFavorite(airport));
                 if (currentDetailAirport) {
-                    const connections = Array.from(connectionsMap.get(currentDetailAirport) || []);
-                    const enriched = connections.map(name => {
-                        const city = cityInfoByEn.get(name) || { en: name, ja: name, code: '???', country: '', schengen: null };
-                        const count = connectionsMap.get(city.en) ? connectionsMap.get(city.en).size : 0;
-                        return {
-                            en: city.en,
-                            code: city.code,
-                            ja: city.ja,
-                            country: city.country,
-                            schengen: city.schengen,
-                            count
-                        };
-                    });
-                    renderDetailGrid(enriched);
+                    renderDetailGrid(buildDetailConnections(currentDetailAirport));
                 }
             }
         });
@@ -1876,20 +1948,7 @@
         detailSort.addEventListener('change', (e) => {
             detailSortMode = e.target.value;
             if (!currentDetailAirport) return;
-            const connections = Array.from(connectionsMap.get(currentDetailAirport) || []);
-            const enriched = connections.map(name => {
-                const city = cityInfoByEn.get(name) || { en: name, ja: name, code: '???', country: '', schengen: null };
-                const count = connectionsMap.get(city.en) ? connectionsMap.get(city.en).size : 0;
-                return {
-                    en: city.en,
-                    code: city.code,
-                    ja: city.ja,
-                    country: city.country,
-                    schengen: city.schengen,
-                    count
-                };
-            });
-            renderDetailGrid(enriched);
+            renderDetailGrid(buildDetailConnections(currentDetailAirport));
         });
 
         homeButton.addEventListener('click', () => {
@@ -2072,6 +2131,7 @@
         const sortSelect = document.getElementById('sortSelect');
         sortSelect.addEventListener('change', (e) => {
             currentSort = e.target.value;
+            if (searchMode === 'airports') return; // 空港一覧には適用しない（非表示だが念のため）
             sortFlights();
             displayFlights(filteredFlights);
         });
@@ -2128,13 +2188,9 @@
 
         function displayFlights(flights) {
             const grid = document.getElementById('flightsGrid');
-            const resultCount = document.getElementById('resultCount');
-            const groupCount = document.getElementById('groupCount');
-
-            resultCount.textContent = flights.length;
 
             if (flights.length === 0) {
-                groupCount.textContent = 0;
+                setResultsHeader('routes', 0, 0);
                 grid.innerHTML = `
                     <div class="no-results">
                         <div class="no-results-icon">✈️</div>
@@ -2176,7 +2232,8 @@
                 groups.sort((a, b) => b.fromCity.localeCompare(a.fromCity, 'ja'));
             }
 
-            groupCount.textContent = groups.length;
+            // 路線数 = 実際に並ぶ行き先チップの数（同じ路線の重複行があっても一致させる）
+            setResultsHeader('routes', groups.length, groups.reduce((n, g) => n + g.destinations.size, 0));
 
             grid.innerHTML = groups.map((group, index) => {
                 const destinations = Array.from(group.destinations.values())
@@ -2190,6 +2247,7 @@
                                 <div>
                                     <div class="airport-name">${group.fromCity}</div>
                                     <div class="airport-country">${formatCountryLabel(group.fromCountry)}</div>
+                                    <div class="airport-meta">${formatConnectionStats(group.from)}${destinations.length < connectionStats(group.from).outbound ? `（表示 ${destinations.length}）` : ''}</div>
                                 </div>
                             </div>
                             <div class="airport-actions">
@@ -2216,11 +2274,8 @@
 
         function displayAirports(airports) {
             const grid = document.getElementById('flightsGrid');
-            const resultCount = document.getElementById('resultCount');
-            const groupCount = document.getElementById('groupCount');
 
-            resultCount.textContent = airports.length;
-            groupCount.textContent = airports.length;
+            setResultsHeader('airports', airports.length);
 
             if (airports.length === 0) {
                 grid.innerHTML = `
@@ -2248,7 +2303,8 @@
                                 <div>
                                     <div class="airport-name">${city.ja} ${getLoungeIndicator(city.en)}</div>
                                     <div class="airport-country">${formatCountryLabel(city.country)}</div>
-                                    <div class="airport-meta">接続数: ${city.count}</div>
+                                    <div class="airport-meta">${formatConnectionStats(city.en)}</div>
+                                    <div class="airport-meta-hint">タップで接続空港 ${city.count} 件を表示 ›</div>
                                 </div>
                             </div>
                             <div class="airport-actions">

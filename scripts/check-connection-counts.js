@@ -9,6 +9,9 @@
  *   - detail chips == union; chips per direction == stats; 'out' + 'both' == outbound, 'in' + 'both' == inbound
  *   - route-list group for the airport (unfiltered) has exactly `outbound` destination chips
  *   - airports with no departures never get a route-list group
+ *   - list header / sort selector (real setResultsHeader, displayFlights, displayAirports, updateTabView on a
+ *     stub DOM): a search with no results shows "検索結果 0" with the sort selector hidden; the route list
+ *     shows "出発空港 N / 路線 N" with the selector visible; the airport list never shows the selector
  * Usage: node scripts/check-connection-counts.js [--root <dir>] [--airport Larnaca]
  */
 'use strict';
@@ -94,5 +97,49 @@ console.log(`airports with >=1 one-way connection: ${oneWayAirports}`);
 console.log(`arrival-only (${arrivalOnly.length}): ${arrivalOnly.sort().join(', ')}`);
 console.log(`departure-only (${departureOnly.length}): ${departureOnly.sort().join(', ')}`);
 console.log(`${showAirport}: ${P.formatConnectionStats(showAirport)}; route-list group chips=${(groupDest.get(showAirport) || new Set()).size}; →のみ=${P.buildDetailConnections(showAirport).filter((c) => c.dir === 'out').map((c) => c.en).join(', ')}; ←のみ=${P.buildDetailConnections(showAirport).filter((c) => c.dir === 'in').map((c) => c.en).join(', ')}`);
+// ---------------------------------------------------------------- list header / sort selector states
+{
+    const el = () => {
+        const cls = new Set();
+        return { innerHTML: '', value: '', classList: { toggle: (c, on) => (on ? cls.add(c) : cls.delete(c)), add: (c) => cls.add(c), remove: (c) => cls.delete(c), contains: (c) => cls.has(c) } };
+    };
+    const dom = { resultsCountLabel: el(), sortSelect: el(), flightsGrid: el() };
+    const uiCtx = {
+        window: {}, console,
+        document: { getElementById: (id) => dom[id] || el() },
+        favoritesSection: el(), rankingSection: el(), resultsContainer: el(), searchInput: el(),
+        currentFilter: 'all', searchMode: 'routes', currentSort: 'default',
+        renderRankingSection() {}, schengenBadge: () => '', formatCountryLabel: (x) => x, isFavorite: () => false, getLoungeIndicator: () => ''
+    };
+    vm.createContext(uiCtx);
+    vm.runInContext(dataJs, uiCtx, { filename: 'data.js' });
+    vm.runInContext([
+        code.replace(/this\.__out = [^\n]*/, ''),
+        slice('        function updateTabView() {', '        function hiraganaToKatakana('),
+        slice('        function displayFlights(flights) {', '        const flightsGrid = document.getElementById'),
+        'this.__ui = { displayFlights, displayAirports, updateTabView, flightsData, uniqueCities, setSearchMode: (m) => { searchMode = m; } };'
+    ].join('\n'), uiCtx, { filename: 'index.html#ui' });
+    const U = uiCtx.__ui;
+    const label = () => dom.resultsCountLabel.innerHTML.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    const sortShown = () => !dom.sortSelect.classList.contains('is-hidden');
+    const expectState = (name, re, sort) => {
+        if (!re.test(label()) || sortShown() !== sort) fail(`ui ${name}: header "${label()}", sort ${sortShown() ? 'shown' : 'hidden'}`);
+        else console.log(`ui ${name}: header "${label()}", sort ${sortShown() ? 'shown' : 'hidden'}`);
+    };
+    uiCtx.searchInput.value = 'zzz';
+    U.setSearchMode('routes'); U.displayFlights([]); U.updateTabView();
+    expectState('route search, no results', /^検索結果 0$/, false);
+    if (!/no-results/.test(dom.flightsGrid.innerHTML)) fail('ui route search, no results: no .no-results card');
+    U.displayFlights(U.flightsData); U.updateTabView();
+    expectState('route list', /^出発空港 \d+ \/ 路線 \d+$/, true);
+    U.setSearchMode('airports'); U.displayAirports([]); U.updateTabView();
+    expectState('airport search, no results', /^検索結果 0$/, false);
+    U.displayAirports(U.uniqueCities.slice(0, 3)); U.updateTabView();
+    expectState('airport list', /^空港 3$/, false);
+    U.setSearchMode('routes'); U.displayFlights([]); U.updateTabView();
+    U.displayFlights(U.flightsData); U.updateTabView();
+    expectState('route list after an empty search', /^出発空港 \d+ \/ 路線 \d+$/, true);
+}
+
 if (failures) { console.error(`${failures} invariant failure(s)`); process.exit(1); }
 console.log(`OK: all invariants hold for ${P.uniqueCities.length} airports (L.total=${L.total})`);

@@ -21,7 +21,14 @@
         const resultsShown = visible($('#resultsContainer'));
         const nums = (header.match(/\d+/g) || []).map(Number);
         if (resultsShown) {
-            if (/路線/.test(header)) {
+            const empty = $$('.no-results', grid).some(visible);
+            if (empty || /^検索結果/.test(header)) {
+                // 結果なし: 件数は 0 だけ、並び替えは出さない、一覧は空で「検索結果なし」カードがある
+                if (!/^検索結果 0$/.test(header)) errs.push(`no-results state shows header "${header}" (expected "検索結果 0")`);
+                if (visible($('#sortSelect'))) errs.push('sort selector shown with no results');
+                if (groups.length || chips.length) errs.push(`no-results state still lists ${groups.length} groups / ${chips.length} chips`);
+                if (!empty) errs.push('header says 検索結果 0 but no .no-results card is shown');
+            } else if (/路線/.test(header)) {
                 const depGroups = groups.filter((g) => $$('.airport-chip', g).length > 0).length;
                 if (nums[0] !== depGroups) errs.push(`header 出発空港 ${nums[0]} but ${depGroups} departure groups listed`);
                 if (nums[1] !== chips.length) errs.push(`header 路線 ${nums[1]} but ${chips.length} route chips listed`);
@@ -67,7 +74,10 @@
     const home = () => { $('#homeButton').click(); };
 
     home(); check('home');
-    for (const t of ['ラル', 'らる', 'lar', 'ポーランド', 'Poland', 'キプロス', 'ア', 'a', 'lc', 'w6', 'zzz']) { home(); type(t); check(`search "${t}"`); }
+    for (const t of ['ラル', 'らる', 'lar', 'ポーランド', 'Poland', 'キプロス', 'ア', 'a', 'lc', 'w6', 'zzz', 'ｚｚｚ', '該当なし']) { home(); type(t); check(`search "${t}"`); }
+    // 結果なし → 路線一覧に戻ると並び替えも戻る
+    home(); type('zzz'); type('lc'); check('search "zzz" then "lc"');
+    if (!visible($('#sortSelect'))) out.push({ state: 'search "zzz" then "lc"', errors: 1, sample: ['sort selector not restored after an empty search'] });
     for (const f of ['西欧', '東欧', '南欧', '北欧', '中東', 'lounge']) { home(); click(f); check(`tab ${f}`); }
     // sort selector while an airport list is shown
     home(); type('ラル'); const ss = $('#sortSelect'); ss.value = 'ja-asc'; ss.dispatchEvent(new Event('change')); check('search "ラル" then sort 出発地順'); ss.value = 'default';

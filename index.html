@@ -1320,9 +1320,14 @@
         // 一覧ヘッダーの件数。表示中の一覧の種類に合わせてラベルごと書き換える
         // （以前は空港一覧でも「出発空港 N / 路線 N」のままで、路線を1件も表示していないのに 路線 N と出ていた）。
         // kind: 'routes' = 出発空港ごとの路線一覧 / 'airports' = 空港カード一覧 / 'countries' = 行った国
+        //       'none' = 検索結果なし（件数の内訳も並び替えも出さない）
+        let resultsKind = 'routes';
         function setResultsHeader(kind, first, second) {
             const label = document.getElementById('resultsCountLabel');
-            if (kind === 'routes') {
+            resultsKind = kind;
+            if (kind === 'none') {
+                label.innerHTML = `検索結果 <strong id="groupCount">0</strong>`;
+            } else if (kind === 'routes') {
                 label.innerHTML = `出発空港 <strong id="groupCount">${first}</strong> / 路線 <strong id="resultCount">${second}</strong>`;
             } else if (kind === 'countries') {
                 label.innerHTML = `国 <strong id="groupCount">${first}</strong> / 空港 <strong id="resultCount">${second}</strong>`;
@@ -1571,7 +1576,7 @@
             resultsContainer.classList.toggle('is-hidden', (isHome && !isSearching) || isFavorites);
 
             if (sortSelectEl) {
-                sortSelectEl.classList.toggle('is-hidden', isVisitedAirports || isVisitedCountries || searchMode === 'airports');
+                sortSelectEl.classList.toggle('is-hidden', isVisitedAirports || isVisitedCountries || searchMode === 'airports' || resultsKind !== 'routes');
             }
 
             if (isHome) {
@@ -2190,7 +2195,7 @@
             const grid = document.getElementById('flightsGrid');
 
             if (flights.length === 0) {
-                setResultsHeader('routes', 0, 0);
+                setResultsHeader('none');
                 grid.innerHTML = `
                     <div class="no-results">
                         <div class="no-results-icon">✈️</div>
@@ -2275,7 +2280,7 @@
         function displayAirports(airports) {
             const grid = document.getElementById('flightsGrid');
 
-            setResultsHeader('airports', airports.length);
+            setResultsHeader(airports.length === 0 ? 'none' : 'airports', airports.length);
 
             if (airports.length === 0) {
                 grid.innerHTML = `

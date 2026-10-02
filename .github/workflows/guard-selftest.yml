@@ -1,0 +1,37 @@
+name: Safety guard self-test
+
+# Manual only. Proves the daily update's safety guard on the same runner image as the daily job:
+#   1. scripts/test-guard.js: generated PDFs, no network, no secrets: every bad PDF must end in exit 1
+#      with nothing written;
+#   2. a --dry-run of the real update on today's PDF: the guard must accept it (nothing is written).
+# It can never change data or the site: read-only token that is not kept in .git, no push / deploy step,
+# and static.yml's workflow_run trigger only listens to "Update Wizz Air availability".
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install PDF text extractor
+        run: sudo apt-get update && sudo apt-get install --yes poppler-utils
+
+      - name: Run the safety-guard tests
+        run: node scripts/test-guard.js
+
+      - name: Dry run of the guard on today's PDF (writes nothing)
+        env:
+          AUTO_ADD_AIRPORTS: 'false' # no auto-add network work in a self-test
+        run: |
+          curl --fail --location --retry 3 --max-time 120 --output "$RUNNER_TEMP/aycf-availability.pdf" https://multipass.wizzair.com/aycf-availability.pdf
+          node scripts/update-routes-from-pdf.js "$RUNNER_TEMP/aycf-availability.pdf" --dry-run
+          git diff --exit-code

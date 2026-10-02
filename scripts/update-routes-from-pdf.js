@@ -13,7 +13,9 @@
  *              AUTOADD_BUDGET_MS (global wall-clock budget for all auto-add network work, default 360000),
  *              AUTOADD_PROBE=true (report reachability of the auto-add data sources),
  *              AUTOADD_PROBE_AI=true (run the real Gemini resolver on known airports; forces --dry-run,
- *              max 4 Gemini requests, and auto-add makes no AI calls in that run).
+ *              max 4 Gemini requests, and auto-add makes no AI calls in that run),
+ *              FORCE_UPDATE=true (publish even if the safety guard fails; see lib/guard.js).
+ * Exit code 1 without writing any file when the PDF cannot be read or the safety guard refuses it.
  */
 const { execFileSync } = require('node:child_process');
 const crypto = require('node:crypto');
@@ -21,6 +23,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { autoAddAirports } = require('./lib/autoadd');
 const B = require('./lib/budget');
+const guard = require('./lib/guard');
 const { addAirport: defaultAddAirport, loadData, selfCheck } = require('./lib/datajs-insert');
 
 const aliases = {
@@ -163,7 +166,10 @@ async function main(argv, env = process.env, deps = {}) {
     const readmePath = path.join(root, 'README.md');
     const addedLogPath = path.join(root, 'auto-added-airports.json');
     const summary = (text) => { if (env.GITHUB_STEP_SUMMARY) fs.appendFileSync(env.GITHUB_STEP_SUMMARY, text); };
-    const pdfText = typeof deps.pdfText === 'string' ? deps.pdfText : execFileSync('pdftotext', ['-layout', pdfPath, '-'], { encoding: 'utf8' });
+    let pdfText = deps.pdfText;
+    if (typeof pdfText !== 'string') {
+        try { pdfText = execFileSync('pdftotext', ['-layout', pdfPath, '-'], { encoding: 'utf8' }); } catch (error) { throw guard.unreadable(error, { log: console.log, summary }); }
+    }
     const addAirport = deps.addAirport || defaultAddAirport;
 
     const originalSource = fs.readFileSync(dataPath, 'utf8');
@@ -176,8 +182,9 @@ async function main(argv, env = process.env, deps = {}) {
     const previousRoutes = dataBlock[0].match(/`([\s\S]*)`/)[1].trim().split('\n');
     const normalizedPreviousRoute = (route) => route.replace(/London \([^)]*\)/g, 'London');
     const routes = [];
+    const pdfPairs = parsePdfRoutes(pdfText);
 
-    for (const pair of parsePdfRoutes(pdfText)) {
+    for (const pair of pdfPairs) {
         if (pair.includes('London')) {
             const matchingRoutes = previousRoutes.filter((route) => normalizedPreviousRoute(route) === pair.join(' - '));
             routes.push(...(matchingRoutes.length ? matchingRoutes : [pair.map((city) => city === 'London' ? 'London (LTN)' : city).join(' - ')]));
@@ -224,6 +231,7 @@ async function main(argv, env = process.env, deps = {}) {
         finalRoutes = finalRoutes.map((route) => route.split(' - ').map((city) => resolvedNames.get(city) || city).join(' - '));
         finalRoutes = [...new Set(finalRoutes)].sort((a, b) => a.localeCompare(b));
     }
+    const candidateRoutes = finalRoutes; // before tier 4 drops routes of unrecognized airports (safety guard)
 
     // One wall-clock budget for ALL auto-add network work (probe + auto-add), so the job can never run
     // into the workflow's timeout-minutes. Started only if there is network work to do.
@@ -344,6 +352,17 @@ async function main(argv, env = process.env, deps = {}) {
         summary(`\n<details><summary>Auto-add notes</summary>\n\n${autoNotes.map((n) => `- ${oneLine(n)}`).join('\n')}\n\n</details>\n`);
     }
 
+    // Safety guard: refuse an implausible PDF before anything is written (lib/guard.js). Exit 1 => no commit, no deploy.
+    const force = String(env.FORCE_UPDATE || '').trim().toLowerCase() === 'true';
+    const lastRun = pdfText.match(/Last run:\s*\n\s*(\d{4})-(\d{2})-(\d{2})/);
+    const metrics = guard.measure({
+        pdfText, pdfPairs, candidateRoutes, routes: finalRoutes, previousRoutes: previousRoutes.filter(Boolean), lastRun,
+        indexHtml: fs.existsSync(indexPath) ? fs.readFileSync(indexPath, 'utf8') : '', now: deps.now || Date.now()
+    });
+    const verdict = guard.evaluate(metrics);
+    guard.report(verdict, metrics, { force, log: console.log, summary });
+    if (verdict.failures.length && !force) throw new guard.GuardError(verdict.failures[0]);
+
     // Record additions.
     const today = new Date().toISOString().slice(0, 10);
     const logEntries = additions.map((a) => ({
@@ -380,7 +399,6 @@ async function main(argv, env = process.env, deps = {}) {
         }
     }
 
-    const lastRun = pdfText.match(/Last run:\s*\n\s*(\d{4})-(\d{2})-(\d{2})/);
     if (lastRun && !args.dryRun) {
         const [, year, month, day] = lastRun;
         const japaneseDate = `${year}年${Number(month)}月${Number(day)}日`;
@@ -420,7 +438,8 @@ module.exports = { main, parsePdfRoutes, checkMetadata };
 
 if (require.main === module) {
     main(process.argv.slice(2), process.env).catch((error) => {
-        console.error(error);
+        // A safety-guard refusal was already reported (::error:: line + job summary); no stack trace for it.
+        if (!(error instanceof guard.GuardError)) console.error(error);
         process.exit(1);
     });
 }

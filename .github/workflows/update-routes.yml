@@ -20,7 +20,7 @@ on:
         type: boolean
         default: false
       force_update:
-        description: 'Publish this PDF even if the safety guard refuses it (route count far below the published data, cut-off list, unrecognized airports, changed layout). Only after checking the PDF yourself; this run only'
+        description: 'Publish this PDF even if the safety guard refuses it (route count far below the published data, cut-off list, unrecognized airports). Only after checking the PDF yourself; this run only'
         type: boolean
         default: false
 

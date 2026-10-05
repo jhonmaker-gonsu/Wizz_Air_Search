@@ -11,14 +11,14 @@
             renderDetailView(city.en);
             const h = parse(document.getElementById('detailCount').textContent);
             const chips = document.querySelectorAll('#detailGrid .airport-chip');
-            const outOnly = [...chips].filter((c) => /→のみ/.test(c.textContent)).length;
-            const inOnly = [...chips].filter((c) => /←のみ/.test(c.textContent)).length;
+            const outOnly = [...chips].filter((c) => /ここ発のみ/.test(c.textContent)).length;
+            const inOnly = [...chips].filter((c) => /ここ着のみ/.test(c.textContent)).length;
             const both = chips.length - outOnly - inOnly;
             if (!h) { errors.push(`${city.en}/${mode}: header unparsable`); continue; }
             const [o, i, t] = h;
             if (chips.length !== t) errors.push(`${city.en}/${mode}: chips ${chips.length} != 計 ${t}`);
-            if (outOnly + both !== o) errors.push(`${city.en}/${mode}: →のみ+both ${outOnly + both} != 出発先 ${o}`);
-            if (inOnly + both !== i) errors.push(`${city.en}/${mode}: ←のみ+both ${inOnly + both} != 到着元 ${i}`);
+            if (outOnly + both !== o) errors.push(`${city.en}/${mode}: ここ発のみ+both ${outOnly + both} != 出発先 ${o}`);
+            if (inOnly + both !== i) errors.push(`${city.en}/${mode}: ここ着のみ+both ${inOnly + both} != 到着元 ${i}`);
             if (t !== connectionsMap.get(city.en).size) errors.push(`${city.en}: 計 != connectionsMap`);
         }
     }

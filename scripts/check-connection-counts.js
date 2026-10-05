@@ -96,7 +96,7 @@ console.log(`routes=${P.flightsData.length} airports=${P.uniqueCities.length} du
 console.log(`airports with >=1 one-way connection: ${oneWayAirports}`);
 console.log(`arrival-only (${arrivalOnly.length}): ${arrivalOnly.sort().join(', ')}`);
 console.log(`departure-only (${departureOnly.length}): ${departureOnly.sort().join(', ')}`);
-console.log(`${showAirport}: ${P.formatConnectionStats(showAirport)}; route-list group chips=${(groupDest.get(showAirport) || new Set()).size}; →のみ=${P.buildDetailConnections(showAirport).filter((c) => c.dir === 'out').map((c) => c.en).join(', ')}; ←のみ=${P.buildDetailConnections(showAirport).filter((c) => c.dir === 'in').map((c) => c.en).join(', ')}`);
+console.log(`${showAirport}: ${P.formatConnectionStats(showAirport)}; route-list group chips=${(groupDest.get(showAirport) || new Set()).size}; ここ発のみ=${P.buildDetailConnections(showAirport).filter((c) => c.dir === 'out').map((c) => c.en).join(', ')}; ここ着のみ=${P.buildDetailConnections(showAirport).filter((c) => c.dir === 'in').map((c) => c.en).join(', ')}`);
 // ---------------------------------------------------------------- list header / sort selector states
 {
     const el = () => {

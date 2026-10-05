@@ -1297,7 +1297,7 @@
         }
 
         // 詳細ページの接続先一覧。dir は表示中の空港から見た向き:
-        // 'both' = 往復とも / 'out' = この空港 → 相手 のみ / 'in' = 相手 → この空港 のみ
+        // 'both' = 往復とも / 'out' = この空港発のみ（この空港 → 相手） / 'in' = この空港着のみ（相手 → この空港）
         function buildDetailConnections(airportEn) {
             const outbound = outboundMap.get(airportEn) || EMPTY_SET;
             const inbound = inboundMap.get(airportEn) || EMPTY_SET;
@@ -1318,8 +1318,8 @@
         }
 
         function directionBadge(dir) {
-            if (dir === 'out') return '<span class="dir-badge" title="この空港から行く便のみ（逆方向の便はデータなし）">→のみ</span>';
-            if (dir === 'in') return '<span class="dir-badge" title="この空港へ来る便のみ（逆方向の便はデータなし）">←のみ</span>';
+            if (dir === 'out') return '<span class="dir-badge" title="この空港から出る便のみ（逆向きの便はデータなし）">ここ発のみ</span>';
+            if (dir === 'in') return '<span class="dir-badge" title="この空港に着く便のみ（逆向きの便はデータなし）">ここ着のみ</span>';
             return '';
         }
 
@@ -1871,7 +1871,7 @@
             detailSub.innerHTML = `${info.en} / <span class="detail-country-link" data-country="${info.country}">${formatCountryLabel(info.country)}</span><br>${fullNameLabel}`;
             const hasOneWay = enriched.some(city => city.dir !== 'both');
             detailCount.innerHTML = formatConnectionStats(airportEn)
-                + (hasOneWay ? '<br><span class="dir-legend">→のみ: この空港発の便だけ ／ ←のみ: この空港着の便だけ</span>' : '');
+                + (hasOneWay ? '<br><span class="dir-legend">ここ発のみ: この空港から出る便だけ ／ ここ着のみ: この空港に着く便だけ（どちらも逆向きの便はデータなし）</span>' : '');
             detailCopyBtn.dataset.copyCode = info.code;
             detailFavBtn.classList.toggle('active', isFavorite(info.en));
             detailFavBtn.dataset.favAirport = info.en;

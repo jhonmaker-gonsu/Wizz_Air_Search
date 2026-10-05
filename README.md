@@ -1,6 +1,6 @@
 [https://jhonmaker-gonsu.github.io/Wizz_Air_Search/](https://jhonmaker-gonsu.github.io/Wizz_Air_Search/)
 
-## V2（2026-10-04）
+## V2（2026-10-05）
 
 Wizz Air 公式の `aycf-availability.pdf`（All You Can Fly の空席データ）から、路線データを毎日自動で更新しています。見出しの日付は取り込んだ PDF の最終更新日です。空席状況は日々変動するため、最新情報は [公式PDF](https://multipass.wizzair.com/aycf-availability.pdf) を確認してください。
 

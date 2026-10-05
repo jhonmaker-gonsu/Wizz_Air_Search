@@ -370,7 +370,7 @@
     };
 
     const countryMap = {
-        'Aberdeen': 'スコットランド',
+        'Aberdeen': 'イギリス',
         'Abu Dhabi': 'UAE',
         'Agadir': 'モロッコ',
         'Alesund': 'ノルウェー',
@@ -431,7 +431,7 @@
         'Funchal (Madeira)': 'ポルトガル',
         'Gdansk': 'ポーランド',
         'Genoa': 'イタリア',
-        'Glasgow': 'スコットランド',
+        'Glasgow': 'イギリス',
         'Gothenburg': 'スウェーデン',
         'Gran Canaria': 'スペイン',
         'Grenoble': 'フランス',
@@ -2535,7 +2535,6 @@ Zaragoza - Rome`
         'Dubai': 'https://www.prioritypass.com/ja/lounges/united-arab-emirates/al-maktoum-international', // ドバイ・アール・マクトゥーム国際空港(Dubai Al Maktoum Intl)
         'Dubrovnik': 'https://www.prioritypass.com/ja/lounges/croatia/dubrovnik-cilipi-konavle', // ドゥブロヴニク・ルジェル・ボシュコヴィッチ空港(Dubrovnik Ruder Boskovic)
         'Faro (Algarve)': 'https://www.prioritypass.com/ja/lounges/portugal/faro-international', // ファロ国際空港(Faro International)
-        'Frankfurt': 'https://www.prioritypass.com/ja/lounges/germany/frankfurt-main', // フランクフルト・アム・マイン(Frankfurt Main)
         'Fuerteventura': 'https://www.prioritypass.com/ja/lounges/spain/fuerteventura-airport', // フエルテベントゥラ島(Fuerteventura)
         'Gdansk': 'https://www.prioritypass.com/ja/lounges/poland/gdansk-lech-walesa', // グダニスク・レフ・ワレサ空港(Gdansk Lech Walesa)
         'Glasgow': 'https://www.prioritypass.com/ja/lounges/united-kingdom/glasgow-international', // グラスゴー国際空港(Glasgow International)
@@ -2574,7 +2573,6 @@ Zaragoza - Rome`
         'Oslo': 'https://www.prioritypass.com/ja/lounges/norway/oslo-gardermoen', // オスロ・ガーデモエン空港(Oslo Gardermoen)
         'Palermo': 'https://www.prioritypass.com/ja/lounges/italy/palermo-falcone-borsellino', // パレルモ・ファルコーネ ボルセリーノ空港(Palermo Falcone Borsellino)
         'Paphos': 'https://www.prioritypass.com/ja/lounges/cyprus/paphos-international', // パフォス国際空港(Paphos International)
-        'Paris': 'https://www.prioritypass.com/ja/lounges/france/paris-cdg', // パリ＝シャルル・ド・ゴール空港(Paris Charles de Gaulle)
         'Paris Orly': 'https://www.prioritypass.com/ja/lounges/france/orly', // パリ・オルリー空港(Paris Orly)
         'Pisa': 'https://www.prioritypass.com/ja/lounges/italy/pisa-galileo-galilei-intl', // ピサ・ガリレオ・ガリレイ国際空港(Pisa Galileo Galilei Intl)
         'Porto': 'https://www.prioritypass.com/ja/lounges/portugal/porto-francisco-scarneiro-int', // ポルト・フランシスコ・サ・カルネイロ国際空港(Porto Francisco S.Carneiro Int)
@@ -2590,7 +2588,6 @@ Zaragoza - Rome`
         'Skopje': 'https://www.prioritypass.com/ja/lounges/macedonia/skopje-alexander-the-great', // スコピエ国際線ラウンジ
         'Sofia': 'https://www.prioritypass.com/ja/lounges/bulgaria/sofia-airport', // ソフィア空港(Sofia)
         'Stavanger': 'https://www.prioritypass.com/ja/lounges/norway/stavanger-sola', // スタバンゲル空港(Stavanger Sola)
-        'Stockholm': 'https://www.prioritypass.com/ja/lounges/sweden/stockholm-arlanda', // ストックホルム・アーランダ(Stockholm Arlanda)
         'Stockholm Arlanda': 'https://www.prioritypass.com/ja/lounges/sweden/stockholm-arlanda', // ストックホルム・アーランダ空港(Stockholm Arlanda)
         'Tallinn': 'https://www.prioritypass.com/ja/lounges/estonia/tallinn-airport', // タリン・レナルトメリ空港(Tallinn Lennart Meri)
         'Tenerife': 'https://www.prioritypass.com/ja/lounges/spain/tenerife-south-reina-sofia', // テネリフェ・スール・レイナ・ソフィア国際空港(Tenerife South Reina Sofia)

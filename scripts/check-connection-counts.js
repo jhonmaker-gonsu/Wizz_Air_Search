@@ -141,5 +141,33 @@ console.log(`${showAirport}: ${P.formatConnectionStats(showAirport)}; route-list
     expectState('route list after an empty search', /^出発空港 \d+ \/ 路線 \d+$/, true);
 }
 
+// ---------------------------------------------------------------- data.js consistency (lounges, country labels, regions)
+{
+    const D = ctx.window.AIRPORT_DATA;
+    // A Priority Pass lounge page belongs to ONE airport. match_lounges.py once matched by city name, so the low-cost satellite
+    // airports got the lounge of their city's main airport (Frankfurt Hahn -> Frankfurt Main with the crown icon, Paris Beauvais -> CDG,
+    // Stockholm Skavsta -> Arlanda). Those three entries were deleted: each must stay absent, or point at a page naming the airport itself.
+    const SATELLITES = [['Frankfurt', 'HHN', ['hahn', 'hhn']], ['Paris', 'BVA', ['beauvais', 'bva']], ['Stockholm', 'NYO', ['skavsta', 'nyo']]];
+    for (const [key, code, tokens] of SATELLITES) {
+        if (D.airportCodes[key] !== code) { console.log(`lounge: ${key} is no longer ${code} in airportCodes (${D.airportCodes[key]}); check not applicable`); continue; }
+        const url = D.loungeData[key];
+        if (!url) console.log(`lounge: ${key} (${code}) has no lounge entry (correct: no matching Priority Pass page)`);
+        else if (tokens.some((t) => url.toLowerCase().includes(t))) console.log(`lounge: ${key} (${code}) -> ${url} (names the airport)`);
+        else fail(`lounge: ${key} (${code}) carries ${url}, which does not name that airport (main-airport lounge on a satellite airport)`);
+    }
+    for (const key of Object.keys(D.loungeData)) if (!(key in D.airportCodes)) fail(`lounge: loungeData key ${key} is not a registry airport`);
+    // The two Scottish airports are labelled like every other UK airport (owner decision; they were "スコットランド" before).
+    for (const key of ['Aberdeen', 'Glasgow']) {
+        if (D.countryMap[key] !== D.countryMap['London (LTN)']) fail(`country: ${key} is "${D.countryMap[key]}", other UK airports are "${D.countryMap['London (LTN)']}"`);
+    }
+    if (Object.values(D.countryMap).includes('スコットランド')) fail('country: a stray "スコットランド" label is still in countryMap');
+    // Region totals: every airport of the routes is in exactly one region and the regions add up to the airport total.
+    const regionCount = {};
+    for (const city of P.uniqueCities) { const r = D.regionMap[city.en]; regionCount[r] = (regionCount[r] || 0) + 1; }
+    const regionSum = Object.values(regionCount).reduce((a, b) => a + b, 0);
+    if (regionSum !== P.uniqueCities.length || Object.keys(regionCount).some((r) => !['西欧', '東欧', '南欧', '北欧', '中東'].includes(r))) fail(`regions: ${JSON.stringify(regionCount)} do not add up to ${P.uniqueCities.length} airports in the 5 known regions`);
+    else console.log(`regions: ${JSON.stringify(regionCount)} = ${regionSum} airports`);
+}
+
 if (failures) { console.error(`${failures} invariant failure(s)`); process.exit(1); }
 console.log(`OK: all invariants hold for ${P.uniqueCities.length} airports (L.total=${L.total})`);

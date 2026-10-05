@@ -1,8 +1,9 @@
 // State sweep for the list views. Paste into the page console (or Browser javascript_tool).
 // Drives the REAL UI (input events, filter-button clicks) through every list state and checks that
 // every number on screen equals what is listed. The first part works on the old and the new index.html; the last part
-// ("behaviour checks": star clicks, search while on a tab, default order, empty 行った空港 tab, IME / similar-name search) checks
-// fixes of the audit rows B1, B2, B5, B6, B7, B13 and reports every failure as an error of its own state line.
+// ("behaviour checks": star clicks, search while on a tab, default order, empty 行った空港 tab, IME / similar-name search, zoom-safe form
+// controls, full-width characters inside Japanese names) checks fixes of the audit rows B1, B2, B5, B6, B7, B13, B14 (+ iPhone zoom) and
+// reports every failure as an error of its own state line (the zoom and full-width checks always add one state line, pass or fail).
 // Read-only: favorites/visited are modified in memory only (never saved: saveFavorites is stubbed while stars are clicked) and restored afterwards.
 (() => {
     const out = [];
@@ -100,6 +101,7 @@
     const realSave = window.saveFavorites;
     window.saveFavorites = () => { /* read-only sweep: star clicks must not write localStorage */ };
     const fails = (state, msgs) => out.push({ state, header: '-', groups: 0, chips: 0, ranking: 0, errors: msgs.length, sample: msgs.slice(0, 3) });
+    const record = fails; // same line, used for checks that report a state line even when they pass
     const activeTab = () => { const b = $('.filter-btn.active'); return b ? b.dataset.filter : null; };
     const headerText = () => $('.results-count').textContent.replace(/\s+/g, ' ').trim();
     const listKeys = () => $$('#flightsGrid [data-airport]').map((e) => e.dataset.airport).join('|');
@@ -198,6 +200,39 @@
             home(); input('ｚｚｚ'); if (!/^検索結果 0$/.test(headerText())) errs.push(`"ｚｚｚ" header is "${headerText()}"`);
             home();
             if (errs.length) fails('search auto-open / full-width input (behaviour)', errs);
+        }
+
+        // iPhone zoom (follows B14: with user-scalable=no gone, iOS Safari zooms in on a focused control below 16px and stays zoomed)
+        {
+            const errs = [];
+            const vp = ($('meta[name=viewport]') || {}).content || '';
+            if (/user-scalable\s*=\s*(no|0)/i.test(vp)) errs.push(`viewport meta blocks zoom: "${vp}"`);
+            if (/maximum-scale/i.test(vp)) errs.push(`viewport meta has maximum-scale: "${vp}"`);
+            const controls = $$('input, select, textarea').filter((el) => !/^(button|submit|reset|checkbox|radio|range|color|file|hidden|image)$/i.test(el.type || ''));
+            const phone = window.innerWidth <= 600;
+            if (!controls.length) errs.push('no input / select / textarea found');
+            if (phone) for (const el of controls) { const px = parseFloat(getComputedStyle(el).fontSize); if (!(px >= 16)) errs.push(`${el.id ? '#' + el.id : el.tagName.toLowerCase() + '.' + el.className}: font-size ${px}px (< 16px)`); }
+            record(`zoom-safe controls (${controls.length} controls, ${window.innerWidth}px${phone ? ', font-size >= 16px' : ', font-size is only required at <= 600px'}, viewport meta)`, errs);
+        }
+
+        // Full-width characters inside a Japanese name (カイロ（スフィンクス） has full-width brackets): the typed text is NFKC-normalised, so the
+        // data side must be too, in the airport search, in the region tab that keeps the typed text, and in the route filter
+        {
+            const errs = [];
+            const cairo = uniqueCities.find((c) => /カイロ/.test(c.ja));
+            if (!cairo) errs.push('no airport named カイロ…');
+            else {
+                const hasCairo = () => $$('#flightsGrid [data-airport]').some((e) => e.dataset.airport === cairo.en);
+                home(); type('カイロ（'); if (!hasCairo()) errs.push(`search "カイロ（": ${cairo.en} not listed ("${headerText()}")`);
+                const region = regionMap[cairo.en];
+                click(region); if (!hasCairo()) errs.push(`search "カイロ（" kept while clicking tab ${region}: ${cairo.en} not listed ("${headerText()}")`);
+                home(); currentFilter = 'all'; searchMode = 'routes'; filterAndDisplay(normalizeText('カイロ（'));
+                if (!filteredFlights.some((f) => f.from === cairo.en || f.to === cairo.en)) errs.push(`route filter "カイロ（": no route of ${cairo.en} (${filteredFlights.length} routes)`);
+                home(); type('ｃａｉｒｏ'); if (!hasCairo()) errs.push('full-width "ｃａｉｒｏ": Cairo not listed');
+                home(); type('ｚｚｚ'); if (!/^検索結果 0$/.test(headerText())) errs.push(`"ｚｚｚ" header is "${headerText()}"`);
+            }
+            home();
+            record('full-width characters in Japanese names (カイロ（, search / region tab / route filter)', errs);
         }
     } finally {
         window.saveFavorites = realSave;

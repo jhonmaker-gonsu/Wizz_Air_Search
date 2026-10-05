@@ -873,9 +873,15 @@
                 padding: 0.9rem 0.9rem 1rem;
             }
 
+            /* iOS Safari zooms into a focused text control smaller than 16px and stays zoomed (user-scalable=no is gone):
+               keep every input / select at 16px on phones */
             #searchInput {
                 padding: 0.85rem 0.85rem 0.85rem 2.7rem;
-                font-size: 0.95rem;
+                font-size: 16px;
+            }
+
+            .sort-select {
+                font-size: 16px;
             }
 
             .filter-btn {
@@ -944,7 +950,7 @@
                 min-height: 34px;
                 white-space: nowrap;
                 padding: 0.35rem 0.62rem;
-                font-size: 0.8rem;
+                font-size: 16px;
             }
 
             .detail-visited-inline {
@@ -1585,11 +1591,12 @@
                     if (!loungeData || !loungeData[city.en]) return false;
                 }
 
+                // 入力は NFKC に揃えてあるので、空港名の側も同じ形に揃えて比べる（例: カイロ（スフィンクス）の全角かっこ）
                 return !searchTerm ||
                     city.en.toLowerCase().includes(searchTerm) ||
-                    city.ja.includes(searchTerm) ||
+                    normalizeText(city.ja).includes(searchTerm) ||
                     city.code.toLowerCase().includes(searchTerm) ||
-                    hiraganaToKatakana(city.ja).includes(hiraganaToKatakana(searchTerm));
+                    normalizeKana(city.ja).includes(normalizeKana(searchTerm));
             }).sort((a, b) => a.ja.localeCompare(b.ja, 'ja'));
 
             displayAirports(filteredCities);
@@ -2236,11 +2243,14 @@
             filteredFlights = flightsData.filter(flight => {
                 const regionMatch = currentFilter === 'all' || flight.region === currentFilter;
 
+                // 入力は NFKC に揃えてあるので、都市名の側も同じ形に揃えて比べる
+                const fromCity = normalizeText(flight.fromCity);
+                const toCity = normalizeText(flight.toCity);
                 const searchMatch = !searchTerm ||
-                    flight.fromCity.toLowerCase().includes(searchTerm) ||
-                    flight.fromCity.toLowerCase().includes(katakanaSearchTerm) ||
-                    flight.toCity.toLowerCase().includes(searchTerm) ||
-                    flight.toCity.toLowerCase().includes(katakanaSearchTerm) ||
+                    fromCity.includes(searchTerm) ||
+                    fromCity.includes(katakanaSearchTerm) ||
+                    toCity.includes(searchTerm) ||
+                    toCity.includes(katakanaSearchTerm) ||
                     flight.fromCountry.toLowerCase().includes(searchTerm) ||
                     flight.toCountry.toLowerCase().includes(searchTerm) ||
                     getCountryEnglish(flight.fromCountry).toLowerCase().includes(searchTerm) ||

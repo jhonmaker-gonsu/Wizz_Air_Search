@@ -9,4 +9,4 @@ Wizz Air 公式の `aycf-availability.pdf`（All You Can Fly の空席データ�
 - PDF上で空港が特定されない London は、既存の路線データを使って LTN/LGW を維持しています
 
 ## 新機能 (New Features)
-- **Lounge Integration (ラウンジ連携)**: Priority PassのラウンジURLを表示します。一部のプレミアムラウンジ（アブダビ、フランクフルト、ロンドン・ガトウィック、ローマ空港など）には王冠アイコン（👑）が表示されます。追加のプレミアムラウンジは `data.js` 内の `premiumLounges` 配列にURLを追記することで設定可能です。
+- **Lounge Integration (ラウンジ連携)**: Priority PassのラウンジURLを表示します。一部のプレミアムラウンジ（アブダビ、ロンドン・ガトウィック、ローマ空港など）には王冠アイコン（👑）が表示されます。追加のプレミアムラウンジは `data.js` 内の `premiumLounges` 配列にURLを追記することで設定可能です。

@@ -20,7 +20,9 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { loadData } = require('./lib/datajs-insert');
+const { loadData, insertEntry, addAirport, selfCheck, q: quote, SECTIONS } = require('./lib/datajs-insert');
+const V = require('./lib/validate');
+const { autoAddAirports } = require('./lib/autoadd');
 const S = require('./lib/airport-sources');
 const G = require('./lib/guard');
 const { main } = require('./update-routes-from-pdf');
@@ -335,6 +337,11 @@ async function inProcessCases() {
     {
         const old = await run('PDF dated before the site date (warning only)', pdfText(TODAY, { date: '2026-09-28' }));
         check('accepted with "older than the data on the site" + age warnings', !old.error && /older than the data on the site \(2026-10-01\)/.test(old.out) && /is 4 days old/.test(old.out));
+        // The age warning starts AT warnAgeDays (2): a PDF exactly 2 days old warns, one 1 day old does not (a "> 2" instead of ">= 2" would miss the first).
+        const two = await run('PDF "Last run" exactly 2 days old (the warning threshold)', pdfText(TODAY, { date: '2026-09-30' }));
+        check('accepted, with the age warning "is 2 days old"', !two.error && /::warning::Safety guard: the PDF "Last run" date 2026-09-30 is 2 days old/.test(two.out), two.error ? two.error.message : '');
+        const one = await run('PDF "Last run" 1 day old (below the threshold)', pdfText(TODAY, { date: '2026-10-01' }));
+        check('accepted, no age warning', !one.error && !/days old/.test(one.out), one.error ? one.error.message : '');
     }
 }
 
@@ -363,6 +370,81 @@ function unitCases() {
     const both = G.evaluate(m({ ...bad, routes: 299, parsedRoutes: 299, candidateRoutes: 299, previousRoutes: 299 }));
     check('layout differences + 299 routes: the failures are the numeric ones only, the layout stays a warning', both.failures.length === 2 && both.failures.every((f) => /only 299 routes/.test(f)) && both.layout.length === 3 && both.warnings.length >= 3, JSON.stringify(both.failures));
     check('the "Last run:" warning says the date line was not updated', /"Last run:" date could not be parsed, so the date line on the site \(index\.html, README\.md\) was not updated/.test(lay.warnings[1]), lay.warnings[1]);
+}
+
+/** Direct assertions for the validators, the data.js insertion / self-check and the auto-add limits (audit B10: these used to be covered only indirectly). */
+async function validatorCases() {
+    console.log('\n== evaluate(): the age warning starts at exactly warnAgeDays');
+    const m = (o) => ({ headerOk: true, pagesOk: true, lastRunDate: PDF_DATE, siteDate: PREV_DATE, today: PDF_DATE, duplicateRows: 0, parsedRoutes: 1000, candidateRoutes: 1000, routes: 1000, airports: 150, departures: 100, skippedRoutes: 0, previousRoutes: 1000, previousDepartures: 100, ...o });
+    const ageWarnings = (lastRunDate) => G.evaluate(m({ lastRunDate, siteDate: lastRunDate })).warnings.filter((w) => /days old/.test(w));
+    check('warnAgeDays is 2', G.LIMITS.warnAgeDays === 2);
+    check('1 day old: no age warning', ageWarnings('2026-10-01').length === 0);
+    check('exactly 2 days old: age warning "is 2 days old"', ageWarnings('2026-09-30').length === 1 && /is 2 days old/.test(ageWarnings('2026-09-30')[0]), ageWarnings('2026-09-30')[0]);
+    check('3 days old: age warning "is 3 days old"', ageWarnings('2026-09-29').length === 1 && /is 3 days old/.test(ageWarnings('2026-09-29')[0]));
+
+    console.log('\n== validate.js: Japanese-name character filter, registry keys, limits');
+    check('validCityJa accepts ordinary names', V.validCityJa('シビウ') && V.validCityJa('クルジュ＝ナポカ') && V.validCityJa('Sibiu'));
+    check('validCityJa rejects HTML: "<b>x</b>" and "<script>alert(1)</script>"', !V.validCityJa('<b>x</b>') && !V.validCityJa('<script>alert(1)</script>'));
+    check('validCityJa rejects quotes, backticks, newlines, ampersands, "${x}"', ['a"b', "a'b", 'a`b', 'a\nb', 'a&b', '${x}', 'a;b'].every((x) => !V.validCityJa(x)));
+    check('validCityJa rejects empty, > 20 characters, non-strings', !V.validCityJa('') && V.validCityJa('あ'.repeat(20)) && !V.validCityJa('あ'.repeat(21)) && !V.validCityJa(null) && !V.validCityJa(5));
+    check('validAirportJa needs 空港 / 飛行場 at the end and only allowed characters', V.validAirportJa('シビウ国際空港') && V.validAirportJa('ニシュ空港') && !V.validAirportJa('シビウ') && !V.validAirportJa('<b>x</b>空港') && !V.validAirportJa('x'.repeat(41) + '空港'));
+    check('validRegistryKey accepts existing key shapes', ['Sibiu', 'Faro (Algarve)', 'Košice', 'Rzeszów', "Bari-Palese", 'Tromsø', 'Cluj-Napoca'].every((x) => V.validRegistryKey(x)));
+    check('validRegistryKey rejects a key containing " - " (it would split a route line)', !V.validRegistryKey('Foo - Bar') && !V.validRegistryKey('A - B') && V.validRegistryKey('Foo-Bar'));
+    check('validRegistryKey rejects backtick, quote-injection, empty, > 40 characters', ['a`b', "a'; alert(1); '", '', 'x'.repeat(41)].every((x) => !V.validRegistryKey(x)) && V.validRegistryKey('x'.repeat(40)));
+    const entry = { name: 'Sibiu', code: 'SBZ', cityJa: 'シビウ', countryJa: 'ルーマニア', region: '東欧', schengen: true, gmap: 'https://www.google.com/maps/search/Sibiu+International+Airport+SBZ', fullJa: 'シビウ国際空港' };
+    const none = { usedCodes: new Set(), usedKeys: new Set() };
+    check('validateEntry: a complete entry is accepted', V.validateEntry(entry, none).length === 0, V.validateEntry(entry, none).join('; '));
+    check('validateEntry rejects a key containing " - "', V.validateEntry({ ...entry, name: 'Foo - Bar' }, none).includes('registry key invalid'));
+    check('validateEntry rejects HTML in the city name', V.validateEntry({ ...entry, cityJa: '<b>x</b>' }, none).some((x) => /^cityJa invalid/.test(x)));
+    check('validateEntry rejects an IATA code that is already used, and a key that already exists', V.validateEntry(entry, { usedCodes: new Set(['SBZ']), usedKeys: new Set() }).includes('IATA SBZ already used') && V.validateEntry(entry, { usedCodes: new Set(), usedKeys: new Set(['Sibiu']) }).includes('registry key already exists'));
+    check('MAX_NEW_AIRPORTS is 5', V.MAX_NEW_AIRPORTS === 5);
+
+    console.log('\n== autoAddAirports(): at most MAX_NEW_AIRPORTS (5) new airports per run');
+    {
+        // AUTOADD_OA_CSV points at a missing file, so nothing past the count check can succeed and no network is used:
+        // the ONLY difference between 5 and 6 names is whether the count rule refuses them.
+        const env = { AUTOADD_OA_CSV: path.join(os.tmpdir(), 'does-not-exist-oa.csv'), AUTOADD_WIZZ_JSON: path.join(os.tmpdir(), 'does-not-exist-wizz.json') };
+        const five = await autoAddAirports({ names: ['Aaa', 'Bbb', 'Ccc', 'Ddd', 'Eee'], routes: [], data: registry, env });
+        check('exactly 5 new airports are NOT refused by the count rule (the run goes on to load its data sources)', !/unrecognized airports \(> 5\)/.test(five.skipped || '') && five.skipped === 'OurAirports data unavailable', five.skipped);
+        const six = await autoAddAirports({ names: ['Aaa', 'Bbb', 'Ccc', 'Ddd', 'Eee', 'Fff'], routes: [], data: registry, env });
+        check('6 new airports are refused: "6 unrecognized airports (> 5) ... adding none", every name reported', /^6 unrecognized airports \(> 5\); PDF parsing likely broke, adding none$/.test(six.skipped || '') && six.entries.length === 0 && six.failures.length === 6, six.skipped);
+        const zero = await autoAddAirports({ names: [], routes: [], data: registry, env });
+        check('no names: nothing to do, no failure', zero.entries.length === 0 && zero.failures.length === 0 && !zero.skipped);
+    }
+
+    console.log('\n== datajs-insert.js: insertEntry never overwrites, selfCheck reports every kind of damage');
+    const orig = fs.readFileSync(path.join(REPO, 'data.js'), 'utf8');
+    const O = loadData(orig);
+    const routeCount = O.rawFlightData.trim().split('\n').length;
+    const refuses = (fn) => { try { fn(); return false; } catch (e) { return /^refuse overwrite /.test(e.message); } };
+    check('insertEntry refuses to overwrite an existing key (airportCodes[Larnaca])', refuses(() => insertEntry(orig, 'airportCodes', 'Larnaca', quote('XXX'))));
+    check('insertEntry refuses to overwrite in every key-by-name section, and airportFullNames by code', ['airportCodes', 'cityNames', 'countryMap', 'regionMap', 'schengenMap', 'airportGoogleMap'].every((sec) => refuses(() => insertEntry(orig, sec, Object.keys(O[sec])[0], quote('x')))) && refuses(() => insertEntry(orig, 'airportFullNames', Object.keys(O.airportFullNames)[0], quote('x'))));
+    check('addAirport refuses an airport whose key already exists (nothing half-inserted: it throws)', refuses(() => addAirport(orig, { name: 'Larnaca', code: 'BBB', cityJa: 'x', countryJa: 'x', region: '西欧', schengen: false, gmap: 'https://www.google.com/maps/search/X+ZZZ', fullJa: 'x空港' })));
+    check('insertEntry adds a new key (control: the refusal above is about the existing key)', loadData(insertEntry(orig, 'airportCodes', 'Bbbland', quote('BBB'))).airportCodes.Bbbland === 'BBB');
+    const fresh = { name: 'Bbbland', code: 'BBB', cityJa: 'ズズ', countryJa: 'イギリス', region: '西欧', schengen: false, gmap: 'https://www.google.com/maps/search/Bbb+Airport+BBB', fullJa: 'ズズ空港' };
+    const withFresh = addAirport(orig, fresh);
+    check('selfCheck: original + one declared addition is clean', selfCheck(orig, withFresh, [fresh], routeCount).length === 0, selfCheck(orig, withFresh, [fresh], routeCount).join('; '));
+    check('selfCheck: nothing changed, route count as expected -> clean', selfCheck(orig, orig, [], routeCount).length === 0);
+    const wrongCount = selfCheck(orig, orig, [], routeCount + 1);
+    check('selfCheck reports a route-count mismatch', wrongCount.length === 1 && wrongCount[0] === `rawFlightData has ${routeCount} routes, expected ${routeCount + 1}`, wrongCount.join('; '));
+    const unexpected = selfCheck(orig, withFresh, [], routeCount);
+    check('selfCheck reports a key that appeared without being declared', unexpected.includes('airportCodes gained unexpected key Bbbland') && unexpected.includes('airportFullNames gained unexpected key BBB'), unexpected.join('; '));
+    const loungeAdded = selfCheck(orig, orig.replace("    const loungeData = {\n", "    const loungeData = {\n        'Bbbland': 'https://example.invalid/x',\n"), [], routeCount);
+    check('selfCheck reports a new key in a section that auto-add never writes (loungeData)', loungeAdded.includes('loungeData gained unexpected key Bbbland'), loungeAdded.join('; '));
+    const changed = selfCheck(orig, orig.replace("'Larnaca': 'LCA'", "'Larnaca': 'XXX'"), [], routeCount);
+    check('selfCheck reports an existing value that changed', changed.includes('airportCodes[Larnaca] changed'), changed.join('; '));
+    const missing = selfCheck(orig, orig, [fresh], routeCount);
+    check('selfCheck reports a declared addition that is missing from data.js, in all 7 sections', SECTIONS.every((sec) => missing.some((x) => x.startsWith(`${sec} lacks new key `))), missing.join('; '));
+    check('selfCheck reports a source that does not evaluate', selfCheck(orig, 'this is not javascript (', [], routeCount)[0].startsWith('new data.js does not evaluate'));
+
+    console.log('\n== airport-sources.js / validate.js: ambiguous OurAirports name match, duplicate IATA code');
+    {
+        const rec = (code, iso) => ({ iata_code: code, scheduled_service: 'yes', type: 'large_airport', iso_country: iso, municipality: 'Springfield', name: `${code} Airport` });
+        const OA = (recs) => ({ recs, byIata: Object.fromEntries(recs.map((r) => [r.iata_code, [r]])) });
+        check('oaByName: one scheduled airport in the municipality -> that airport', S.oaByName(OA([rec('AAA', 'US')]), 'Springfield', null).iata_code === 'AAA');
+        check('oaByName: two scheduled airports in the municipality -> ambiguous, no match', S.oaByName(OA([rec('AAA', 'US'), rec('BBB', 'US')]), 'Springfield', null) === null);
+        check('oaByName: the same two airports in different countries are told apart by the country', S.oaByName(OA([rec('AAA', 'US'), rec('BBB', 'CA')]), 'Springfield', 'CA').iata_code === 'BBB');
+    }
 }
 
 function cli(label, pdfBuffer, previous = BASE, env = {}) {
@@ -427,6 +509,7 @@ function workflowCases() {
 (async () => {
     console.log(`synthetic data: ${BASE.length} published routes, ${TODAY.length} on the normal day, ${NAMES.length} airport names`);
     unitCases();
+    await validatorCases();
     await inProcessCases();
     cliCases();
     workflowCases();

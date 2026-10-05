@@ -109,7 +109,7 @@ async function scenarios() {
     const pdf = arg('--pdf');
     const oldScript = arg('--old-script');
     if (!pdf || !process.env.AUTOADD_OA_CSV || !process.env.AUTOADD_WIZZ_JSON) { console.error('need --pdf, AUTOADD_OA_CSV, AUTOADD_WIZZ_JSON'); process.exit(2); }
-    const { main } = require('./update-routes-from-pdf');
+    const { main, parsePdfRoutes } = require('./update-routes-from-pdf');
     const S = require('./lib/airport-sources');
     S.setWikimediaGap(0); S.setSleep(() => Promise.resolve());
     const FAKE_KEY = 'TESTKEY-not-a-real-key-0123456789';
@@ -154,6 +154,14 @@ async function scenarios() {
     }
     const gem = (text) => ({ candidates: [{ content: { parts: [{ text }] } }] });
 
+    // The PDF text as pdftotext gives it, read once. Removed airports are only "unrecognized" (and so only reach the auto-add code) when a PDF row
+    // mentions them; a PDF that happens to have no route for one (e.g. an older PDF without Sibiu) used to make the scenarios vacuous or fail.
+    // run() therefore appends one synthetic row for each removed airport the PDF lacks; a PDF that already has them is fed in untouched.
+    let pdfTextCache = null;
+    const pdfText0 = () => pdfTextCache || (pdfTextCache = require('node:child_process').execFileSync('pdftotext', ['-layout', pdf, '-'], { encoding: 'utf8' }));
+    const namesInPdf = () => new Set(parsePdfRoutes(pdfText0()).flat());
+    const addRows = (text, names) => text + '\n' + names.map((n) => `Tirana          ${n}`).join('\n') + '\n';
+
     async function run(label, remove, { env = {}, fetchOpts = {}, deps = {}, orphanMapKeys = [], pdfTransform = null } = {}) {
         const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'autoadd-scn-'));
         copyRepo(tmp);
@@ -173,7 +181,13 @@ async function scenarios() {
         let error = null;
         const t0 = Date.now();
         const allDeps = { ...deps };
-        if (pdfTransform) allDeps.pdfText = pdfTransform(require('node:child_process').execFileSync('pdftotext', ['-layout', pdf, '-'], { encoding: 'utf8' }));
+        const inPdf = remove.length ? namesInPdf() : null;
+        const syntheticRows = remove.filter((n) => !inPdf.has(n));
+        if (syntheticRows.length || pdfTransform) {
+            let text = pdfText0();
+            if (syntheticRows.length) text = addRows(text, syntheticRows);
+            allDeps.pdfText = pdfTransform ? pdfTransform(text) : text;
+        }
         try { await main([pdf, '--root', tmp], { GITHUB_STEP_SUMMARY: summaryPath, AUTOADD_OA_CSV: process.env.AUTOADD_OA_CSV, AUTOADD_WIZZ_JSON: process.env.AUTOADD_WIZZ_JSON, ...env }, allDeps); }
         catch (e) { error = e; } finally { console.log = realLog; S.setFetch(null); }
         const elapsedMs = Date.now() - t0;
@@ -182,11 +196,12 @@ async function scenarios() {
         const N = loadData(fs.readFileSync(dp, 'utf8'));
         const addedLog = JSON.parse(fs.readFileSync(path.join(tmp, 'auto-added-airports.json'), 'utf8'));
         console.log(`\n== ${label}`);
+        if (syntheticRows.length) console.log(`  note: this PDF has no route for ${syntheticRows.join(', ')}: one synthetic row ("Tirana - <name>") per airport was added`);
         check('exit code 0 (main() resolved without throwing)', !error, error && error.message);
         check('API key never appears in stdout/summary/added-log', ![out, summary, JSON.stringify(addedLog)].some((t) => t.includes(FAKE_KEY)));
         check('every request carried exactly the repo User-Agent (no browser UA, no other header UA)', fetchStub.calls.every((c) => c.init && c.init.headers && c.init.headers['User-Agent'] === S.USER_AGENT && !/mozilla|chrome|safari/i.test(JSON.stringify(c.init.headers))), [...new Set(fetchStub.calls.map((c) => c.init && c.init.headers && c.init.headers['User-Agent']))].join(' | '));
         check('no request to the wizzair.com home page (bot-protected)', fetchStub.calls.every((c) => new URL(c.url).hostname !== 'www.wizzair.com'));
-        return { tmp, out, summary, N, addedLog, fetchStub, elapsedMs, dataSrc: fs.readFileSync(dp, 'utf8'), filesUnchanged: snap() === before };
+        return { tmp, out, summary, N, addedLog, fetchStub, elapsedMs, dataSrc: fs.readFileSync(dp, 'utf8'), filesUnchanged: snap() === before, syntheticRows };
     }
     const warned = (r, re) => new RegExp(re).test(r.out);
     const aiBody = (r) => r.fetchStub.calls.filter((c) => /generativelanguage/.test(c.url));
@@ -265,7 +280,8 @@ async function scenarios() {
         check('no network calls at all', r.fetchStub.calls.length === 0, `calls=${r.fetchStub.calls.length}`);
         check('nothing added, added-log empty', r.addedLog.length === 0 && !('Sibiu' in r.N.airportCodes) && !('Debrecen' in r.N.airportCodes));
         check('tier-4 warning line present in old format', warned(r, '::warning::Unrecognized airport\\(s\\) skipped: (Sibiu, Debrecen|Debrecen, Sibiu)'));
-        if (oldScript) {
+        if (oldScript && r.syntheticRows.length) console.log(`  SKIPPED: --old-script comparison (the old script reads the PDF file, which lacks ${r.syntheticRows.join(', ')}; use a PDF that has them)`);
+        else if (oldScript) {
             const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'autoadd-old-'));
             fs.mkdirSync(path.join(tmp, 'scripts'));
             fs.copyFileSync(oldScript, path.join(tmp, 'scripts', 'update-routes-from-pdf.js'));

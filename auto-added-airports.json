@@ -1,1 +1,44 @@
-[]
+[
+  {
+    "name": "Asturias",
+    "code": "OVD",
+    "date": "2026-10-19",
+    "aiUsed": true,
+    "cityJa": "アストゥリアス州",
+    "countryJa": "スペイン",
+    "region": "南欧",
+    "schengen": true,
+    "fullJa": "アストゥリアス空港",
+    "googleMap": "https://www.google.com/maps/search/Asturias+Airport+OVD",
+    "sources": {
+      "code": "ai(validated against Wizz/OurAirports)",
+      "cityJa": "wikipedia",
+      "fullJa": "wikidata",
+      "country": "country-table",
+      "region": "country-table",
+      "schengen": "country-table",
+      "gmap": "ourairports"
+    }
+  },
+  {
+    "name": "Granada",
+    "code": "GRX",
+    "date": "2026-10-19",
+    "aiUsed": true,
+    "cityJa": "グラナダ",
+    "countryJa": "スペイン",
+    "region": "南欧",
+    "schengen": true,
+    "fullJa": "グラナダ空港",
+    "googleMap": "https://www.google.com/maps/search/F+G+L+Airport+Granada+Jaen+Airport+GRX",
+    "sources": {
+      "code": "oaMunicipality+ai-confirmed",
+      "cityJa": "wikipedia",
+      "fullJa": "wikidata",
+      "country": "country-table",
+      "region": "country-table",
+      "schengen": "country-table",
+      "gmap": "ourairports"
+    }
+  }
+]

@@ -40,5 +40,26 @@
       "schengen": "country-table",
       "gmap": "ourairports"
     }
+  },
+  {
+    "name": "Almeria",
+    "code": "LEI",
+    "date": "2026-10-23",
+    "aiUsed": true,
+    "cityJa": "アルメリア",
+    "countryJa": "スペイン",
+    "region": "南欧",
+    "schengen": true,
+    "fullJa": "アルメリア空港",
+    "googleMap": "https://www.google.com/maps/search/Almeria+Airport+LEI",
+    "sources": {
+      "code": "oaMunicipality+ai-confirmed",
+      "cityJa": "wikipedia",
+      "fullJa": "wikidata",
+      "country": "country-table",
+      "region": "country-table",
+      "schengen": "country-table",
+      "gmap": "ourairports"
+    }
   }
 ]

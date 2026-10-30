@@ -61,5 +61,26 @@
       "schengen": "country-table",
       "gmap": "ourairports"
     }
+  },
+  {
+    "name": "Arad",
+    "code": "ARW",
+    "date": "2026-10-30",
+    "aiUsed": true,
+    "cityJa": "アラド",
+    "countryJa": "ルーマニア",
+    "region": "東欧",
+    "schengen": true,
+    "fullJa": "アラド国際空港",
+    "googleMap": "https://www.google.com/maps/search/Arad+International+Airport+ARW",
+    "sources": {
+      "code": "oaMunicipality+ai-confirmed",
+      "cityJa": "wikipedia",
+      "fullJa": "wikidata",
+      "country": "country-table",
+      "region": "country-table",
+      "schengen": "country-table",
+      "gmap": "ourairports"
+    }
   }
 ]

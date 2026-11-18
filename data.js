@@ -946,19 +946,22 @@
     };
 
     const rawFlightData = `Aberdeen - Gdansk
-Agadir - Bratislava
-Agadir - Gdansk
 Agadir - Katowice
-Agadir - Milan
 Agadir - Warsaw
+Alexandria - Rome
 Alicante - Belgrade
+Alicante - Bratislava
 Alicante - Bucharest
+Alicante - Chisinau
+Alicante - Katowice
+Alicante - London (LTN)
 Alicante - Rome
-Alicante - Venice
+Almeria - Bucharest
 Ancona - Tirana
 Ankara - Budapest
 Arad - Bari
 Arad - Bologna
+Arad - Dortmund
 Arad - London (LTN)
 Arad - Memmingen
 Arad - Milan
@@ -967,6 +970,7 @@ Asturias - London (LTN)
 Athens - Bratislava
 Athens - Budapest
 Athens - Chisinau
+Athens - Kutaisi
 Athens - Larnaca
 Athens - Tel Aviv
 Athens - Tirana
@@ -974,41 +978,45 @@ Athens - Warsaw
 Bacau - Rome
 Baku - Bratislava
 Baku - Budapest
-Banja Luka - Basel-Mulhouse
-Barcelona - Bratislava
-Barcelona - Bucharest
+Baku - Rome
+Barcelona - Belgrade
 Barcelona - Budapest
 Barcelona - Chisinau
 Barcelona - Cluj-Napoca
 Barcelona - Gdansk
-Barcelona - Iasi
+Barcelona - Katowice
 Barcelona - Kutaisi
 Barcelona - Larnaca
-Barcelona - Milan
+Barcelona - Palermo
+Barcelona - Podgorica
 Barcelona - Rome
-Barcelona - Skopje
-Barcelona - Turin
+Barcelona - Tirana
+Barcelona - Venice
 Barcelona - Warsaw
 Bari - Arad
 Bari - Bucharest
+Bari - Budapest
 Bari - Craiova
+Bari - Skopje
 Bari - Tirana
 Bari - Warsaw
 Bari - Wroclaw
+Basel-Mulhouse - Belgrade
 Basel-Mulhouse - Bratislava
 Basel-Mulhouse - Bucharest
 Basel-Mulhouse - Budapest
-Basel-Mulhouse - Chisinau
-Basel-Mulhouse - Cluj-Napoca
-Basel-Mulhouse - Niš
+Basel-Mulhouse - Iasi
 Basel-Mulhouse - Ohrid
+Basel-Mulhouse - Podgorica
+Basel-Mulhouse - Poznan
 Basel-Mulhouse - Pristina
 Basel-Mulhouse - Skopje
-Basel-Mulhouse - Sofia
+Basel-Mulhouse - Târgu-Mures
 Basel-Mulhouse - Tirana
 Basel-Mulhouse - Tuzla
-Basel-Mulhouse - Varna
+Basel-Mulhouse - Wroclaw
 Belgrade - Alicante
+Belgrade - Barcelona
 Belgrade - Basel-Mulhouse
 Belgrade - Berlin
 Belgrade - Dortmund
@@ -1017,114 +1025,119 @@ Belgrade - Hamburg
 Belgrade - Larnaca
 Belgrade - London (LTN)
 Belgrade - Madrid
+Belgrade - Malmö
 Belgrade - Malta
 Belgrade - Memmingen
 Belgrade - Milan
 Belgrade - Nice
 Belgrade - Paris
 Belgrade - Rome
+Belgrade - Stockholm
+Bergen - Budapest
+Bergen - Gdansk
+Bergen - Szczecin
 Berlin - Belgrade
 Berlin - Bratislava
 Berlin - Bucharest
 Berlin - Budapest
 Berlin - Chisinau
-Berlin - Kutaisi
 Berlin - Skopje
 Berlin - Sofia
 Berlin - Tirana
+Berlin - Tuzla
 Berlin - Varna
 Bilbao - Budapest
 Bilbao - Krakow
 Bilbao - London (LTN)
 Bilbao - Milan
 Bilbao - Rome
+Bilbao - Turin
 Bilbao - Venice
-Bilbao - Warsaw
 Billund - Bucharest
 Billund - Budapest
 Billund - Gdansk
 Billund - Iasi
-Billund - Tirana
+Billund - Katowice
 Birmingham - Craiova
 Bologna - Arad
-Bologna - Chisinau
 Bologna - Cluj-Napoca
-Bologna - Suceava
-Bologna - Warsaw
-Bordeaux - Rome
-Bordeaux - Venice
 Bratislava - Alicante
 Bratislava - Athens
 Bratislava - Baku
 Bratislava - Basel-Mulhouse
 Bratislava - Berlin
 Bratislava - Chisinau
+Bratislava - Hurghada
 Bratislava - Kutaisi
-Bratislava - Larnaca
 Bratislava - London (LTN)
+Bratislava - Malaga
 Bratislava - Palermo
 Bratislava - Rome
 Bratislava - Skopje
 Bratislava - Tel Aviv
-Bratislava - Tirana
 Bratislava - Tuzla
 Bratislava - Varna
 Bratislava - Warsaw
 Bratislava - Yerevan
+Brussels Charleroi - Arad
 Brussels Charleroi - Budapest
 Brussels Charleroi - Chisinau
 Brussels Charleroi - Cluj-Napoca
 Brussels Charleroi - Craiova
+Brussels Charleroi - Iasi
 Brussels Charleroi - Kutaisi
 Brussels Charleroi - Pristina
+Brussels Charleroi - Skopje
+Brussels Charleroi - Sofia
 Brussels Charleroi - Suceava
-Brussels Charleroi - Târgu-Mures
 Brussels Charleroi - Tirana
 Brussels Charleroi - Varna
 Brussels Charleroi - Warsaw
+Bucharest - Almeria
 Bucharest - Bari
 Bucharest - Billund
 Bucharest - Bologna
 Bucharest - Castellon
 Bucharest - Catania
 Bucharest - Chisinau
-Bucharest - Gran Canaria
+Bucharest - Hamburg
 Bucharest - Larnaca
 Bucharest - Lisbon
 Bucharest - Madrid
 Bucharest - Malaga
 Bucharest - Malta
 Bucharest - Marrakech
+Bucharest - Memmingen
+Bucharest - Milan
 Bucharest - Nice
-Bucharest - Pisa
-Bucharest - Porto
-Bucharest - Santander
+Bucharest - Nuremberg
+Bucharest - Rome
 Bucharest - Sevilla
+Bucharest - Stockholm
 Bucharest - Tel Aviv
 Bucharest - Tenerife
-Bucharest - Valencia
 Bucharest - Venice
-Bucharest - Yerevan
 Bucharest - Zaragoza
+Budapest - Alicante
 Budapest - Ankara
 Budapest - Athens
 Budapest - Baku
 Budapest - Barcelona
 Budapest - Bari
 Budapest - Basel-Mulhouse
+Budapest - Bergen
+Budapest - Bilbao
 Budapest - Billund
 Budapest - Brasov
+Budapest - Brussels Charleroi
 Budapest - Bucharest
 Budapest - Cairo (Sphinx)
 Budapest - Catania
 Budapest - Chisinau
 Budapest - Copenhagen
-Budapest - Eindhoven
 Budapest - Funchal (Madeira)
 Budapest - Gdansk
-Budapest - Gran Canaria
 Budapest - Hurghada
-Budapest - Istanbul
 Budapest - Krakow
 Budapest - Kutaisi
 Budapest - Larnaca
@@ -1134,18 +1147,23 @@ Budapest - Madrid
 Budapest - Malaga
 Budapest - Malta
 Budapest - Marrakech
-Budapest - Memmingen
 Budapest - Milan
 Budapest - Nice
+Budapest - Oslo
 Budapest - Paris
 Budapest - Podgorica
 Budapest - Reykjavik
 Budapest - Rome
 Budapest - Sharm El Sheikh
+Budapest - Skopje
+Budapest - Stockholm
 Budapest - Târgu-Mures
 Budapest - Tel Aviv
 Budapest - Tenerife
+Budapest - Thessaloniki
+Budapest - Tirana
 Budapest - Turin
+Budapest - Venice
 Budapest - Vilnius
 Budapest - Warsaw
 Budapest - Wroclaw
@@ -1155,23 +1173,22 @@ Cairo (Sphinx) - London (LTN)
 Cairo (Sphinx) - Milan
 Cairo (Sphinx) - Rome
 Castellon - Bucharest
+Castellon - Cluj-Napoca
 Catania - Bucharest
 Catania - Budapest
 Catania - Gdansk
 Catania - Katowice
-Catania - Podgorica
-Catania - Porto
-Catania - Sharm El Sheikh
+Catania - Memmingen
 Catania - Tel Aviv
-Catania - Vilnius
+Catania - Tirana
 Catania - Warsaw
+Chisinau - Alicante
 Chisinau - Athens
 Chisinau - Berlin
 Chisinau - Bologna
 Chisinau - Bratislava
 Chisinau - Brussels Charleroi
 Chisinau - Bucharest
-Chisinau - Budapest
 Chisinau - Copenhagen
 Chisinau - Dortmund
 Chisinau - Larnaca
@@ -1183,51 +1200,54 @@ Chisinau - Rome
 Chisinau - Stuttgart
 Chisinau - Verona
 Chisinau - Warsaw
-Cluj-Napoca - Alicante
 Cluj-Napoca - Bologna
+Cluj-Napoca - Brussels Charleroi
+Cluj-Napoca - Castellon
 Cluj-Napoca - Eindhoven
-Cluj-Napoca - Malaga
-Cluj-Napoca - Malmö
+Cluj-Napoca - London (LTN)
+Cluj-Napoca - Madrid
 Cluj-Napoca - Marrakech
-Cluj-Napoca - Memmingen
 Cluj-Napoca - Milan
 Cluj-Napoca - Nuremberg
 Cluj-Napoca - Rome
+Cluj-Napoca - Venice
 Cologne - Podgorica
-Cologne - Tirana
-Cologne - Tuzla
 Constanta - Rome
 Copenhagen - Budapest
 Copenhagen - Chisinau
 Copenhagen - Gdansk
 Craiova - Bari
 Craiova - Brussels Charleroi
-Craiova - Dortmund
+Craiova - Madrid
 Craiova - Milan
-Debrecen - Istanbul
+Debrecen - Eindhoven
+Debrecen - London (LTN)
+Dortmund - Arad
 Dortmund - Belgrade
+Dortmund - Brasov
 Dortmund - Chisinau
-Dortmund - Cluj-Napoca
 Dortmund - Craiova
 Dortmund - Gdansk
 Dortmund - Iasi
 Dortmund - Katowice
 Dortmund - Milan
+Dortmund - Niš
 Dortmund - Ohrid
-Dortmund - Olsztyn-Mazury
+Dortmund - Oradea
 Dortmund - Palermo
+Dortmund - Podgorica
 Dortmund - Pristina
 Dortmund - Rome
 Dortmund - Sibiu
 Dortmund - Skopje
 Dortmund - Târgu-Mures
 Dortmund - Tirana
-Dortmund - Vilnius
 Dortmund - Yerevan
 Eindhoven - Belgrade
 Eindhoven - Bucharest
 Eindhoven - Budapest
 Eindhoven - Cluj-Napoca
+Eindhoven - Debrecen
 Eindhoven - Gdansk
 Eindhoven - Iasi
 Eindhoven - Katowice
@@ -1237,10 +1257,11 @@ Eindhoven - Sofia
 Eindhoven - Tirana
 Eindhoven - Varna
 Eindhoven - Warsaw
-Frankfurt - Bucharest
-Frankfurt - Chisinau
-Frankfurt - Kutaisi
+Eindhoven - Yerevan
 Frankfurt - Skopje
+Frankfurt - Tirana
+Frankfurt - Tuzla
+Frankfurt - Varna
 Friedrichshafen - Skopje
 Fuerteventura - Katowice
 Fuerteventura - Warsaw
@@ -1250,7 +1271,8 @@ Funchal (Madeira) - Katowice
 Funchal (Madeira) - Warsaw
 Gdansk - Aberdeen
 Gdansk - Alesund
-Gdansk - Alicante
+Gdansk - Athens
+Gdansk - Barcelona
 Gdansk - Bergen
 Gdansk - Budapest
 Gdansk - Catania
@@ -1263,7 +1285,6 @@ Gdansk - Hamburg
 Gdansk - Haugesund
 Gdansk - Larnaca
 Gdansk - London (LTN)
-Gdansk - Malaga
 Gdansk - Marsa Alam
 Gdansk - Milan
 Gdansk - Oslo
@@ -1272,95 +1293,85 @@ Gdansk - Reykjavik
 Gdansk - Rome
 Gdansk - Sharm El Sheikh
 Gdansk - Stavanger
+Gdansk - Stockholm
+Gdansk - Tallinn
 Gdansk - Tenerife
 Gdansk - Tromsø
 Gdansk - Turku
+Gdansk - Vilnius
 Genoa - Tirana
-Gothenburg - Belgrade
 Gothenburg - Gdansk
-Gothenburg - Skopje
-Gran Canaria - Bucharest
-Gran Canaria - Budapest
 Gran Canaria - Wroclaw
-Granada - London (LTN)
 Hamburg - Belgrade
 Hamburg - Chisinau
-Hamburg - Podgorica
 Hamburg - Skopje
-Hamburg - Sofia
 Hamburg - Tirana
-Hamburg - Tuzla
 Hamburg - Yerevan
 Haugesund - Gdansk
 Hurghada - Budapest
 Hurghada - London (LTN)
+Hurghada - Rome
 Hurghada - Sofia
 Hurghada - Warsaw
 Hurghada - Wroclaw
-Iasi - Barcelona
 Iasi - Billund
 Iasi - Dortmund
+Iasi - Madrid
 Iasi - Memmingen
-Iasi - Pisa
+Iasi - Milan
 Iasi - Rome
-Iasi - Valencia
 Iasi - Venice
-Istanbul - Budapest
-Istanbul - Debrecen
-Karlsruhe/Baden-Baden - Arad
-Karlsruhe/Baden-Baden - Podgorica
 Karlsruhe/Baden-Baden - Pristina
 Karlsruhe/Baden-Baden - Sibiu
 Karlsruhe/Baden-Baden - Skopje
-Karlsruhe/Baden-Baden - Tirana
+Karlsruhe/Baden-Baden - Suceava
 Katowice - Agadir
 Katowice - Alicante
+Katowice - Athens
 Katowice - Barcelona
-Katowice - Catania
+Katowice - Billund
 Katowice - Dortmund
+Katowice - Eindhoven
 Katowice - Fuerteventura
 Katowice - Funchal (Madeira)
+Katowice - Hurghada
+Katowice - Kutaisi
 Katowice - Larnaca
 Katowice - London (LTN)
-Katowice - Malaga
 Katowice - Malta
-Katowice - Marsa Alam
+Katowice - Porto
 Katowice - Reykjavik
+Katowice - Rome
 Katowice - Sharm El Sheikh
 Katowice - Tenerife
 Kaunas - London (LTN)
 Košice - Rome
-Krakow - Barcelona
 Krakow - Basel-Mulhouse
 Krakow - Bergen
 Krakow - Bilbao
 Krakow - Budapest
+Krakow - Eindhoven
 Krakow - Larnaca
 Krakow - London (LTN)
 Krakow - Lyon
 Krakow - Malaga
 Krakow - Marsa Alam
 Krakow - Milan
-Krakow - Nice
+Krakow - Oslo
 Krakow - Rome
 Krakow - Tel Aviv
-Krakow - Valencia
-Krakow - Venice
-Kutaisi - Athens
+Krakow - Vilnius
 Kutaisi - Barcelona
 Kutaisi - Bratislava
 Kutaisi - Brussels Charleroi
 Kutaisi - Budapest
-Kutaisi - Frankfurt
 Kutaisi - Katowice
 Kutaisi - Larnaca
-Kutaisi - Madrid
 Kutaisi - Milan
 Kutaisi - Paris
 Kutaisi - Poznan
 Kutaisi - Rome
-Kutaisi - Venice
-Kutaisi - Vilnius
+Kutaisi - Thessaloniki
 Kutaisi - Warsaw
 Larnaca - Athens
 Larnaca - Barcelona
@@ -1376,23 +1387,19 @@ Larnaca - Madrid
 Larnaca - Radom
 Larnaca - Târgu-Mures
 Larnaca - Tel Aviv
-Larnaca - Venice
+Larnaca - Warsaw
 Larnaca - Yerevan
-Leeds - Cluj-Napoca
-Lisbon - Bucharest
 Lisbon - Budapest
 Lisbon - Rome
 Lisbon - Warsaw
+Liverpool - Iasi
 Ljubljana - Podgorica
-Ljubljana - Skopje
+London (LTN) - Alicante
 London (LTN) - Antalya
 London (LTN) - Arad
 London (LTN) - Asturias
-London (LTN) - Bacau
-London (LTN) - Barcelona
 London (LTN) - Belgrade
 London (LTN) - Bilbao
-London (LTN) - Brasov
 London (LTN) - Bratislava
 London (LTN) - Bucharest
 London (LTN) - Budapest
@@ -1402,12 +1409,10 @@ London (LTN) - Craiova
 London (LTN) - Debrecen
 London (LTN) - Dortmund
 London (LTN) - Gdansk
-London (LTN) - Granada
 London (LTN) - Hurghada
 London (LTN) - Iasi
 London (LTN) - Katowice
 London (LTN) - Kaunas
-London (LTN) - Krakow
 London (LTN) - Larnaca
 London (LTN) - Lublin
 London (LTN) - Lyon
@@ -1415,13 +1420,12 @@ London (LTN) - Madrid
 London (LTN) - Malaga
 London (LTN) - Milan
 London (LTN) - Plovdiv
+London (LTN) - Podgorica
 London (LTN) - Rome
-London (LTN) - Sarajevo
 London (LTN) - Satu Mare
 London (LTN) - Sevilla
 London (LTN) - Sharm El Sheikh
-London (LTN) - Skopje
-London (LTN) - Suceava
+London (LTN) - Sibiu
 London (LTN) - Târgu-Mures
 London (LTN) - Tel Aviv
 London (LTN) - Tirana
@@ -1429,41 +1433,44 @@ London (LTN) - Tromsø
 London (LTN) - Turin
 London (LTN) - Valencia
 London (LTN) - Varna
+London (LTN) - Venice
 London (LTN) - Vilnius
 London (LTN) - Yerevan
 Lublin - London (LTN)
-Lyon - Bucharest
 Lyon - Krakow
 Lyon - London (LTN)
-Lyon - Tirana
 Lyon - Warsaw
-Maastricht - Podgorica
 Madrid - Belgrade
 Madrid - Bucharest
 Madrid - Budapest
 Madrid - Cluj-Napoca
-Madrid - Gdansk
-Madrid - Kutaisi
+Madrid - Craiova
+Madrid - Iasi
 Madrid - Larnaca
 Madrid - London (LTN)
 Madrid - Milan
 Madrid - Pisa
 Madrid - Rome
+Madrid - Skopje
 Madrid - Sofia
+Madrid - Turin
+Madrid - Venice
 Malaga - Bucharest
-Malaga - Cluj-Napoca
 Malaga - London (LTN)
 Malaga - Milan
 Malaga - Rome
 Malaga - Sofia
 Malaga - Tirana
 Malaga - Turin
-Malmö - Cluj-Napoca
-Malmö - Tirana
+Malaga - Venice
+Malaga - Vilnius
+Malmö - Podgorica
 Malta - Belgrade
 Malta - Bucharest
 Malta - Budapest
 Malta - Katowice
+Malta - Rome
+Malta - Skopje
 Malta - Tirana
 Malta - Warsaw
 Marrakech - Bucharest
@@ -1472,9 +1479,7 @@ Marrakech - Cluj-Napoca
 Marrakech - Milan
 Marrakech - Palermo
 Marrakech - Rome
-Marrakech - Sofia
 Marrakech - Warsaw
-Marsa Alam - Budapest
 Marsa Alam - Gdansk
 Marsa Alam - Krakow
 Marsa Alam - Milan
@@ -1482,23 +1487,24 @@ Marsa Alam - Rome
 Marsa Alam - Warsaw
 Memmingen - Arad
 Memmingen - Belgrade
-Memmingen - Brasov
 Memmingen - Bucharest
-Memmingen - Budapest
+Memmingen - Catania
 Memmingen - Chisinau
 Memmingen - Cluj-Napoca
 Memmingen - Iasi
 Memmingen - Kutaisi
+Memmingen - Ohrid
 Memmingen - Podgorica
 Memmingen - Pristina
 Memmingen - Sibiu
 Memmingen - Skopje
+Memmingen - Sofia
 Memmingen - Suceava
 Memmingen - Târgu-Mures
 Memmingen - Tirana
 Memmingen - Varna
 Memmingen - Yerevan
-Milan - Agadir
+Milan - Alicante
 Milan - Arad
 Milan - Belgrade
 Milan - Bilbao
@@ -1512,49 +1518,60 @@ Milan - Dortmund
 Milan - Gdansk
 Milan - Iasi
 Milan - Kutaisi
+Milan - Larnaca
 Milan - London (LTN)
 Milan - Madrid
 Milan - Malaga
-Milan - Marrakech
 Milan - Marsa Alam
+Milan - Oradea
 Milan - Podgorica
 Milan - Porto
 Milan - Pristina
 Milan - Reykjavik
+Milan - Santander
 Milan - Sevilla
 Milan - Sharm El Sheikh
-Milan - Skopje
-Milan - Sofia
 Milan - Suceava
-Milan - Târgu-Mures
 Milan - Tel Aviv
+Milan - Tenerife
 Milan - Tirana
 Milan - Valencia
 Milan - Varna
 Milan - Warsaw
 Milan - Yerevan
-Milan - Zaragoza
 Nice - Belgrade
 Nice - Bucharest
 Nice - Budapest
 Nice - Chisinau
 Nice - Krakow
 Nice - Rome
-Nice - Vilnius
+Nice - Sofia
 Nice - Warsaw
 Niš - Basel-Mulhouse
+Niš - Dortmund
+Niš - Memmingen
+Nuremberg - Brasov
+Nuremberg - Bucharest
 Nuremberg - Chisinau
 Nuremberg - Cluj-Napoca
+Nuremberg - Sibiu
 Nuremberg - Skopje
+Nuremberg - Tirana
 Ohrid - Basel-Mulhouse
 Ohrid - Dortmund
-Olsztyn-Mazury - Dortmund
-Oslo - Bucharest
+Ohrid - Memmingen
+Oradea - Dortmund
+Oradea - Milan
+Oradea - Rome
+Oslo - Bratislava
+Oslo - Budapest
 Oslo - Palanga
 Oslo - Rome
 Oslo - Skopje
+Oslo - Szczecin
 Oslo - Warsaw
 Palanga - Oslo
+Palermo - Barcelona
 Palermo - Bratislava
 Palermo - Dortmund
 Palermo - Marrakech
@@ -1563,37 +1580,39 @@ Palermo - Sharm El Sheikh
 Palermo - Sofia
 Palermo - Tel Aviv
 Palermo - Warsaw
-Paphos - Warsaw
 Paris - Belgrade
 Paris - Bucharest
 Paris - Chisinau
 Paris - Iasi
 Paris - Kutaisi
+Paris - Podgorica
 Paris - Rome
 Paris - Skopje
 Paris - Sofia
 Paris - Târgu-Mures
 Paris - Tirana
 Paris - Yerevan
-Perugia - Tirana
 Pescara - Tirana
 Pisa - Bucharest
 Pisa - Iasi
 Pisa - Madrid
-Podgorica - Catania
+Pisa - Warsaw
+Podgorica - Barcelona
+Podgorica - Basel-Mulhouse
 Podgorica - Cologne
+Podgorica - Dortmund
 Podgorica - Ljubljana
-Podgorica - Maastricht
+Podgorica - London (LTN)
+Podgorica - Malmö
 Podgorica - Memmingen
 Podgorica - Milan
-Podgorica - Rome
+Podgorica - Paris
 Poprad-Tatry - Gdansk
-Poprad-Tatry - London (LTN)
-Porto - Bucharest
-Porto - Catania
+Porto - Katowice
 Porto - Milan
 Porto - Rome
 Porto - Warsaw
+Poznan - Basel-Mulhouse
 Poznan - Kutaisi
 Poznan - London (LTN)
 Prague - Bucharest
@@ -1602,24 +1621,31 @@ Prague - Kutaisi
 Prague - Larnaca
 Prague - London (LTN)
 Prague - Palermo
+Prague - Poprad-Tatry
 Prague - Rome
+Prague - Skopje
+Prague - Sofia
 Prague - Tirana
 Prague - Vilnius
 Prague - Yerevan
 Pristina - Basel-Mulhouse
+Pristina - Karlsruhe/Baden-Baden
 Pristina - Milan
-Pristina - Rome
 Radom - Larnaca
 Reykjavik - Budapest
 Reykjavik - Gdansk
 Reykjavik - Katowice
 Reykjavik - Milan
+Reykjavik - Vilnius
 Reykjavik - Warsaw
 Reykjavik - Wroclaw
+Rimini - Tirana
+Rome - Alexandria
 Rome - Arad
 Rome - Bacau
+Rome - Baku
+Rome - Belgrade
 Rome - Bilbao
-Rome - Bordeaux
 Rome - Bratislava
 Rome - Bucharest
 Rome - Budapest
@@ -1629,7 +1655,9 @@ Rome - Cluj-Napoca
 Rome - Constanta
 Rome - Dortmund
 Rome - Gdansk
+Rome - Hurghada
 Rome - Iasi
+Rome - Katowice
 Rome - Košice
 Rome - Krakow
 Rome - Kutaisi
@@ -1639,20 +1667,20 @@ Rome - Malaga
 Rome - Marrakech
 Rome - Marsa Alam
 Rome - Nice
+Rome - Oradea
 Rome - Oslo
 Rome - Paris
-Rome - Podgorica
 Rome - Porto
 Rome - Prague
-Rome - Pristina
+Rome - Rzeszów
 Rome - Sarajevo
 Rome - Sevilla
 Rome - Sharm El Sheikh
-Rome - Sibiu
 Rome - Skopje
 Rome - Sofia
 Rome - Suceava
 Rome - Tallinn
+Rome - Târgu-Mures
 Rome - Tel Aviv
 Rome - Tenerife
 Rome - Tirana
@@ -1660,74 +1688,84 @@ Rome - Valencia
 Rome - Varna
 Rome - Warsaw
 Rome - Zaragoza
-Santander - Bucharest
-Sarajevo - London (LTN)
+Rzeszów - Rome
+Santander - Milan
 Sarajevo - Rome
 Satu Mare - London (LTN)
-Sevilla - Bucharest
 Sevilla - London (LTN)
+Sevilla - Milan
 Sevilla - Rome
 Sevilla - Venice
+Sevilla - Warsaw
 Sharm El Sheikh - Budapest
-Sharm El Sheikh - Catania
 Sharm El Sheikh - Gdansk
-Sharm El Sheikh - Katowice
 Sharm El Sheikh - London (LTN)
 Sharm El Sheikh - Milan
 Sharm El Sheikh - Palermo
 Sharm El Sheikh - Rome
 Sharm El Sheikh - Sofia
-Sharm El Sheikh - Turin
 Sharm El Sheikh - Venice
-Sharm El Sheikh - Warsaw
 Sibiu - Dortmund
 Sibiu - Karlsruhe/Baden-Baden
-Sibiu - Rome
-Skopje - Barcelona
+Sibiu - Memmingen
+Sibiu - Nuremberg
+Skopje - Bari
 Skopje - Basel-Mulhouse
+Skopje - Bologna
+Skopje - Budapest
 Skopje - Dortmund
+Skopje - Eindhoven
 Skopje - Frankfurt
 Skopje - Friedrichshafen
+Skopje - Hamburg
 Skopje - Karlsruhe/Baden-Baden
+Skopje - Madrid
 Skopje - Malmö
 Skopje - Memmingen
-Skopje - Milan
 Skopje - Oslo
+Skopje - Paris
 Skopje - Rome
+Skopje - Stockholm
 Skopje - Venice
+Sofia - Chisinau
 Sofia - Hurghada
 Sofia - Larnaca
 Sofia - Palermo
 Sofia - Rome
 Sofia - Sharm El Sheikh
 Sofia - Tel Aviv
+Sofia - Warsaw
 Stockholm - Belgrade
 Stockholm - Bucharest
-Stuttgart - Budapest
+Stockholm - Skopje
+Stockholm - Tirana
+Stockholm - Warsaw
 Stuttgart - Chisinau
 Stuttgart - Cluj-Napoca
-Suceava - Bologna
+Stuttgart - Skopje
+Suceava - Dortmund
 Suceava - Memmingen
 Suceava - Milan
 Suceava - Rome
-Suceava - Venice
+Szczecin - Bergen
+Szczecin - Oslo
 Tallinn - Budapest
-Tallinn - Krakow
+Tallinn - Gdansk
 Tallinn - Rome
 Tallinn - Venice
 Tallinn - Vilnius
 Tallinn - Warsaw
+Târgu-Mures - Basel-Mulhouse
 Târgu-Mures - Budapest
 Târgu-Mures - Dortmund
 Târgu-Mures - Larnaca
 Târgu-Mures - London (LTN)
 Târgu-Mures - Memmingen
-Târgu-Mures - Milan
 Târgu-Mures - Paris
+Târgu-Mures - Rome
 Tel Aviv - Athens
 Tel Aviv - Bratislava
 Tel Aviv - Bucharest
-Tel Aviv - Budapest
 Tel Aviv - Catania
 Tel Aviv - Krakow
 Tel Aviv - London (LTN)
@@ -1737,102 +1775,98 @@ Tel Aviv - Rome
 Tel Aviv - Sofia
 Tel Aviv - Venice
 Tel Aviv - Vilnius
+Tel Aviv - Warsaw
 Tenerife - Bucharest
 Tenerife - Budapest
 Tenerife - Gdansk
 Tenerife - Katowice
+Tenerife - Milan
 Tenerife - Rome
 Tenerife - Warsaw
 Thessaloniki - Larnaca
 Tirana - Ancona
 Tirana - Athens
 Tirana - Bari
-Tirana - Billund
 Tirana - Brussels Charleroi
+Tirana - Catania
 Tirana - Cologne
 Tirana - Dortmund
-Tirana - Eindhoven
 Tirana - Genoa
-Tirana - Karlsruhe/Baden-Baden
 Tirana - London (LTN)
 Tirana - Malaga
 Tirana - Malta
 Tirana - Memmingen
 Tirana - Milan
-Tirana - Palermo
 Tirana - Paris
 Tirana - Pescara
 Tirana - Rome
+Tirana - Stockholm
 Tirana - Trieste
 Tirana - Turin
 Tirana - Venice
 Trieste - Tirana
 Tromsø - Gdansk
 Tromsø - London (LTN)
-Turin - Barcelona
+Turin - Bilbao
 Turin - Bucharest
 Turin - Budapest
-Turin - Chisinau
-Turin - Iasi
 Turin - London (LTN)
+Turin - Madrid
 Turin - Malaga
-Turin - Sharm El Sheikh
 Turin - Tirana
 Turin - Valencia
 Turku - Gdansk
 Tuzla - Bratislava
 Valencia - Brasov
 Valencia - Bucharest
-Valencia - Iasi
+Valencia - Budapest
 Valencia - London (LTN)
 Valencia - Milan
 Valencia - Rome
 Valencia - Sofia
 Valencia - Turin
 Valencia - Venice
-Valencia - Warsaw
-Varna - Basel-Mulhouse
-Varna - London (LTN)
 Varna - Milan
 Varna - Rome
 Venice - Athens
 Venice - Bilbao
 Venice - Bucharest
+Venice - Budapest
 Venice - Chisinau
-Venice - Kutaisi
+Venice - Cluj-Napoca
+Venice - London (LTN)
+Venice - Madrid
+Venice - Malaga
 Venice - Sevilla
 Venice - Sharm El Sheikh
 Venice - Skopje
-Venice - Suceava
 Venice - Tallinn
 Venice - Tel Aviv
 Venice - Tirana
 Venice - Valencia
+Venice - Warsaw
 Venice - Yerevan
 Verona - Chisinau
-Verona - Tirana
 Vilnius - Berlin
-Vilnius - Catania
+Vilnius - Eindhoven
+Vilnius - Gdansk
 Vilnius - Kutaisi
 Vilnius - Larnaca
 Vilnius - Malaga
 Vilnius - Milan
-Vilnius - Nice
-Vilnius - Prague
+Vilnius - Reykjavik
 Vilnius - Tallinn
 Vilnius - Tel Aviv
 Warsaw - Agadir
-Warsaw - Alicante
 Warsaw - Barcelona
 Warsaw - Bari
-Warsaw - Bilbao
 Warsaw - Bologna
 Warsaw - Bratislava
 Warsaw - Brussels Charleroi
 Warsaw - Bucharest
-Warsaw - Budapest
 Warsaw - Catania
 Warsaw - Copenhagen
+Warsaw - Dortmund
 Warsaw - Eindhoven
 Warsaw - Fuerteventura
 Warsaw - Funchal (Madeira)
@@ -1849,36 +1883,37 @@ Warsaw - Milan
 Warsaw - Nice
 Warsaw - Oslo
 Warsaw - Paris
+Warsaw - Pisa
 Warsaw - Porto
 Warsaw - Reykjavik
 Warsaw - Rome
+Warsaw - Sevilla
+Warsaw - Sofia
+Warsaw - Stockholm
 Warsaw - Tallinn
 Warsaw - Tel Aviv
 Warsaw - Tenerife
 Warsaw - Valencia
-Wroclaw - Barcelona
+Warsaw - Venice
 Wroclaw - Bari
-Wroclaw - Budapest
+Wroclaw - Basel-Mulhouse
 Wroclaw - Chisinau
+Wroclaw - Dortmund
 Wroclaw - Gran Canaria
 Wroclaw - Hurghada
-Wroclaw - Larnaca
+Wroclaw - London (LTN)
 Wroclaw - Reykjavik
-Yerevan - Bari
 Yerevan - Bratislava
-Yerevan - Bucharest
-Yerevan - Budapest
 Yerevan - Dortmund
 Yerevan - Eindhoven
 Yerevan - Larnaca
 Yerevan - London (LTN)
 Yerevan - Memmingen
 Yerevan - Paris
+Yerevan - Prague
 Yerevan - Rome
 Yerevan - Venice
 Zaragoza - Bucharest
-Zaragoza - Cluj-Napoca
-Zaragoza - Milan
 Zaragoza - Rome`
 
     const airportGoogleMap = {
